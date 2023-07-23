@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Home",
+    "route": "Home"
+  },
+  {
+    "name": "Expenses & Income",
+    "route": "ExpensesIncome"
+  },
+  {
+    "name": "Exchange",
+    "route": "Exchange"
+  },
+  {
+    "name": "History",
+    "route": "History"
+  },
+  {
+    "name": "Settings",
+    "route": "Settings"
+  }
+]
