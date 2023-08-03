@@ -1,7 +1,134 @@
-import { Text } from 'react-native';
+import { COLORS } from '../../styles/Colors';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { Link } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import CustomButton from '../../components/CustomButton/CustomButton';
+import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
+import Title from '../../components/Title/Title';
 
 const SignUpScreen = () => {
-  return <Text>SignUpScreen</Text>;
+  return (
+    <SafeAreaView style={{ backgroundColor: COLORS.PRIMARY, flex: 1 }}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={{
+          backgroundColor: COLORS.PRIMARY,
+          flex: 1,
+          gap: 40
+        }}
+        enableOnAndroid={true}
+        extraScrollHeight={180}
+      >
+        <Title
+          customStyles={{
+            container: {
+              backgroundColor: 'transparent',
+              marginTop: 30
+            },
+            content: {
+              fontSize: 48,
+              letterSpacing: 3,
+              textShadowColor: 'rgba(0, 0, 0, 0.4)',
+              textShadowOffset: { height: 3, width: 3 },
+              textShadowRadius: 6
+            }
+          }}
+          text="Budgety"
+        />
+        <Image
+          resizeMode="contain"
+          source={require('../../../assets/logo.png')}
+          style={styles.image}
+        />
+
+        <View style={styles.inputContainer}>
+          <CustomTextInput
+            onChangeText={e => console.log('email')}
+            placeholderText="Name (optional)"
+          />
+          <CustomTextInput
+            autoCapitalize="none"
+            onChangeText={e => console.log('email')}
+            placeholderText="Email"
+            type="email-address"
+          />
+          <CustomTextInput
+            autoCapitalize="none"
+            hashText
+            onChangeText={e => console.log('pass')}
+            placeholderText="Password"
+          />
+          <CustomTextInput
+            autoCapitalize="none"
+            hashText
+            onChangeText={e => console.log('pass')}
+            placeholderText="Confirm Password"
+          />
+        </View>
+        <CustomButton
+          customStyles={{
+            container: {
+              alignSelf: 'center',
+              marginTop: 20,
+              width: 240
+            }
+          }}
+          onPress={e => console.log('submit')}
+          title="Sign Up"
+        />
+        <View style={styles.paragraphContainer}>
+          <Text style={styles.paragraph}>
+            Already have an account?{' '}
+            <Link style={styles.link} to={{ screen: 'Login' }}>
+              Sign In!
+            </Link>
+          </Text>
+        </View>
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  image: {
+    alignItems: 'center',
+    height: 220,
+    justifyContent: 'center',
+    width: '100%'
+  },
+  input: {
+    borderColor: '#888888',
+    borderWidth: 1,
+    fontSize: 16,
+    marginLeft: 80,
+    marginRight: 80,
+    padding: 5
+  },
+  inputContainer: {
+    alignSelf: 'center',
+    gap: 20,
+    height: 160,
+    width: '60%'
+  },
+  link: {
+    color: COLORS.SECONDARY,
+    fontSize: 16,
+    textDecorationLine: 'underline',
+    textDecorationStyle: 'solid'
+  },
+  paragraph: {
+    color: COLORS.WHITE_SHADE
+  },
+  paragraphContainer: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginBottom: '5%',
+    textAlign: 'center'
+  }
+});
 
 export default SignUpScreen;
