@@ -1,17 +1,28 @@
 import 'react-native-gesture-handler';
-import { StyleSheet } from 'react-native';
-import DrawerNavigator from './src/routes/Drawer/Drawer';
+import { COLORS } from './src/styles/Colors';
+import { StyleSheet, StatusBar, View } from 'react-native';
+import { useState } from 'react';
+import AppRouter from './src/routes/AppRouter/AppRouter';
 
 const App = () => {
-  return <DrawerNavigator />;
+  const [isAuthed, setIsAuthed] = useState(false);
+
+  return (
+    <View style={styles.container}>
+      <StatusBar
+        backgroundColor={`${COLORS.PRIMARY}`}
+        barStyle="light-content"
+        translucent={true}
+      />
+      <AppRouter isAuthed={isAuthed} />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    backgroundColor: '#f2f2f2',
-    flex: 1,
-    justifyContent: 'center'
+    backgroundColor: 'transparent',
+    flex: 1
   }
 });
 
