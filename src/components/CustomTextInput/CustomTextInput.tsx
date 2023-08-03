@@ -38,6 +38,7 @@ const CustomTextInput = ({
         placeholderTextColor={`${COLORS.LIGHT_GRAY}`}
         secureTextEntry={hashText}
         style={[styles.textInput, contentStyle]}
+        textContentType="oneTimeCode"
       />
     </View>
   );

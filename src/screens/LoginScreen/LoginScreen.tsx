@@ -136,11 +136,6 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     textDecorationStyle: 'solid'
   },
-  headerText: {
-    color: '#0066cc',
-    fontSize: 40,
-    textAlign: 'center'
-  },
   image: {
     alignItems: 'center',
     height: 220,
@@ -161,40 +156,11 @@ const styles = StyleSheet.create({
     height: 120,
     width: '60%'
   },
-  label: {
-    fontSize: 18,
-    marginBottom: 5,
-    marginLeft: 80,
-    marginRight: 80,
-    marginTop: 20
-  },
-  loginButton: {
-    backgroundColor: '#0066cc',
-    borderRadius: 5,
-    marginBottom: 20,
-    marginLeft: 80,
-    marginRight: 80,
-    marginTop: 40
-  },
-  loginHeader: {
-    margin: 20,
-    marginTop: 100,
-    padding: 20
-  },
-  loginInputs: {
-    marginTop: 150
-  },
   link: {
     color: COLORS.SECONDARY,
     fontSize: 16,
     textDecorationLine: 'underline',
     textDecorationStyle: 'solid'
-  },
-  loginText: {
-    color: '#ffff',
-    fontSize: 16,
-    padding: 10,
-    textAlign: 'center'
   },
   paragraph: {
     color: COLORS.WHITE_SHADE
