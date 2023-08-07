@@ -1,3 +1,4 @@
+import { COLORS } from '../../styles/Colors';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import CustomDrawerContent from '../CustomDrawerContent/CustomDrawerContent';
 import HomeScreen from '../../screens/HomeScreen/HomeScreen';
@@ -15,6 +16,11 @@ const DrawerNavigator: React.FC = () => (
     )}
     initialRouteName="Home"
     screenOptions={{
+      headerStyle: {
+        backgroundColor: COLORS.PRIMARY,
+        shadowColor: 'transparent'
+      },
+      headerTintColor: COLORS.WHITE_SHADE,
       headerTitle: ''
     }}
   >

@@ -5,7 +5,7 @@ import { useState } from 'react';
 import AppRouter from './src/routes/AppRouter/AppRouter';
 
 const App = () => {
-  const [isAuthed, setIsAuthed] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(true);
 
   return (
     <View style={styles.container}>
