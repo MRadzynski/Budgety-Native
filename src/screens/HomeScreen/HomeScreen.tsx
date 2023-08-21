@@ -61,7 +61,8 @@ const styles = StyleSheet.create({
     color: COLORS.BLACK_SHADE,
     flex: 2,
     fontSize: 20,
-    textAlign: 'center'
+    textAlign: 'center',
+    textAlignVertical: 'center'
   },
   welcomeText: {
     alignSelf: 'flex-start',
