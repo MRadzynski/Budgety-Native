@@ -1,5 +1,11 @@
 import { COLORS } from '../../styles/Colors';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View
+} from 'react-native';
 import { formatNumber } from '../../utils/helpers';
 import { useEffect, useState } from 'react';
 import CurrencyListItem from '../../components/CurrencyListItem/CurrencyListItem';
@@ -20,9 +26,11 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
   const [currenciesList, setCurrenciesList] = useState<ICurrencyListState[]>(
     []
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchCurrencies = async () => {
+      setIsLoading(true);
       const currenciesRes = await fetch(
         `https://api.frankfurter.app/latest?from=USD`
       );
@@ -44,6 +52,7 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
           },
           ...formattedList
         ]);
+        setIsLoading(false);
       }
     };
 
@@ -62,13 +71,21 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
         Check your balance in different currencies
       </Text>
       <View style={styles.listContainer}>
-        <FlatList
-          data={currenciesList}
-          renderItem={({ item, index }) => (
-            <CurrencyListItem item={item} index={index} />
-          )}
-          style={styles.listContent}
-        />
+        {isLoading ? (
+          <ActivityIndicator
+            color={COLORS.PRIMARY}
+            size="large"
+            style={styles.loader}
+          />
+        ) : (
+          <FlatList
+            data={currenciesList}
+            renderItem={({ item, index }) => (
+              <CurrencyListItem item={item} index={index} />
+            )}
+            style={styles.listContent}
+          />
+        )}
       </View>
       <View style={styles.buttonsContainer}>
         <CustomButton
@@ -101,12 +118,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32
   },
   listContainer: {
+    backgroundColor: 'white',
     borderRadius: 25,
     flex: 1,
+    justifyContent: 'center',
     overflow: 'hidden'
   },
   listContent: {
     backgroundColor: 'white'
+  },
+  loader: {
+    transform: [{ scaleX: 1.25 }, { scaleY: 1.25 }]
   },
   singleButtonContainer: {
     flex: 1
