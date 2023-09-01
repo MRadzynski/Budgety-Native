@@ -7,6 +7,8 @@ interface IProps {
   hashText?: boolean;
   onChangeText: (event: string) => void;
   placeholderText: string;
+  placeholderTextColor?: string;
+  selectionColor?: string;
   text?: string;
   type?: KeyboardTypeOptions;
 }
@@ -22,6 +24,8 @@ const CustomTextInput = ({
   hashText,
   onChangeText,
   placeholderText,
+  placeholderTextColor = COLORS.LIGHT_GRAY,
+  selectionColor = 'white',
   type = 'default'
 }: IProps) => {
   const containerStyle = customStyles?.container || {};
@@ -35,10 +39,11 @@ const CustomTextInput = ({
         keyboardType={type}
         onChangeText={onChangeText}
         placeholder={placeholderText}
-        placeholderTextColor={`${COLORS.LIGHT_GRAY}`}
+        placeholderTextColor={placeholderTextColor}
         secureTextEntry={hashText}
         style={[styles.textInput, contentStyle]}
         textContentType="oneTimeCode"
+        selectionColor={selectionColor}
       />
     </View>
   );
@@ -48,7 +53,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     flex: 1,
-    height: '100%',
     justifyContent: 'center'
   },
   content: {
