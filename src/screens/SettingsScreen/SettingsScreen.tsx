@@ -1,7 +1,9 @@
 import { COLORS } from '../../styles/Colors';
 import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
 import CURRENCIES from '../../data/currencies.json';
 import CustomButton from '../../components/CustomButton/CustomButton';
+import CustomModal from '../../components/CustomModal/CustomModal';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import LANGUAGES from '../../data/languages.json';
@@ -12,8 +14,23 @@ interface IDrawerProps {
 }
 
 const SettingsScreen = ({ navigation }: IDrawerProps) => {
+  const [isDeletedModalVisible, setIsDeletedModalVisible] = useState(false);
+  const [isErasedModalVisible, setIsErasedModalVisible] = useState(false);
+
   return (
     <View style={styles.container}>
+      <CustomModal
+        isVisible={isErasedModalVisible}
+        message="You are about to erase your data."
+        onConfirm={() => console.log('erased')}
+        setIsVisible={setIsErasedModalVisible}
+      />
+      <CustomModal
+        isVisible={isDeletedModalVisible}
+        message="You are about to delete your account."
+        onConfirm={() => console.log('deleted')}
+        setIsVisible={setIsDeletedModalVisible}
+      />
       <Title customStyles={{ content: styles.titleContent }} text="Settings" />
       <View style={styles.sectionsContainer}>
         <View style={styles.sectionContainer}>
@@ -75,7 +92,7 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
                   container: styles.dangerZoneButtonContainer,
                   textContent: styles.dangerZoneButtonContent
                 }}
-                onPress={() => {}}
+                onPress={() => setIsErasedModalVisible(true)}
                 title="Erase"
               />
             </View>
@@ -92,7 +109,7 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
                     color: COLORS.WHITE_SHADE
                   }
                 }}
-                onPress={() => {}}
+                onPress={() => setIsDeletedModalVisible(true)}
                 title="Delete"
               />
             </View>
