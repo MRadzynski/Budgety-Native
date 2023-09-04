@@ -1,22 +1,15 @@
 import { COLORS } from '../../styles/Colors';
-import { FlatList, Modal, StyleSheet, Text, View } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useRoute } from '@react-navigation/native';
 import { useState } from 'react';
+import CategoryForm from '../../components/CategoryForm/CategoryForm';
 import CategoryListItem from '../../components/CategoryListItem/CategoryListItem';
-import Title from '../../components/Title/Title';
-import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomModal from '../../components/CustomModal/CustomModal';
+import Title from '../../components/Title/Title';
 
 interface DrawerProps {
   navigation: any;
-}
-
-interface ICategoryListItem {
-  amount: number;
-  bgColor: string;
-  iconName: string;
-  name: string;
 }
 
 const TEMP_DATA_EXPENSES = [
@@ -130,8 +123,29 @@ const ExpensesIncomeScreen = ({ navigation }: DrawerProps) => {
   const [context, setContext] = useState(CONTEXT.EXPENSES);
   const [isModalShown, setIsModalShown] = useState(false);
 
+  const route = useRoute();
+
+  const handleEditCategory = () => {
+    navigation.navigate('EditCategory');
+  };
+
   return (
     <View style={styles.container}>
+      {/* // <KeyboardAwareScrollView
+    //   style={{
+    //     backgroundColor: COLORS.PRIMARY
+    //   }}
+    //   extraScrollHeight={200}
+    //   enableOnAndroid={true}
+    //   scrollEnabled={false}
+    //   resetScrollToCoords={{ x: 0, y: 0 }}
+    //   contentContainerStyle={{
+    //     backgroundColor: COLORS.PRIMARY,
+    //     // flexGrow: 1
+    //     flex: 1
+    //     // justifyContent: 'center'
+    //   }}
+    // > */}
       <View style={styles.headerContainer}>
         <Title
           customStyles={{
@@ -143,65 +157,67 @@ const ExpensesIncomeScreen = ({ navigation }: DrawerProps) => {
         <View style={styles.chartContainer}></View>
       </View>
       <View style={styles.bodyContainer}>
-        <CustomModal
-          isVisible={isModalShown}
-          message="You are about to delete the ... category."
-          onConfirm={() => console.log('deleted')}
-          setIsVisible={setIsModalShown}
-        />
-        <View style={styles.tabsContainer}>
-          <TouchableOpacity
-            onPress={() => setContext(CONTEXT.EXPENSES)}
-            style={[
-              styles.tab,
-              context === CONTEXT.EXPENSES ? styles.activeTab : {}
-            ]}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                context === CONTEXT.EXPENSES ? styles.activeTabText : {}
-              ]}
-            >
-              Expenses
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setContext(CONTEXT.INCOME)}
-            style={[
-              styles.tab,
-              context === CONTEXT.INCOME ? styles.activeTab : {}
-            ]}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                context === CONTEXT.INCOME ? styles.activeTabText : {}
-              ]}
-            >
-              Income
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.categoryListContainer}>
-          <FlatList
-            data={
-              context === CONTEXT.EXPENSES
-                ? TEMP_DATA_EXPENSES
-                : TEMP_DATA_INCOME
-            }
-            renderItem={({ item }: { item: ICategoryListItem }) => (
-              <CategoryListItem
-                amount={item.amount}
-                bgColor={item.bgColor}
-                iconName={item.iconName}
-                name={item.name}
-                setIsModalShown={setIsModalShown}
-              />
-            )}
-          />
-        </View>
+        {route.name !== 'EditCategory' ? (
+          <>
+            <CustomModal
+              isVisible={isModalShown}
+              message="You are about to delete the ... category."
+              onConfirm={() => console.log('deleted')}
+              setIsVisible={setIsModalShown}
+            />
+            <View style={styles.tabsContainer}>
+              <TouchableOpacity
+                onPress={() => setContext(CONTEXT.EXPENSES)}
+                style={[
+                  styles.tab,
+                  context === CONTEXT.EXPENSES ? styles.activeTab : {}
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.tabText,
+                    context === CONTEXT.EXPENSES ? styles.activeTabText : {}
+                  ]}
+                >
+                  Expenses
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setContext(CONTEXT.INCOME)}
+                style={[
+                  styles.tab,
+                  context === CONTEXT.INCOME ? styles.activeTab : {}
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.tabText,
+                    context === CONTEXT.INCOME ? styles.activeTabText : {}
+                  ]}
+                >
+                  Income
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.categoryListContainer}>
+              {TEMP_DATA_EXPENSES.map(item => (
+                <CategoryListItem
+                  amount={item.amount}
+                  bgColor={item.bgColor}
+                  handleEditCategory={handleEditCategory}
+                  iconName={item.iconName}
+                  key={item.name}
+                  name={item.name}
+                  setIsModalShown={setIsModalShown}
+                />
+              ))}
+            </ScrollView>
+          </>
+        ) : (
+          <CategoryForm type="EDIT" navigation={navigation} />
+        )}
       </View>
+      {/* </KeyboardAwareScrollView> */}
     </View>
   );
 };
@@ -221,7 +237,6 @@ const styles = StyleSheet.create({
   },
   categoryListContainer: {
     flex: 1,
-    // marginBottom: 32,
     marginTop: 16,
     paddingHorizontal: 32
   },
@@ -234,7 +249,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   headerContainer: {
-    flex: 4,
+    height: 300,
     flexDirection: 'row',
     paddingBottom: 16,
     paddingHorizontal: 24

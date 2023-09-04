@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 interface IProps {
   amount: number;
   bgColor: string;
+  handleEditCategory: () => void;
   iconName: string;
   name: string;
   setIsModalShown: (isVisible: boolean) => void;
@@ -13,6 +14,7 @@ interface IProps {
 const CategoryListItem = ({
   amount,
   bgColor,
+  handleEditCategory,
   iconName,
   name,
   setIsModalShown
@@ -27,7 +29,12 @@ const CategoryListItem = ({
         <Text style={styles.amount}>{formatNumber(amount, 'USD')}</Text>
       </View>
       <View style={styles.actionsContainer}>
-        <MaterialIcons color="orange" name="edit" size={24} />
+        <MaterialIcons
+          color="orange"
+          name="edit"
+          onPress={handleEditCategory}
+          size={24}
+        />
         <MaterialIcons
           color="red"
           name="delete-outline"
