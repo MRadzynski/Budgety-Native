@@ -1,8 +1,9 @@
 import { COLORS } from '../../styles/Colors';
+import { MaterialIcons } from '@expo/vector-icons';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useRoute } from '@react-navigation/native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CategoryForm from '../../components/CategoryForm/CategoryForm';
 import CategoryListItem from '../../components/CategoryListItem/CategoryListItem';
 import CustomModal from '../../components/CustomModal/CustomModal';
@@ -16,49 +17,57 @@ const TEMP_DATA_EXPENSES = [
   {
     amount: 10.54,
     bgColor: 'red',
-    iconName: 'Health',
+    iconName: 'local-hospital',
+    id: '1',
     name: 'Health'
   },
   {
     amount: 22.54,
     bgColor: 'green',
-    iconName: 'Food',
+    iconName: 'fastfood',
+    id: '2',
     name: 'Food'
   },
   {
     amount: 43.54,
     bgColor: 'blue',
-    iconName: 'Clothes',
+    iconName: 'checkroom',
+    id: '3',
     name: 'Clothes'
   },
   {
     amount: 980.54,
     bgColor: 'orange',
-    iconName: 'House',
+    iconName: 'house',
+    id: '4',
     name: 'House'
   },
   {
     amount: 120.54,
     bgColor: 'yellow',
-    iconName: 'Car',
+    iconName: 'directions-car',
+    id: '5',
     name: 'Car'
   },
   {
     amount: 150.54,
     bgColor: 'purple',
-    iconName: 'Bills',
+    iconName: 'payments',
+    id: '6',
     name: 'Bills'
   },
   {
     amount: 130.54,
     bgColor: 'grey',
-    iconName: 'Gas',
+    iconName: 'local-gas-station',
+    id: '7',
     name: 'Gas'
   },
   {
     amount: 1800.54,
-    bgColor: 'white',
-    iconName: 'Other',
+    bgColor: 'black',
+    iconName: 'more-horiz',
+    id: '8',
     name: 'Other'
   }
 ];
@@ -67,50 +76,37 @@ const TEMP_DATA_INCOME = [
   {
     amount: 110.54,
     bgColor: 'green',
-    iconName: 'Health',
-    name: 'Health'
+    iconName: 'work',
+    id: '1',
+    name: 'Job'
   },
   {
     amount: 2232.54,
     bgColor: 'blue',
-    iconName: 'Food',
-    name: 'Food'
+    iconName: 'home-work',
+    id: '2',
+    name: 'Secondary work'
   },
   {
     amount: 4433.54,
     bgColor: 'red',
-    iconName: 'Clothes',
-    name: 'Clothes'
+    iconName: 'card-giftcard',
+    id: '3',
+    name: 'Gifts'
   },
   {
     amount: 9830.54,
     bgColor: 'orange',
-    iconName: 'House',
-    name: 'House'
+    iconName: 'person',
+    id: '4',
+    name: 'Socials'
   },
   {
     amount: 120.54,
-    bgColor: 'yellow',
-    iconName: 'Car',
-    name: 'Car'
-  },
-  {
-    amount: 150.54,
     bgColor: 'purple',
-    iconName: 'Bills',
-    name: 'Bills'
-  },
-  {
-    amount: 130.54,
-    bgColor: 'grey',
-    iconName: 'Gas',
-    name: 'Gas'
-  },
-  {
-    amount: 1800.54,
-    bgColor: 'white',
-    iconName: 'Other',
-    name: 'Other'
+    iconName: 'attach-money',
+    id: '5',
+    name: 'Sale'
   }
 ];
 
@@ -120,13 +116,30 @@ const CONTEXT = {
 };
 
 const ExpensesIncomeScreen = ({ navigation }: DrawerProps) => {
+  const [categoryToBeRemoved, setCategoryToBeRemoved] = useState('');
   const [context, setContext] = useState(CONTEXT.EXPENSES);
   const [isModalShown, setIsModalShown] = useState(false);
 
   const route = useRoute();
 
-  const handleEditCategory = () => {
-    navigation.navigate('EditCategory');
+  useEffect(() => {
+    if (!isModalShown && categoryToBeRemoved) setCategoryToBeRemoved('');
+  }, [isModalShown]);
+
+  const handleAddCategory = () => {
+    navigation.navigate('AddCategory', { context });
+  };
+
+  const handleEditCategory = (category: any) => {
+    navigation.navigate('EditCategory', {
+      categoryData: category,
+      context
+    });
+  };
+
+  const handleRemoveCategory = (categoryName: string) => {
+    setCategoryToBeRemoved(categoryName);
+    setIsModalShown(true);
   };
 
   return (
@@ -157,11 +170,11 @@ const ExpensesIncomeScreen = ({ navigation }: DrawerProps) => {
         <View style={styles.chartContainer}></View>
       </View>
       <View style={styles.bodyContainer}>
-        {route.name !== 'EditCategory' ? (
+        {route.name !== 'EditCategory' && route.name !== 'AddCategory' ? (
           <>
             <CustomModal
               isVisible={isModalShown}
-              message="You are about to delete the ... category."
+              message={`You are about to delete the "${categoryToBeRemoved}" category.`}
               onConfirm={() => console.log('deleted')}
               setIsVisible={setIsModalShown}
             />
@@ -200,21 +213,42 @@ const ExpensesIncomeScreen = ({ navigation }: DrawerProps) => {
               </TouchableOpacity>
             </View>
             <ScrollView style={styles.categoryListContainer}>
-              {TEMP_DATA_EXPENSES.map(item => (
+              {(context === CONTEXT.EXPENSES
+                ? TEMP_DATA_EXPENSES
+                : TEMP_DATA_INCOME
+              ).map(item => (
                 <CategoryListItem
                   amount={item.amount}
                   bgColor={item.bgColor}
-                  handleEditCategory={handleEditCategory}
+                  handleEditCategory={() => handleEditCategory(item)}
+                  handleRemoveCategory={handleRemoveCategory}
                   iconName={item.iconName}
+                  id={item.id}
                   key={item.name}
                   name={item.name}
-                  setIsModalShown={setIsModalShown}
                 />
               ))}
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={handleAddCategory}
+                style={styles.addCategoryContainer}
+              >
+                <View style={styles.addCategoryIconContainer}>
+                  <MaterialIcons color="white" name="add" size={32} />
+                </View>
+                <View style={styles.addCategoryInfoContainer}>
+                  <Text style={styles.addCategoryInfoText}>
+                    Add new category
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </ScrollView>
           </>
         ) : (
-          <CategoryForm type="EDIT" navigation={navigation} />
+          <CategoryForm
+            navigation={navigation}
+            type={route.name === 'EditCategory' ? 'EDIT' : 'ADD'}
+          />
         )}
       </View>
       {/* </KeyboardAwareScrollView> */}
@@ -229,6 +263,31 @@ const styles = StyleSheet.create({
   activeTabText: {
     color: COLORS.PRIMARY
   },
+  addCategoryContainer: {
+    backgroundColor: '#efefef',
+    borderRadius: 8,
+    elevation: 3,
+    flexDirection: 'row',
+    gap: 16,
+    marginBottom: 10,
+    marginHorizontal: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 6
+  },
+  addCategoryIconContainer: {
+    alignItems: 'center',
+    backgroundColor: COLORS.SECONDARY,
+    borderRadius: 50,
+    justifyContent: 'center',
+    height: 48,
+    width: 48
+  },
+  addCategoryInfoContainer: {
+    justifyContent: 'center'
+  },
+  addCategoryInfoText: {
+    fontSize: 16
+  },
   bodyContainer: {
     backgroundColor: 'white',
     borderTopLeftRadius: 32,
@@ -237,7 +296,7 @@ const styles = StyleSheet.create({
   },
   categoryListContainer: {
     flex: 1,
-    marginTop: 16,
+    marginVertical: 16,
     paddingHorizontal: 32
   },
   chartContainer: {

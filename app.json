@@ -22,7 +22,7 @@
         "backgroundColor": "#ffffff",
         "foregroundImage": "./assets/icon.png"
       },
-      "softwareKeyboardLayoutMode" : "adjustPan"
+      "softwareKeyboardLayoutMode": "adjustPan"
     },
     "web": {
       "favicon": "./assets/favicon.png"

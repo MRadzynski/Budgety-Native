@@ -6,23 +6,24 @@ interface IProps {
   amount: number;
   bgColor: string;
   handleEditCategory: () => void;
+  handleRemoveCategory: (categoryName: string) => void;
   iconName: string;
+  id: string;
   name: string;
-  setIsModalShown: (isVisible: boolean) => void;
 }
 
 const CategoryListItem = ({
   amount,
   bgColor,
   handleEditCategory,
+  handleRemoveCategory,
   iconName,
-  name,
-  setIsModalShown
+  name
 }: IProps) => {
   return (
     <View style={styles.container}>
       <View style={[styles.iconContainer, { backgroundColor: bgColor }]}>
-        <Text>{iconName}</Text>
+        <MaterialIcons color="white" name={iconName as any} size={24} />
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{name}</Text>
@@ -39,7 +40,7 @@ const CategoryListItem = ({
           color="red"
           name="delete-outline"
           size={24}
-          onPress={() => setIsModalShown(true)}
+          onPress={() => handleRemoveCategory(name)}
         />
       </View>
     </View>
