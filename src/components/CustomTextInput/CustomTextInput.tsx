@@ -4,10 +4,12 @@ import { KeyboardTypeOptions, StyleSheet, TextInput, View } from 'react-native';
 interface IProps {
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters' | undefined;
   customStyles?: ITextInputCustomStyle;
+  defaultValue?: string;
   hashText?: boolean;
   onChangeText: (event: string) => void;
   placeholderText: string;
-  text?: string;
+  placeholderTextColor?: string;
+  selectionColor?: string;
   type?: KeyboardTypeOptions;
 }
 
@@ -19,9 +21,12 @@ interface ITextInputCustomStyle {
 const CustomTextInput = ({
   autoCapitalize,
   customStyles,
+  defaultValue,
   hashText,
   onChangeText,
   placeholderText,
+  placeholderTextColor = COLORS.LIGHT_GRAY,
+  selectionColor = 'white',
   type = 'default'
 }: IProps) => {
   const containerStyle = customStyles?.container || {};
@@ -32,11 +37,13 @@ const CustomTextInput = ({
       <TextInput
         autoCapitalize={autoCapitalize}
         cursorColor={`${COLORS.WHITE_SHADE}`}
+        defaultValue={defaultValue}
         keyboardType={type}
         onChangeText={onChangeText}
         placeholder={placeholderText}
-        placeholderTextColor={`${COLORS.LIGHT_GRAY}`}
+        placeholderTextColor={placeholderTextColor}
         secureTextEntry={hashText}
+        selectionColor={selectionColor}
         style={[styles.textInput, contentStyle]}
         textContentType="oneTimeCode"
       />
@@ -48,7 +55,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     flex: 1,
-    height: '100%',
     justifyContent: 'center'
   },
   content: {
