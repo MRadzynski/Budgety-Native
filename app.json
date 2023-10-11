@@ -22,10 +22,31 @@
         "backgroundColor": "#ffffff",
         "foregroundImage": "./assets/icon.png"
       },
-      "softwareKeyboardLayoutMode": "adjustPan"
+      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.mradzynski.Budgety"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+      }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 33,
+            "targetSdkVersion": 33,
+            "buildToolsVersion": "33.0.0"
+          },
+          "ios": {
+            "deploymentTarget": "15.0"
+          }
+        }
+      ]
+    ]
+
   }
 }
