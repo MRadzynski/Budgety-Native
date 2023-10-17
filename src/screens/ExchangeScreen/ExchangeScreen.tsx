@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     backgroundColor: 'white',
-    borderRadius: 25,
+    borderRadius: 8,
     flex: 1,
     justifyContent: 'center',
     overflow: 'hidden'
@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
     transform: [{ scaleX: 1.25 }, { scaleY: 1.25 }]
   },
   singleButtonContainer: {
+    borderRadius: 8,
     flex: 1
   },
   subText: {

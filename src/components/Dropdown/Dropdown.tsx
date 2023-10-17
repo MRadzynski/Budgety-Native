@@ -79,7 +79,7 @@ const Dropdown: FC<IProps> = ({
         px: number,
         py: number
       ) => {
-        setDropdownPos({ top: py + 5, left: px });
+        setDropdownPos({ top: py + 16, left: px });
       }
     );
 

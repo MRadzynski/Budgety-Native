@@ -1,10 +1,107 @@
-import { BarChart, PieChart } from 'react-native-charts-wrapper';
 import { COLORS } from '../../styles/Colors';
-import { processColor, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import ScrollableBarChart from '../../components/ScrollableBarChart/ScrollableBarChart';
+import SemiPieChart from '../../components/SemiPieChart/SemiPieChart';
 
 interface DrawerProps {
   navigation: any;
 }
+
+const BALANCE_MOCK_DATA = [
+  { color: '#4BB543', name: 'Expenses', value: 6248 },
+  { color: '#ED4337', name: 'Income', value: 3752 }
+];
+
+const EXPENSES_MOCK_DATA = [
+  {
+    color: '#497E76',
+    name: 'Food',
+    value: 12.67
+  },
+  {
+    color: '#6D3F5B',
+    name: 'Bills',
+    value: 22.32
+  },
+  {
+    color: '#E6D690',
+    name: 'Water',
+    value: 54.3
+  },
+  {
+    color: '#D95030',
+    name: 'Clothes',
+    value: 7.67
+  },
+  {
+    color: '#FF7514',
+    name: 'Electricity',
+    value: 32.67
+  },
+  {
+    color: '#FE0000',
+    name: 'Gifts',
+    value: 13.67
+  },
+  {
+    color: '#A18594',
+    name: 'Work',
+    value: 4.67
+  },
+  {
+    color: '#FAD201',
+    name: 'Entertainment',
+    value: 9.67
+  },
+  {
+    color: '#3B83BD',
+    name: 'Gas',
+    value: 31.67
+  },
+  {
+    color: '#DE4C8A',
+    name: 'Family',
+    value: 17.67
+  }
+];
+
+const INCOME_MOCK_DATA = [
+  {
+    color: '#354D73',
+    name: 'Job',
+    value: 15.67
+  },
+  {
+    color: '#1C542D',
+    name: 'Additional Job',
+    value: 17.32
+  },
+  {
+    color: '#A2231D',
+    name: 'Gifts',
+    value: 33.3
+  },
+  {
+    color: '#CDA434',
+    name: 'Sales',
+    value: 7.67
+  },
+  {
+    color: '#2C5545',
+    name: 'Charity',
+    value: 32.67
+  },
+  {
+    color: '#256D7B',
+    name: 'Consulting',
+    value: 23.67
+  },
+  {
+    color: '#E63244',
+    name: 'Rewards',
+    value: 10.43
+  }
+];
 
 const TEMP_BALANCE = 12322.45;
 
@@ -14,184 +111,28 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
       <Text style={styles.welcomeText}>Hey User! 👋</Text>
       <View style={styles.section}>
         <View style={styles.chartContainer}>
-          <PieChart
-            chartDescription={{ text: '' }}
-            data={{
-              dataSets: [
-                {
-                  config: {
-                    colors: [processColor('#4BB543'), processColor('#ED4337')],
-                    sliceSpace: 2,
-                    valueFormatter: '$#.#',
-                    valueLineColor: processColor('#999999aa'),
-                    valueLinePart2Length: 0,
-                    valueTextSize: 12,
-                    yValuePosition: 'OUTSIDE_SLICE'
-                  },
-                  label: 'Balance',
-                  values: [
-                    { label: 'Expenses', value: 6248 },
-                    { label: 'Income', value: 3752 }
-                  ]
-                }
-              ]
-            }}
-            drawEntryLabels={false}
-            holeColor={processColor('#00000000')}
-            holeRadius={75}
-            legend={{ enabled: false }}
-            maxAngle={180}
-            rotationAngle={180}
-            rotationEnabled={false}
-            style={styles.chart}
+          <SemiPieChart
+            chartStyles={styles.chart}
+            data={BALANCE_MOCK_DATA}
+            label="Balance"
           />
         </View>
         <Text style={styles.balanceText}>{`Balance: $${TEMP_BALANCE}`}</Text>
       </View>
       <View style={styles.section}>
-        <ScrollView
-          contentContainerStyle={styles.barChartContainer}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-        >
-          <BarChart
-            chartDescription={{ text: '' }}
-            data={{
-              config: {
-                barWidth: 0.9
-              },
-              dataSets: [
-                {
-                  config: {
-                    colors: [
-                      processColor('red'),
-                      processColor('blue'),
-                      processColor('green'),
-                      processColor('purple'),
-                      processColor('orange'),
-                      processColor('yellow'),
-                      processColor('lime'),
-                      processColor('brown'),
-                      processColor('black'),
-                      processColor('magenta')
-                    ],
-                    drawValues: false
-                  },
-                  label: 'Expenses',
-                  values: [
-                    { y: 12 },
-                    { y: 18 },
-                    { y: 43 },
-                    { y: 14 },
-                    { y: 65 },
-                    { y: 34 },
-                    { y: 4 },
-                    { y: 21 },
-                    { y: 54 },
-                    { y: 2 }
-                  ]
-                }
-              ]
-            }}
-            doubleTapToZoomEnabled={false}
-            drawValueAboveBar={false}
-            legend={{ enabled: false }}
-            pinchZoom={false}
-            style={{ width: 600 }}
-            xAxis={{
-              labelCount: 10,
-              granularity: 1,
-              position: 'BOTTOM',
-              valueFormatter: [
-                'Food',
-                'Bills',
-                'Water',
-                'Clothes',
-                'Electricity',
-                'Gifts',
-                'Work',
-                'Entertainment',
-                'Gas',
-                'Family',
-                'Animals'
-              ]
-            }}
-            yAxis={{
-              left: {
-                valueFormatter: 'percent'
-              },
-              right: { enabled: false }
-            }}
-          />
-        </ScrollView>
+        <ScrollableBarChart
+          containerStyles={styles.barChartContainer}
+          data={EXPENSES_MOCK_DATA}
+          label="Expenses"
+        />
         <Text style={styles.sectionValueText}>Expenses</Text>
       </View>
       <View style={styles.section}>
-        <ScrollView
-          contentContainerStyle={styles.barChartContainer}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-        >
-          <BarChart
-            chartDescription={{ text: '' }}
-            data={{
-              config: {
-                barWidth: 0.9
-              },
-              dataSets: [
-                {
-                  config: {
-                    colors: [
-                      processColor('green'),
-                      processColor('orange'),
-                      processColor('red'),
-                      processColor('magenta'),
-                      processColor('pink'),
-                      processColor('blue'),
-                      processColor('seagreen')
-                    ],
-                    drawValues: false
-                  },
-                  label: 'Expenses',
-                  values: [
-                    { y: 12 },
-                    { y: 18 },
-                    { y: 43 },
-                    { y: 14 },
-                    { y: 24 },
-                    { y: 4 },
-                    { y: 65 }
-                  ]
-                }
-              ]
-            }}
-            doubleTapToZoomEnabled={false}
-            drawValueAboveBar={false}
-            legend={{ enabled: false }}
-            pinchZoom={false}
-            style={{ width: 600 }}
-            xAxis={{
-              labelCount: 10,
-              granularity: 1,
-              position: 'BOTTOM',
-              valueFormatter: [
-                'Job',
-                'Additional Job',
-                'Gifts',
-                'Sales',
-                'Charity',
-                'Consulting',
-                'Rewards'
-              ]
-            }}
-            yAxis={{
-              left: {
-                valueFormatter: 'percent'
-              },
-              right: { enabled: false }
-            }}
-          />
-        </ScrollView>
+        <ScrollableBarChart
+          containerStyles={styles.barChartContainer}
+          data={INCOME_MOCK_DATA}
+          label="Income"
+        />
         <Text style={styles.sectionValueText}>Income</Text>
       </View>
     </View>
@@ -212,7 +153,7 @@ const styles = StyleSheet.create({
   },
   chart: {
     flex: 9,
-    top: 20
+    top: 32
   },
   chartContainer: {
     alignSelf: 'center',

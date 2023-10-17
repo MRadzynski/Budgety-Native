@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     height: 48,
     width: 48
   },
-  infoContainer: { flex: 6, justifyContent: 'center' },
+  infoContainer: { flex: 5, justifyContent: 'center' },
   name: {
     fontSize: 16
   }

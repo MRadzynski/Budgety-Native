@@ -83,11 +83,13 @@ const CategoryForm = ({ navigation, type }: IProps) => {
         <View style={styles.formRow}>
           <Text style={styles.formFieldName}>Name</Text>
           <CustomTextInput
+            cursorColor={COLORS.PRIMARY}
             customStyles={{
               container: styles.nameInputContainer,
               content: styles.nameInputContent
             }}
             defaultValue={name}
+            selectionColor={COLORS.PRIMARY}
             onChangeText={handleNameChange}
             placeholderTextColor="#757575"
             placeholderText="i.e. Food"
