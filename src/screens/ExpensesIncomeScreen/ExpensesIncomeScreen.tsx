@@ -1,12 +1,19 @@
 import { COLORS } from '../../styles/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View
+} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { useRoute } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
+import { useRoute } from '@react-navigation/native';
 import CategoryForm from '../../components/CategoryForm/CategoryForm';
 import CategoryListItem from '../../components/CategoryListItem/CategoryListItem';
 import CustomModal from '../../components/CustomModal/CustomModal';
+import PieChartWrapper from '../../components/PieChartWrapper/PieChartWrapper';
 import Title from '../../components/Title/Title';
 
 interface DrawerProps {
@@ -110,15 +117,36 @@ const TEMP_DATA_INCOME = [
   }
 ];
 
+const TEMP_EXPENSES_BALANCE = 15432.33;
+const TEMP_INCOME_BALANCE = 2256043.98;
+
 const CONTEXT = {
   EXPENSES: 'EXPENSES',
   INCOME: 'INCOME'
 };
 
+const TEMP_PIE_DATA_EXPENSES = [
+  { color: '#F5D033', name: 'Food', value: 6248 },
+  { color: '#1D334A', name: 'Bills', value: 3752 },
+  { color: '#84C3BE', name: 'Water', value: 1230 },
+  { color: '#35682D', name: 'Family', value: 2123 },
+  { color: '#57A639', name: 'Entertainment', value: 2500 },
+  { color: '#354D73', name: 'Gas', value: 1999 }
+];
+
+const TEMP_PIE_DATA_INCOME = [
+  { color: '#E6D690', name: 'Job', value: 6248 },
+  { color: '#308446', name: 'Additional Job', value: 3752 },
+  { color: '#3B83BD', name: 'Rewards', value: 1230 },
+  { color: '#8F8F8F', name: 'Gifts', value: 2123 }
+];
+
 const ExpensesIncomeScreen = ({ navigation }: DrawerProps) => {
   const [categoryToBeRemoved, setCategoryToBeRemoved] = useState('');
   const [context, setContext] = useState(CONTEXT.EXPENSES);
   const [isModalShown, setIsModalShown] = useState(false);
+
+  const { width } = useWindowDimensions();
 
   const route = useRoute();
 
@@ -167,7 +195,24 @@ const ExpensesIncomeScreen = ({ navigation }: DrawerProps) => {
           }}
           text={context === CONTEXT.EXPENSES ? 'Expenses' : 'Income'}
         />
-        <View style={styles.chartContainer}></View>
+        <PieChartWrapper
+          centerValue={
+            context === CONTEXT.EXPENSES
+              ? TEMP_EXPENSES_BALANCE
+              : TEMP_INCOME_BALANCE
+          }
+          containerStyles={{
+            ...styles.chartContainer,
+            height: width / 2,
+            width: width / 2
+          }}
+          data={
+            context === CONTEXT.EXPENSES
+              ? TEMP_PIE_DATA_EXPENSES
+              : TEMP_PIE_DATA_INCOME
+          }
+          label="Balance"
+        />
       </View>
       <View style={styles.bodyContainer}>
         {route.name !== 'EditCategory' && route.name !== 'AddCategory' ? (
@@ -297,18 +342,19 @@ const styles = StyleSheet.create({
   categoryListContainer: {
     flex: 1,
     marginVertical: 16,
-    paddingHorizontal: 32
+    paddingHorizontal: 24
   },
   chartContainer: {
-    backgroundColor: 'white',
-    flex: 6
+    borderRadius: 100,
+    elevation: 10,
+    shadowColor: '#00000066'
   },
   container: {
     backgroundColor: COLORS.PRIMARY,
     flex: 1
   },
   headerContainer: {
-    height: 300,
+    flex: 3.5,
     flexDirection: 'row',
     paddingBottom: 16,
     paddingHorizontal: 24
@@ -324,7 +370,8 @@ const styles = StyleSheet.create({
   tabsContainer: {
     flexDirection: 'row',
     gap: 16,
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
+    paddingHorizontal: 32
   },
   tabText: {
     color: COLORS.BLACK_SHADE,

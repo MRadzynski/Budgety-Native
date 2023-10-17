@@ -3,6 +3,7 @@ import { KeyboardTypeOptions, StyleSheet, TextInput, View } from 'react-native';
 
 interface IProps {
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters' | undefined;
+  cursorColor?: string;
   customStyles?: ITextInputCustomStyle;
   defaultValue?: string;
   hashText?: boolean;
@@ -20,6 +21,7 @@ interface ITextInputCustomStyle {
 
 const CustomTextInput = ({
   autoCapitalize,
+  cursorColor = COLORS.WHITE_SHADE,
   customStyles,
   defaultValue,
   hashText,
@@ -36,7 +38,7 @@ const CustomTextInput = ({
     <View style={[styles.container, containerStyle]}>
       <TextInput
         autoCapitalize={autoCapitalize}
-        cursorColor={`${COLORS.WHITE_SHADE}`}
+        cursorColor={cursorColor}
         defaultValue={defaultValue}
         keyboardType={type}
         onChangeText={onChangeText}

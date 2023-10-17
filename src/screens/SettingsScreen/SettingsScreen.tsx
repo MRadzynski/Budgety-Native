@@ -39,6 +39,7 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
             <View style={styles.sectionItemContainer}>
               <Text style={styles.sectionItemTitle}>Display Name</Text>
               <CustomTextInput
+                cursorColor={COLORS.PRIMARY}
                 customStyles={{
                   content: styles.textInput,
                   container: styles.textInputContainer
