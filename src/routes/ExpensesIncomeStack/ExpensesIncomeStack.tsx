@@ -18,6 +18,11 @@ const ExpensesIncomeStack = () => {
       />
       <Stack.Screen
         component={ExpensesIncomeScreen}
+        name="AddExpense"
+        options={{ animationEnabled: false, headerShown: false }}
+      />
+      <Stack.Screen
+        component={ExpensesIncomeScreen}
         name="EditCategory"
         options={{ animationEnabled: false, headerShown: false }}
       />

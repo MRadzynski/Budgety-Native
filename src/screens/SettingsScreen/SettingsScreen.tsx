@@ -47,7 +47,7 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
                 onChangeText={() => {}}
                 placeholderText="John Doe"
                 placeholderTextColor="#757575"
-                selectionColor={COLORS.BLACK_SHADE}
+                selectionColor={COLORS.PRIMARY}
               />
             </View>
           </View>

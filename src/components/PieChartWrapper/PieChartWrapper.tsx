@@ -43,6 +43,7 @@ const PieChartWrapper = ({
           ]
         }}
         drawEntryLabels={false}
+        highlightPerTapEnabled={false}
         holeColor={processColor('#00000015')}
         holeRadius={60}
         legend={{ enabled: false }}
@@ -54,8 +55,8 @@ const PieChartWrapper = ({
         <View style={styles.centerValueContainer}>
           <Text style={styles.centerValueText}>
             {new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: 'USD'
+              currency: 'USD',
+              style: 'currency'
             }).format(centerValue)}
           </Text>
         </View>

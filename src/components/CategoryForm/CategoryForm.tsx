@@ -146,7 +146,9 @@ const styles = StyleSheet.create({
     width: 36
   },
   confirmBtnContainer: {
-    backgroundColor: COLORS.PRIMARY
+    alignSelf: 'center',
+    backgroundColor: COLORS.PRIMARY,
+    width: '70%'
   },
   confirmBtnText: {
     color: COLORS.WHITE_SHADE
@@ -155,7 +157,7 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 32,
     paddingHorizontal: 32,
-    paddingVertical: 16,
+    paddingTop: 16,
     position: 'relative'
   },
   exitContainer: {

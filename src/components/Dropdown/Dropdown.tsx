@@ -25,6 +25,7 @@ type TDropdownOption = {
 interface IDropdownCustomStyles {
   button?: {};
   dropdownList?: {};
+  dropdownListItemValue?: {};
 }
 
 interface IProps {
@@ -44,6 +45,7 @@ const Dropdown: FC<IProps> = ({
 }) => {
   const buttonStyle = customStyles?.button || {};
   const dropdownListStyle = customStyles?.dropdownList || {};
+  const dropdownListItemValueStyle = customStyles?.dropdownListItemValue || {};
 
   const [dropdownPos, setDropdownPos] = useState({ left: 0, top: 0 });
   const [selected, setSelected] = useState<TDropdownOption>();
@@ -54,7 +56,7 @@ const Dropdown: FC<IProps> = ({
 
   useEffect(() => {
     setSelected(defaultSelected);
-  }, []);
+  }, [defaultSelected]);
 
   const hideDropdown = () => setVisible(false);
 
@@ -122,7 +124,7 @@ const Dropdown: FC<IProps> = ({
       ]}
       onPress={() => onItemPress(item)}
     >
-      <Text>{item.label}</Text>
+      <Text style={dropdownListItemValueStyle}>{item.label}</Text>
     </TouchableOpacity>
   );
 
@@ -171,13 +173,9 @@ const styles = StyleSheet.create({
     flex: 4,
     marginLeft: 8,
     textAlign: 'center'
-    // position: 'relative'
   },
   chevronIcon: {
-    flex: 1,
     marginRight: 8
-    // position: 'absolute',
-    // right: 0
   },
   dropdownList: {
     backgroundColor: '#fff',

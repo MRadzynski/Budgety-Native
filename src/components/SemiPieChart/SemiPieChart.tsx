@@ -1,4 +1,4 @@
-import { PieChart } from 'react-native-charts-wrapper';
+import { PieChart, PieChartSelectEvent } from 'react-native-charts-wrapper';
 import { processColor, StyleProp, ViewStyle } from 'react-native';
 
 interface Props {
@@ -9,9 +9,10 @@ interface Props {
     value: number;
   }[];
   label: string;
+  onSelectHandler: (event: PieChartSelectEvent) => void;
 }
 
-const SemiPieChart = ({ chartStyles, data, label }: Props) => {
+const SemiPieChart = ({ chartStyles, data, label, onSelectHandler }: Props) => {
   return (
     <PieChart
       chartDescription={{ text: '' }}
@@ -37,6 +38,7 @@ const SemiPieChart = ({ chartStyles, data, label }: Props) => {
       holeRadius={75}
       legend={{ enabled: false }}
       maxAngle={180}
+      onSelect={onSelectHandler}
       rotationAngle={180}
       rotationEnabled={false}
       style={chartStyles}

@@ -1,7 +1,8 @@
 import { COLORS } from '../../styles/Colors';
 import { Entypo } from '@expo/vector-icons';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import ScrollableBarChart from '../ScrollableBarChart/ScrollableBarChart';
 
 interface IProps {
@@ -107,6 +108,12 @@ const TEMP_BALANCE = TEMP_EXPENSES_BALANCE - TEMP_INCOME_BALANCE;
 
 const HistoryTab = ({ title }: IProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => setIsOpen(false);
+    }, [])
+  );
 
   return (
     <>
