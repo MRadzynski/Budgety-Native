@@ -2,8 +2,8 @@ import { Platform } from 'react-native';
 
 export const formatNumber = (number: number, currency: string) =>
   new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency
+    currency,
+    style: 'currency'
   }).format(number);
 
 export const generateBoxShadowStyle = (

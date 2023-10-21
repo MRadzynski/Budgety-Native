@@ -1,4 +1,5 @@
 import { COLORS } from '../../styles/Colors';
+import { PieChartSelectEvent } from 'react-native-charts-wrapper';
 import { StyleSheet, Text, View } from 'react-native';
 import ScrollableBarChart from '../../components/ScrollableBarChart/ScrollableBarChart';
 import SemiPieChart from '../../components/SemiPieChart/SemiPieChart';
@@ -106,6 +107,16 @@ const INCOME_MOCK_DATA = [
 const TEMP_BALANCE = 12322.45;
 
 const HomeScreen = ({ navigation }: DrawerProps) => {
+  const handleSemiPieChartClick = (event: PieChartSelectEvent) => {
+    if (!event.nativeEvent || !event.nativeEvent.label) return;
+    const context = event.nativeEvent.label;
+
+    //TODO: navigate to the proper tab with context ^
+    navigation.navigate('ExpensesIncome', {
+      screen: 'ExpensesIncomeScreen'
+    });
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Hey User! 👋</Text>
@@ -115,6 +126,7 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
             chartStyles={styles.chart}
             data={BALANCE_MOCK_DATA}
             label="Balance"
+            onSelectHandler={handleSemiPieChartClick}
           />
         </View>
         <Text style={styles.balanceText}>{`Balance: $${TEMP_BALANCE}`}</Text>
