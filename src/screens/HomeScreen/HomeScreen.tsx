@@ -1,6 +1,7 @@
 import { COLORS } from '../../styles/Colors';
 import { PieChartSelectEvent } from 'react-native-charts-wrapper';
 import { StyleSheet, Text, View } from 'react-native';
+import { useAppSelector } from '../../hooks/redux';
 import ScrollableBarChart from '../../components/ScrollableBarChart/ScrollableBarChart';
 import SemiPieChart from '../../components/SemiPieChart/SemiPieChart';
 
@@ -107,6 +108,8 @@ const INCOME_MOCK_DATA = [
 const TEMP_BALANCE = 12322.45;
 
 const HomeScreen = ({ navigation }: DrawerProps) => {
+  const username = useAppSelector(state => state.settings.username);
+
   const handleSemiPieChartClick = (event: PieChartSelectEvent) => {
     if (!event.nativeEvent || !event.nativeEvent.label) return;
     const context = event.nativeEvent.label;
@@ -119,7 +122,7 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Hey User! 👋</Text>
+      <Text style={styles.welcomeText}>{`Hey ${username}! 👋`}</Text>
       <View style={styles.section}>
         <View style={styles.chartContainer}>
           <SemiPieChart
