@@ -1,5 +1,7 @@
 import { DrawerActions } from '@react-navigation/native';
+import { setUser } from '../../slices/userSlice';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useAppDispatch } from '../../hooks/redux';
 import ROUTES from '../../data/routes.json';
 
 interface IRoute {
@@ -8,6 +10,10 @@ interface IRoute {
 }
 
 const CustomDrawerContent: React.FC<any> = ({ navigation }) => {
+  const dispatch = useAppDispatch();
+
+  const handleLogout = () => dispatch(setUser({}));
+
   const navigateToScreen = (route: string) => {
     navigation.dispatch(DrawerActions.closeDrawer());
     navigation.navigate(route);
@@ -24,6 +30,13 @@ const CustomDrawerContent: React.FC<any> = ({ navigation }) => {
           <Text style={styles.menuItemText}>{name}</Text>
         </TouchableOpacity>
       ))}
+      <TouchableOpacity
+        key="logout"
+        onPress={handleLogout}
+        style={styles.menuItem}
+      >
+        <Text style={styles.menuItemText}>Log Out</Text>
+      </TouchableOpacity>
     </View>
   );
 };

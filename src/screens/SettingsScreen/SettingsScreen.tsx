@@ -1,5 +1,11 @@
 import { COLORS } from '../../styles/Colors';
+import {
+  setCurrency,
+  setLanguage,
+  setUsername
+} from '../../slices/settingsSlice';
 import { StyleSheet, Text, View } from 'react-native';
+import { useAppDispatch } from '../../hooks/redux';
 import { useState } from 'react';
 import CURRENCIES from '../../data/currencies.json';
 import CustomButton from '../../components/CustomButton/CustomButton';
@@ -16,6 +22,8 @@ interface IDrawerProps {
 const SettingsScreen = ({ navigation }: IDrawerProps) => {
   const [isDeletedModalVisible, setIsDeletedModalVisible] = useState(false);
   const [isErasedModalVisible, setIsErasedModalVisible] = useState(false);
+
+  const dispatch = useAppDispatch();
 
   return (
     <View style={styles.container}>
@@ -44,7 +52,7 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
                   content: styles.textInput,
                   container: styles.textInputContainer
                 }}
-                onChangeText={() => {}}
+                onChangeText={val => dispatch(setUsername(val))}
                 placeholderText="John Doe"
                 placeholderTextColor="#757575"
                 selectionColor={COLORS.PRIMARY}
@@ -64,7 +72,7 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
                 }}
                 data={CURRENCIES}
                 defaultSelected={CURRENCIES[0]}
-                onSelect={() => null}
+                onSelect={currency => dispatch(setCurrency(currency.value))}
               />
             </View>
             <View style={styles.sectionItemContainer}>
@@ -76,7 +84,7 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
                 }}
                 data={LANGUAGES}
                 defaultSelected={LANGUAGES[0]}
-                onSelect={() => null}
+                onSelect={language => dispatch(setLanguage(language.value))}
               />
             </View>
           </View>

@@ -3,6 +3,8 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Link } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { setUser } from '../../slices/userSlice';
+import { useAppDispatch } from '../../hooks/redux';
 import { useReducer } from 'react';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
@@ -34,15 +36,18 @@ const reducer = (state: IState, action: TAction): IState => {
 };
 
 const LoginScreen: React.FC<any> = ({ navigation }) => {
-  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+  const [state, reducerDispatch] = useReducer(reducer, INITIAL_STATE);
+
+  const dispatch = useAppDispatch();
 
   const handleEmailChange = (e: string) =>
-    dispatch({ email: e, type: 'UPDATE_EMAIL' });
+    reducerDispatch({ email: e, type: 'UPDATE_EMAIL' });
 
   const handlePasswordChange = (e: string) =>
-    dispatch({ password: e, type: 'UPDATE_PASSWORD' });
+    reducerDispatch({ password: e, type: 'UPDATE_PASSWORD' });
 
   const handleSubmit = () => {
+    dispatch(setUser({ email: 'test@test.com' }));
     console.log('Email: ', state.email, 'Password: ', state.password);
   };
 
