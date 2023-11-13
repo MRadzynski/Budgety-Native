@@ -1,3 +1,4 @@
+import { deleteFromSecureStore } from '../../utils/secureStorage';
 import { DrawerActions } from '@react-navigation/native';
 import { setUser } from '../../slices/userSlice';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -12,7 +13,10 @@ interface IRoute {
 const CustomDrawerContent: React.FC<any> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
-  const handleLogout = () => dispatch(setUser({}));
+  const handleLogout = async () => {
+    dispatch(setUser({}));
+    await deleteFromSecureStore('user');
+  };
 
   const navigateToScreen = (route: string) => {
     navigation.dispatch(DrawerActions.closeDrawer());

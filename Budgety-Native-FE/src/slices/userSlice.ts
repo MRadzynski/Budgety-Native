@@ -1,9 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface UserSlice {
-  currentUser: {
-    email?: string;
-  };
+  currentUser:
+    | {
+        currency: string;
+        email: string;
+        language: string;
+        token: string;
+        username: string;
+      }
+    | {};
 }
 
 const initialState: UserSlice = {
