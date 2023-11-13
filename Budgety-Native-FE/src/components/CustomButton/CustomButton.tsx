@@ -13,19 +13,21 @@ interface TextInputCustomStyle {
 
 interface IProps {
   customStyles?: TextInputCustomStyle;
+  isDisabled?: boolean;
   onPress: TonPressFunc;
   title: string;
 }
 
 type TonPressFunc = (event: GestureResponderEvent) => void;
 
-const CustomButton = ({ customStyles, onPress, title }: IProps) => {
+const CustomButton = ({ customStyles, isDisabled, onPress, title }: IProps) => {
   const containerStyle = customStyles?.container || {};
   const textContentStyle = customStyles?.textContent || {};
 
   return (
     <TouchableOpacity
       activeOpacity={0.8}
+      disabled={isDisabled}
       onPress={onPress}
       style={[styles.container, containerStyle]}
     >

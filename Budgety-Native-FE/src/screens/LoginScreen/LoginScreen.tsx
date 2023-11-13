@@ -1,11 +1,13 @@
+import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Link } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { saveToSecureStore } from '../../utils/secureStorage';
 import { setUser } from '../../slices/userSlice';
 import { useAppDispatch } from '../../hooks/redux';
-import { useReducer } from 'react';
+import { useReducer, useRef, useState } from 'react';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Title from '../../components/Title/Title';
@@ -37,8 +39,11 @@ const reducer = (state: IState, action: TAction): IState => {
 
 const LoginScreen: React.FC<any> = ({ navigation }) => {
   const [state, reducerDispatch] = useReducer(reducer, INITIAL_STATE);
+  const [error, setError] = useState('');
 
   const dispatch = useAppDispatch();
+
+  const abortControllerRef = useRef<AbortController>(new AbortController());
 
   const handleEmailChange = (e: string) =>
     reducerDispatch({ email: e, type: 'UPDATE_EMAIL' });
@@ -46,10 +51,56 @@ const LoginScreen: React.FC<any> = ({ navigation }) => {
   const handlePasswordChange = (e: string) =>
     reducerDispatch({ password: e, type: 'UPDATE_PASSWORD' });
 
-  const handleSubmit = () => {
-    dispatch(setUser({ email: 'test@test.com' }));
-    console.log('Email: ', state.email, 'Password: ', state.password);
+  const handleSubmit = async () => {
+    const url = `${API_URL}/api/user/login`;
+    const body = {
+      email: state.email.trim().toLowerCase(),
+      password: state.password.trim()
+    };
+
+    try {
+      const response = await fetch(url, {
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        signal: abortControllerRef.current?.signal
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data?.user) {
+        const { currency, email, language, username } = data.user;
+
+        dispatch(
+          setUser({ currency, email, language, token: data?.token, username })
+        );
+
+        await saveToSecureStore(
+          'user',
+          JSON.stringify({
+            currency,
+            email,
+            language,
+            token: data?.token,
+            username
+          })
+        );
+      } else {
+        setError(data?.error);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('Something went wrong');
+      }
+    }
   };
+
+  const isSubmitBtnDisabled =
+    state.email.trim().length === 0 || state.password.trim().length === 0;
 
   return (
     <SafeAreaView style={{ backgroundColor: COLORS.PRIMARY, flex: 1 }}>
@@ -104,6 +155,7 @@ const LoginScreen: React.FC<any> = ({ navigation }) => {
           >
             Forgot password?
           </Link>
+          {error && <Text style={{ color: COLORS.ERROR }}>{error}</Text>}
         </View>
         <CustomButton
           customStyles={{
@@ -113,6 +165,7 @@ const LoginScreen: React.FC<any> = ({ navigation }) => {
               width: 240
             }
           }}
+          isDisabled={isSubmitBtnDisabled}
           onPress={handleSubmit}
           title="Sign In"
         />
