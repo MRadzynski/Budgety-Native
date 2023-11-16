@@ -55,7 +55,7 @@ const ScrollableBarChart = ({ containerStyles, data, label }: Props) => {
   };
 
   const sumOfAllData = useMemo(
-    () => data.reduce((acc, record) => acc + record.value, 0),
+    () => data?.reduce((acc, record) => acc + record.value, 0) || 0,
     [data]
   );
 

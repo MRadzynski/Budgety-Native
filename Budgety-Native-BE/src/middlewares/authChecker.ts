@@ -25,14 +25,14 @@ export const authChecker = async (
   const token = authorization.split(' ')[1];
 
   try {
-    const { _id } = jwt.verify(token, process.env.JWT_SECRET!) as {
-      _id: string;
+    const { id } = jwt.verify(token, process.env.JWT_SECRET!) as {
+      id: string;
     };
 
-    const user = await User.findOne({ _id }).select('_id');
+    const user = await User.findOne({ _id: id }).select('_id');
 
     if (user) {
-      req.userId = user._id;
+      req.userId = user._id.toString();
       next();
     } else {
       res.status(401).json({ error: 'You are not authorized' });

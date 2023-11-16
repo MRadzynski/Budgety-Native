@@ -7,7 +7,7 @@ interface IProps {
   bgColor: string;
   handleQuickAdd: () => void;
   handleEditCategory: () => void;
-  handleRemoveCategory: (categoryName: string) => void;
+  handleRemoveCategory: (categoryName: string, id: string) => void;
   iconName: string;
   id: string;
   name: string;
@@ -20,6 +20,7 @@ const CategoryListItem = ({
   handleQuickAdd,
   handleRemoveCategory,
   iconName,
+  id,
   name
 }: IProps) => {
   return (
@@ -43,7 +44,7 @@ const CategoryListItem = ({
             color="red"
             name="delete-outline"
             size={24}
-            onPress={() => handleRemoveCategory(name)}
+            onPress={() => handleRemoveCategory(name, id)}
           />
         </View>
       </View>

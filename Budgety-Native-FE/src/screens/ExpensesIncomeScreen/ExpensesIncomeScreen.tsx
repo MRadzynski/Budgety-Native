@@ -1,3 +1,4 @@
+import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import {
@@ -8,8 +9,9 @@ import {
   View
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { useEffect, useState } from 'react';
-import { useRoute } from '@react-navigation/native';
+import { useAppSelector } from '../../hooks/redux';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import CategoryForm from '../../components/CategoryForm/CategoryForm';
 import CategoryListItem from '../../components/CategoryListItem/CategoryListItem';
 import CustomButton from '../../components/CustomButton/CustomButton';
@@ -22,146 +24,126 @@ interface DrawerProps {
   navigation: any;
 }
 
-const TEMP_DATA_EXPENSES = [
-  {
-    amount: 10.54,
-    bgColor: 'red',
-    iconName: 'local-hospital',
-    id: '1',
-    name: 'Health'
-  },
-  {
-    amount: 22.54,
-    bgColor: 'green',
-    iconName: 'fastfood',
-    id: '2',
-    name: 'Food'
-  },
-  {
-    amount: 43.54,
-    bgColor: 'blue',
-    iconName: 'checkroom',
-    id: '3',
-    name: 'Clothes'
-  },
-  {
-    amount: 980.54,
-    bgColor: 'orange',
-    iconName: 'house',
-    id: '4',
-    name: 'House'
-  },
-  {
-    amount: 120.54,
-    bgColor: 'yellow',
-    iconName: 'directions-car',
-    id: '5',
-    name: 'Car'
-  },
-  {
-    amount: 150.54,
-    bgColor: 'purple',
-    iconName: 'payments',
-    id: '6',
-    name: 'Bills'
-  },
-  {
-    amount: 130.54,
-    bgColor: 'grey',
-    iconName: 'local-gas-station',
-    id: '7',
-    name: 'Gas'
-  },
-  {
-    amount: 1800.54,
-    bgColor: 'black',
-    iconName: 'more-horiz',
-    id: '8',
-    name: 'Other'
-  }
-];
-
-const TEMP_DATA_INCOME = [
-  {
-    amount: 110.54,
-    bgColor: 'green',
-    iconName: 'work',
-    id: '1',
-    name: 'Job'
-  },
-  {
-    amount: 2232.54,
-    bgColor: 'blue',
-    iconName: 'home-work',
-    id: '2',
-    name: 'Secondary work'
-  },
-  {
-    amount: 4433.54,
-    bgColor: 'red',
-    iconName: 'card-giftcard',
-    id: '3',
-    name: 'Gifts'
-  },
-  {
-    amount: 9830.54,
-    bgColor: 'orange',
-    iconName: 'person',
-    id: '4',
-    name: 'Socials'
-  },
-  {
-    amount: 120.54,
-    bgColor: 'purple',
-    iconName: 'attach-money',
-    id: '5',
-    name: 'Sale'
-  }
-];
-
-const TEMP_EXPENSES_BALANCE = 15432.33;
-const TEMP_INCOME_BALANCE = 2256043.98;
+interface IExpensesIncomeCategory {
+  _id: string;
+  amount: number;
+  bgColor: string;
+  categoryName: string;
+  icon: string;
+}
 
 const CONTEXT = {
   EXPENSES: 'EXPENSES',
   INCOME: 'INCOME'
 };
 
-const TEMP_PIE_DATA_EXPENSES = [
-  { color: '#F5D033', name: 'Food', value: 6248 },
-  { color: '#1D334A', name: 'Bills', value: 3752 },
-  { color: '#84C3BE', name: 'Water', value: 1230 },
-  { color: '#35682D', name: 'Family', value: 2123 },
-  { color: '#57A639', name: 'Entertainment', value: 2500 },
-  { color: '#354D73', name: 'Gas', value: 1999 }
-];
-
-const TEMP_PIE_DATA_INCOME = [
-  { color: '#E6D690', name: 'Job', value: 6248 },
-  { color: '#308446', name: 'Additional Job', value: 3752 },
-  { color: '#3B83BD', name: 'Rewards', value: 1230 },
-  { color: '#8F8F8F', name: 'Gifts', value: 2123 }
-];
-
 const ExpensesIncomeScreen = ({ navigation }: DrawerProps) => {
+  const [categoryIdToBeRemoved, setCategoryIdToBeRemoved] = useState('');
   const [categoryToBeRemoved, setCategoryToBeRemoved] = useState('');
   const [context, setContext] = useState(CONTEXT.EXPENSES);
+  const [expensesCategories, setExpensesCategories] = useState<
+    IExpensesIncomeCategory[] | null
+  >(null);
+  const [incomeCategories, setIncomeCategories] = useState<
+    IExpensesIncomeCategory[] | null
+  >(null);
   const [isModalShown, setIsModalShown] = useState(false);
 
-  const { width } = useWindowDimensions();
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
+  const { width } = useWindowDimensions();
   const route = useRoute();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      if (currentUser && 'token' in currentUser) {
+        const options = {
+          headers: {
+            Authorization: `Bearer ${currentUser.token}`,
+            'Content-Type': 'application/json'
+          },
+          method: 'GET'
+        };
+        const url = `${API_URL}/api/finance/get-categories-monthly`;
+
+        try {
+          const response = await fetch(url, options);
+          const data = await response.json();
+
+          data.monthlyExpenses && setExpensesCategories(data.monthlyExpenses);
+          data.monthlyIncome && setIncomeCategories(data.monthlyIncome);
+        } catch (error: unknown) {
+          if (error instanceof Error) console.error(error.message);
+        }
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     if (!isModalShown && categoryToBeRemoved) setCategoryToBeRemoved('');
   }, [isModalShown]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (route && (route?.params as any)?.newExpenses) {
+        setExpensesCategories((route.params as any).newExpenses);
+      }
+      if (route && (route?.params as any)?.newIncome) {
+        setIncomeCategories((route.params as any).newIncome);
+      }
+    }, [route])
+  );
+
+  const confirmCategoryDeletion = async () => {
+    if (currentUser && 'token' in currentUser) {
+      const options = {
+        body: JSON.stringify({
+          id: categoryIdToBeRemoved
+        }),
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`,
+          'Content-Type': 'application/json'
+        },
+        method: 'DELETE'
+      };
+      const url = `${API_URL}/api/finance/${
+        context === 'EXPENSES' ? 'expenses' : 'income'
+      }/delete-category`;
+
+      try {
+        const response = await fetch(url, options);
+        const data = await response.json();
+
+        if (!data.expenses || !data.income) return;
+
+        context === 'EXPENSES'
+          ? setExpensesCategories(data.expenses)
+          : setIncomeCategories(data.income);
+      } catch (error: unknown) {
+        if (error instanceof Error) console.error(error.message);
+      }
+    }
+  };
 
   const handleAddCategory = () => {
     navigation.navigate('AddCategory', { context });
   };
 
   const handleAddExpenseIncome = (category?: any) => {
-    navigation.navigate('AddExpense', { context, categoryData: category });
+    navigation.navigate('AddExpenseIncome', {
+      categoryData: category,
+      context,
+      expensesCategories: expensesCategories?.map(item => ({
+        label: item.categoryName,
+        value: item._id
+      })),
+      incomeCategories: incomeCategories?.map(item => ({
+        label: item.categoryName,
+        value: item._id
+      }))
+    });
   };
 
   const handleEditCategory = (category: any) => {
@@ -171,8 +153,9 @@ const ExpensesIncomeScreen = ({ navigation }: DrawerProps) => {
     });
   };
 
-  const handleRemoveCategory = (categoryName: string) => {
+  const handleRemoveCategory = (categoryName: string, id: string) => {
     setCategoryToBeRemoved(categoryName);
+    setCategoryIdToBeRemoved(id);
     setIsModalShown(true);
   };
 
@@ -186,7 +169,7 @@ const ExpensesIncomeScreen = ({ navigation }: DrawerProps) => {
       );
     }
 
-    if (route.name === 'AddExpense') {
+    if (route.name === 'AddExpenseIncome') {
       return <ExpenseIncomeForm navigation={navigation} />;
     }
 
@@ -195,7 +178,7 @@ const ExpensesIncomeScreen = ({ navigation }: DrawerProps) => {
         <CustomModal
           isVisible={isModalShown}
           message={`You are about to delete the "${categoryToBeRemoved}" category.`}
-          onConfirm={() => console.log('deleted')}
+          onConfirm={confirmCategoryDeletion}
           setIsVisible={setIsModalShown}
         />
         <View style={styles.tabsContainer}>
@@ -234,19 +217,19 @@ const ExpensesIncomeScreen = ({ navigation }: DrawerProps) => {
         </View>
         <ScrollView style={styles.categoryListContainer}>
           {(context === CONTEXT.EXPENSES
-            ? TEMP_DATA_EXPENSES
-            : TEMP_DATA_INCOME
-          ).map(item => (
+            ? expensesCategories
+            : incomeCategories
+          )?.map(item => (
             <CategoryListItem
               amount={item.amount}
               bgColor={item.bgColor}
               handleEditCategory={() => handleEditCategory(item)}
               handleQuickAdd={() => handleAddExpenseIncome(item)}
               handleRemoveCategory={handleRemoveCategory}
-              iconName={item.iconName}
-              id={item.id}
-              key={item.name}
-              name={item.name}
+              iconName={item.icon}
+              id={item._id}
+              key={item.categoryName}
+              name={item.categoryName}
             />
           ))}
           <TouchableOpacity
@@ -276,6 +259,44 @@ const ExpensesIncomeScreen = ({ navigation }: DrawerProps) => {
     );
   };
 
+  const EXPENSES_CATEGORIES_PIE_DATA = useMemo(
+    () =>
+      expensesCategories?.map(expCategory => ({
+        color: expCategory.bgColor,
+        name: expCategory.categoryName,
+        value: expCategory.amount
+      })),
+    [expensesCategories]
+  );
+
+  const INCOME_CATEGORIES_PIE_DATA = useMemo(
+    () =>
+      incomeCategories?.map(incCategory => ({
+        color: incCategory.bgColor,
+        name: incCategory.categoryName,
+        value: incCategory.amount
+      })),
+    [incomeCategories]
+  );
+
+  const SUM_OF_EXPENSES = useMemo(() => {
+    if (!expensesCategories) return 0;
+
+    return expensesCategories?.reduce(
+      (acc, expCategory) => (acc += expCategory.amount),
+      0
+    );
+  }, [expensesCategories]);
+
+  const SUM_OF_INCOME = useMemo(() => {
+    if (!incomeCategories) return 0;
+
+    return incomeCategories?.reduce(
+      (acc, expCategory) => (acc += expCategory.amount),
+      0
+    );
+  }, [incomeCategories]);
+
   return (
     <View style={styles.container}>
       {/* // <KeyboardAwareScrollView
@@ -304,8 +325,8 @@ const ExpensesIncomeScreen = ({ navigation }: DrawerProps) => {
         <PieChartWrapper
           centerValue={
             context === CONTEXT.EXPENSES
-              ? TEMP_EXPENSES_BALANCE
-              : TEMP_INCOME_BALANCE
+              ? String(SUM_OF_EXPENSES)
+              : String(SUM_OF_INCOME)
           }
           containerStyles={{
             ...styles.chartContainer,
@@ -314,8 +335,8 @@ const ExpensesIncomeScreen = ({ navigation }: DrawerProps) => {
           }}
           data={
             context === CONTEXT.EXPENSES
-              ? TEMP_PIE_DATA_EXPENSES
-              : TEMP_PIE_DATA_INCOME
+              ? EXPENSES_CATEGORIES_PIE_DATA || []
+              : INCOME_CATEGORIES_PIE_DATA || []
           }
           label="Balance"
         />

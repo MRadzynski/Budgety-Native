@@ -22,7 +22,7 @@ const SemiPieChart = ({ chartStyles, data, label, onSelectHandler }: Props) => {
             config: {
               colors: data.map(({ color }) => processColor(color)),
               sliceSpace: 2,
-              valueFormatter: '$#.#',
+              valueFormatter: '$#.##',
               valueLineColor: processColor('#999999aa'),
               valueLinePart2Length: 0,
               valueTextSize: 12,

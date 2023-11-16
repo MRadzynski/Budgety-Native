@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
-import validator from 'validator';
 import mongoose, { Model } from 'mongoose';
+import validator from 'validator';
+import defaultFinancesConfig from '../data/defaultFinances.json';
+import Finances from './financeModel';
 
 interface IUser {
   _id: string;
@@ -36,8 +38,8 @@ const userSchema = new Schema<IUser>(
       type: String
     },
     password: {
-      type: String,
-      required: true
+      required: true,
+      type: String
     },
     username: {
       type: String
@@ -83,6 +85,11 @@ userSchema.statics.signup = async function (
   const hashedPassword = await bcrypt.hash(password, salt);
 
   const user = await this.create({ email, password: hashedPassword, username });
+
+  await Finances.create({
+    userId: user._id,
+    ...defaultFinancesConfig
+  });
 
   return user;
 };

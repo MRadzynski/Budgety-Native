@@ -1,3 +1,5 @@
+import { COLORS } from '../../styles/Colors';
+import { formatNumber } from '../../utils/helpers';
 import { PieChart } from 'react-native-charts-wrapper';
 import {
   processColor,
@@ -7,9 +9,10 @@ import {
   View,
   ViewStyle
 } from 'react-native';
+import { useAppSelector } from '../../hooks/redux';
 
 interface Props {
-  centerValue?: number;
+  centerValue?: string;
   containerStyles?: StyleProp<ViewStyle>;
   data: {
     color: string;
@@ -25,6 +28,8 @@ const PieChartWrapper = ({
   data,
   label
 }: Props) => {
+  const currentUser = useAppSelector(state => state.user.currentUser);
+
   return (
     <View style={[containerStyles, { position: 'relative' }]}>
       <PieChart
@@ -44,8 +49,8 @@ const PieChartWrapper = ({
         }}
         drawEntryLabels={false}
         highlightPerTapEnabled={false}
-        holeColor={processColor('#00000015')}
-        holeRadius={60}
+        holeColor={processColor(COLORS.PRIMARY)}
+        holeRadius={Number(centerValue) === 0 ? 100 : 60}
         legend={{ enabled: false }}
         maxAngle={360}
         rotationEnabled={false}
@@ -54,10 +59,12 @@ const PieChartWrapper = ({
       {centerValue && (
         <View style={styles.centerValueContainer}>
           <Text style={styles.centerValueText}>
-            {new Intl.NumberFormat('en-US', {
-              currency: 'USD',
-              style: 'currency'
-            }).format(centerValue)}
+            {formatNumber(
+              Number(centerValue),
+              currentUser && 'currency' in currentUser
+                ? currentUser.currency
+                : 'USD'
+            )}
           </Text>
         </View>
       )}
@@ -68,6 +75,7 @@ const PieChartWrapper = ({
 const styles = StyleSheet.create({
   centerValueContainer: {
     alignItems: 'center',
+    borderRadius: 100,
     justifyContent: 'center',
     height: '100%',
     position: 'absolute',
