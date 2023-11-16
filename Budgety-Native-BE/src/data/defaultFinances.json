@@ -1,0 +1,100 @@
+{
+  "expenses": [
+    {
+      "amount": 0,
+      "bgColor": "#CDB4DB",
+      "categoryName": "Food",
+      "icon": "fastfood",
+      "logs": []
+    },
+    {
+      "amount": 0,
+      "bgColor": "#FFC8DD",
+      "categoryName": "Health",
+      "icon": "local-hospital",
+      "logs": []
+    },
+    {
+      "amount": 0,
+      "bgColor": "#BDE0FE",
+      "categoryName": "Family",
+      "icon": "family-restroom",
+      "logs": []
+    },
+    {
+      "amount": 0,
+      "bgColor": "#A0C4FF",
+      "categoryName": "Bills",
+      "icon": "money",
+      "logs": []
+    },
+    {
+      "amount": 0,
+      "bgColor": "#C07EED",
+      "categoryName": "Fashion",
+      "icon": "checkroom",
+      "logs": []
+    },
+    {
+      "amount": 0,
+      "bgColor": "#8783E0",
+      "categoryName": "House",
+      "icon": "house",
+      "logs": []
+    },
+    {
+      "amount": 0,
+      "bgColor": "#A983F7",
+      "categoryName": "Gas",
+      "icon": "local-gas-station",
+      "logs": []
+    },
+    {
+      "amount": 0,
+      "bgColor": "#839CF7",
+      "categoryName": "Other",
+      "icon": "more-horiz",
+      "logs": []
+    }
+  ],
+  "expensesLogs": [],
+  "historyLogs": [],
+  "income": [
+    {
+      "amount": 0,
+      "bgColor": "#4FF6DD",
+      "categoryName": "Job",
+      "icon": "work",
+      "logs": []
+    },
+    {
+      "amount": 0,
+      "bgColor": "#44D495",
+      "categoryName": "Additional work",
+      "icon": "home-work",
+      "logs": []
+    },
+    {
+      "amount": 0,
+      "bgColor": "#89F64F",
+      "categoryName": "Sale",
+      "icon": "attach-money",
+      "logs": []
+    },
+    {
+      "amount": 0,
+      "bgColor": "#57EB82",
+      "categoryName": "Gifts",
+      "icon": "card-giftcard",
+      "logs": []
+    },
+    {
+      "amount": 0,
+      "bgColor": "#44D444",
+      "categoryName": "Other",
+      "icon": "more-horiz",
+      "logs": []
+    }
+  ],
+  "incomeLogs": []
+}

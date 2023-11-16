@@ -1,7 +1,9 @@
+import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useAppSelector } from '../../hooks/redux';
 import ColorPickerModal from '../ColorPickerModal/ColorPickerModal';
 import CustomButton from '../CustomButton/CustomButton';
 import CustomTextInput from '../CustomTextInput/CustomTextInput';
@@ -18,9 +20,10 @@ interface IProps {
 type ParamList = {
   ExpensesIncomeScreen: {
     categoryData?: {
+      _id: string;
       bgColor: string;
-      iconName: string;
-      name: string;
+      categoryName: string;
+      icon: string;
     };
     context: string;
   };
@@ -33,20 +36,92 @@ const CategoryForm = ({ navigation, type }: IProps) => {
   const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
   const [name, setName] = useState('');
 
+  const currentUser = useAppSelector(state => state.user.currentUser);
+
   const { params } = useRoute<RouteProp<ParamList, 'ExpensesIncomeScreen'>>();
 
   useEffect(() => {
     if (params?.categoryData) {
-      const { bgColor, iconName, name } = params.categoryData;
+      const { bgColor, categoryName, icon } = params.categoryData;
 
       bgColor && setColor(bgColor);
-      iconName && setIcon(iconName);
-      name && setName(name);
+      icon && setIcon(icon);
+      categoryName && setName(categoryName);
     }
   }, []);
 
-  const handleApply = () => {
-    navigation.navigate('ExpensesIncomeScreen');
+  const handleApply = async () => {
+    if (currentUser && 'token' in currentUser) {
+      const financeType = params.context === 'EXPENSES' ? 'expenses' : 'income';
+      if (type === 'EDIT') {
+        const options = {
+          body: JSON.stringify({
+            bgColor: color,
+            categoryName: name,
+            icon,
+            id: params.categoryData?._id
+          }),
+          headers: {
+            Authorization: `Bearer ${currentUser.token}`,
+            'Content-Type': 'application/json'
+          },
+          method: 'PATCH'
+        };
+        const url = `${API_URL}/api/finance/${financeType}/edit-category`;
+
+        try {
+          const response = await fetch(url, options);
+          const data = await response.json();
+
+          if (params.context === 'EXPENSES' && data.expenses) {
+            navigation.navigate('ExpensesIncomeScreen', {
+              newExpenses: data.expenses
+            });
+          } else if (params.context === 'INCOME' && data.income) {
+            navigation.navigate('ExpensesIncomeScreen', {
+              newIncome: data.income
+            });
+          }
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
+        }
+      }
+
+      if (type === 'ADD') {
+        const options = {
+          body: JSON.stringify({
+            bgColor: color,
+            categoryName: name,
+            icon
+          }),
+          headers: {
+            Authorization: `Bearer ${currentUser.token}`,
+            'Content-Type': 'application/json'
+          },
+          method: 'POST'
+        };
+        const url = `${API_URL}/api/finance/${financeType}/add-category`;
+
+        try {
+          const response = await fetch(url, options);
+          const data = await response.json();
+
+          if (params.context === 'EXPENSES' && data.expenses) {
+            navigation.navigate('ExpensesIncomeScreen', {
+              newExpenses: data.expenses
+            });
+          } else if (params.context === 'INCOME' && data.income) {
+            navigation.navigate('ExpensesIncomeScreen', {
+              newIncome: data.income
+            });
+          }
+        } catch (error: unknown) {
+          if (error instanceof Error) console.error(error.message);
+        }
+      }
+    }
   };
 
   const handleClose = () => navigation.navigate('ExpensesIncomeScreen');

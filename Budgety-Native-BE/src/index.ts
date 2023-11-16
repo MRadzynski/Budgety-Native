@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
 import express, { Application } from 'express';
 import mongoose from 'mongoose';
+import financeRoutes from './routes/financeRoutes';
 import userRoutes from './routes/userRoutes';
-import { authChecker } from './middlewares/authChecker';
 import { logger } from './middlewares/logger';
 
 dotenv.config();
@@ -12,9 +12,9 @@ const port = Number(process.env.PORT) || 8000;
 
 app.use(express.json());
 app.use(logger);
-// app.use(authChecker);
 
 app.use('/api/user', userRoutes);
+app.use('/api/finance', financeRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI!)

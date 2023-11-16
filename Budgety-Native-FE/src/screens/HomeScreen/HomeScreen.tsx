@@ -1,7 +1,11 @@
+import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
+import { formatNumber } from '../../utils/helpers';
 import { PieChartSelectEvent } from 'react-native-charts-wrapper';
 import { StyleSheet, Text, View } from 'react-native';
 import { useAppSelector } from '../../hooks/redux';
+import { useCallback, useMemo, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import ScrollableBarChart from '../../components/ScrollableBarChart/ScrollableBarChart';
 import SemiPieChart from '../../components/SemiPieChart/SemiPieChart';
 
@@ -9,106 +13,54 @@ interface DrawerProps {
   navigation: any;
 }
 
-const BALANCE_MOCK_DATA = [
-  { color: '#4BB543', name: 'Expenses', value: 6248 },
-  { color: '#ED4337', name: 'Income', value: 3752 }
-];
-
-const EXPENSES_MOCK_DATA = [
-  {
-    color: '#497E76',
-    name: 'Food',
-    value: 12.67
-  },
-  {
-    color: '#6D3F5B',
-    name: 'Bills',
-    value: 22.32
-  },
-  {
-    color: '#E6D690',
-    name: 'Water',
-    value: 54.3
-  },
-  {
-    color: '#D95030',
-    name: 'Clothes',
-    value: 7.67
-  },
-  {
-    color: '#FF7514',
-    name: 'Electricity',
-    value: 32.67
-  },
-  {
-    color: '#FE0000',
-    name: 'Gifts',
-    value: 13.67
-  },
-  {
-    color: '#A18594',
-    name: 'Work',
-    value: 4.67
-  },
-  {
-    color: '#FAD201',
-    name: 'Entertainment',
-    value: 9.67
-  },
-  {
-    color: '#3B83BD',
-    name: 'Gas',
-    value: 31.67
-  },
-  {
-    color: '#DE4C8A',
-    name: 'Family',
-    value: 17.67
-  }
-];
-
-const INCOME_MOCK_DATA = [
-  {
-    color: '#354D73',
-    name: 'Job',
-    value: 15.67
-  },
-  {
-    color: '#1C542D',
-    name: 'Additional Job',
-    value: 17.32
-  },
-  {
-    color: '#A2231D',
-    name: 'Gifts',
-    value: 33.3
-  },
-  {
-    color: '#CDA434',
-    name: 'Sales',
-    value: 7.67
-  },
-  {
-    color: '#2C5545',
-    name: 'Charity',
-    value: 32.67
-  },
-  {
-    color: '#256D7B',
-    name: 'Consulting',
-    value: 23.67
-  },
-  {
-    color: '#E63244',
-    name: 'Rewards',
-    value: 10.43
-  }
-];
-
-const TEMP_BALANCE = 12322.45;
+interface IExpensesIncomeCategory {
+  _id: string;
+  amount: number;
+  bgColor: string;
+  categoryName: string;
+  icon: string;
+}
 
 const HomeScreen = ({ navigation }: DrawerProps) => {
-  const username = useAppSelector(state => state.settings.username);
+  const [balance, setBalance] = useState(0);
+  const [expensesCategories, setExpensesCategories] = useState<
+    IExpensesIncomeCategory[] | null
+  >(null);
+  const [incomeCategories, setIncomeCategories] = useState<
+    IExpensesIncomeCategory[] | null
+  >(null);
+
+  const currentUser = useAppSelector(state => state.user.currentUser);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        if (currentUser && 'token' in currentUser) {
+          const options = {
+            headers: {
+              Authorization: `Bearer ${currentUser.token}`,
+              'Content-Type': 'application/json'
+            },
+            method: 'GET'
+          };
+          const url = `${API_URL}/api/finance/get-categories-monthly`;
+
+          try {
+            const response = await fetch(url, options);
+            const data = await response.json();
+
+            data?.monthlyExpenses &&
+              setExpensesCategories(data.monthlyExpenses);
+            data?.monthlyIncome && setIncomeCategories(data.monthlyIncome);
+          } catch (error: unknown) {
+            if (error instanceof Error) console.error(error.message);
+          }
+        }
+      };
+
+      fetchData();
+    }, [])
+  );
 
   const handleSemiPieChartClick = (event: PieChartSelectEvent) => {
     if (!event.nativeEvent || !event.nativeEvent.label) return;
@@ -120,24 +72,84 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
     });
   };
 
+  const BALANCE_PIE_DATA = useMemo(() => {
+    let expensesSum = 0;
+    let incomeSum = 0;
+
+    if (expensesCategories) {
+      expensesSum = expensesCategories.reduce(
+        (acc, expCategory) => (acc += expCategory.amount),
+        0
+      );
+    }
+
+    if (incomeCategories) {
+      incomeSum = incomeCategories.reduce(
+        (acc, incCategory) => (acc += incCategory.amount),
+        0
+      );
+    }
+
+    setBalance(incomeSum - expensesSum);
+
+    return [
+      { color: '#ED4337', name: 'Expenses', value: expensesSum },
+      { color: '#4BB543', name: 'Income', value: incomeSum }
+    ];
+  }, [incomeCategories, expensesCategories]);
+
+  const EXPENSE_BAR_DATA = useMemo(() => {
+    if (!expensesCategories) return [];
+
+    return expensesCategories.map(expCategory => ({
+      color: expCategory.bgColor,
+      name: expCategory.categoryName,
+      value: expCategory.amount
+    }));
+  }, [expensesCategories]);
+
+  const INCOME_BAR_DATA = useMemo(() => {
+    if (!incomeCategories) return [];
+
+    return incomeCategories.map(incCategory => ({
+      color: incCategory.bgColor,
+      name: incCategory.categoryName,
+      value: incCategory.amount
+    }));
+  }, [incomeCategories]);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>{`Hey ${username}! 👋`}</Text>
+      <Text style={styles.welcomeText}>{`Hey ${
+        currentUser && 'username' in currentUser ? currentUser.username : 'User'
+      }! 👋`}</Text>
       <View style={styles.section}>
         <View style={styles.chartContainer}>
           <SemiPieChart
             chartStyles={styles.chart}
-            data={BALANCE_MOCK_DATA}
+            data={BALANCE_PIE_DATA}
             label="Balance"
             onSelectHandler={handleSemiPieChartClick}
           />
         </View>
-        <Text style={styles.balanceText}>{`Balance: $${TEMP_BALANCE}`}</Text>
+        <Text
+          style={[
+            styles.balanceText,
+            {
+              color: balance > 0 ? COLORS.SUCCESS : COLORS.ERROR
+            }
+          ]}
+        >{`Balance: ${formatNumber(
+          balance,
+          currentUser && 'currency' in currentUser
+            ? currentUser.currency
+            : 'USD'
+        )}`}</Text>
       </View>
       <View style={styles.section}>
         <ScrollableBarChart
           containerStyles={styles.barChartContainer}
-          data={EXPENSES_MOCK_DATA}
+          data={EXPENSE_BAR_DATA}
           label="Expenses"
         />
         <Text style={styles.sectionValueText}>Expenses</Text>
@@ -145,7 +157,7 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
       <View style={styles.section}>
         <ScrollableBarChart
           containerStyles={styles.barChartContainer}
-          data={INCOME_MOCK_DATA}
+          data={INCOME_BAR_DATA}
           label="Income"
         />
         <Text style={styles.sectionValueText}>Income</Text>
@@ -158,7 +170,6 @@ const styles = StyleSheet.create({
   balanceText: {
     alignSelf: 'center',
     bottom: 8,
-    color: TEMP_BALANCE > 0 ? COLORS.SUCCESS : COLORS.ERROR,
     flex: 2,
     fontSize: 22,
     position: 'absolute'

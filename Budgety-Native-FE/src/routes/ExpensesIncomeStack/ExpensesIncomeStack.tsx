@@ -9,7 +9,9 @@ const ExpensesIncomeStack = () => {
       <Stack.Screen
         component={ExpensesIncomeScreen}
         name="ExpensesIncomeScreen"
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false
+        }}
       />
       <Stack.Screen
         component={ExpensesIncomeScreen}
@@ -18,8 +20,11 @@ const ExpensesIncomeStack = () => {
       />
       <Stack.Screen
         component={ExpensesIncomeScreen}
-        name="AddExpense"
-        options={{ animationEnabled: false, headerShown: false }}
+        name="AddExpenseIncome"
+        options={{
+          animationEnabled: false,
+          headerShown: false
+        }}
       />
       <Stack.Screen
         component={ExpensesIncomeScreen}

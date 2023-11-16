@@ -1,7 +1,9 @@
+import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { StyleSheet, Text, View } from 'react-native';
+import { useAppSelector } from '../../hooks/redux';
 import CustomButton from '../CustomButton/CustomButton';
 import CustomTextInput from '../CustomTextInput/CustomTextInput';
 import Dropdown from '../Dropdown/Dropdown';
@@ -14,11 +16,14 @@ interface IProps {
 type ParamList = {
   ExpensesIncomeScreen: {
     categoryData: {
+      _id: string;
       bgColor: string;
+      categoryName: string;
       iconName: string;
-      name: string;
     };
     context: string;
+    expensesCategories: TCategory[];
+    incomeCategories: TCategory[];
   };
 };
 
@@ -27,52 +32,65 @@ type TCategory = {
   value: string;
 };
 
-const EXPENSES_CATEGORIES_MOCK_DATA = [
-  { label: 'Health', value: 'Health' },
-  { label: 'Food', value: 'Food' },
-  { label: 'Clothes', value: 'Clothes' },
-  { label: 'House', value: 'House' },
-  { label: 'Car', value: 'Car' },
-  { label: 'Bills', value: 'Bills' },
-  { label: 'Gas', value: 'Gas' },
-  { label: 'Other', value: 'Other' }
-];
-
-const INCOME_CATEGORIES_MOCK_DATA = [
-  { label: 'Job', value: 'Job' },
-  { label: 'Secondary work', value: 'Secondary work' },
-  { label: 'Gifts', value: 'Gifts' },
-  { label: 'Socials', value: 'Socials' },
-  { label: 'Sale', value: 'Sale' },
-  { label: 'Entertainment', value: 'Entertainment' }
-];
-
 const ExpenseIncomeForm = ({ navigation }: IProps) => {
   const [category, setCategory] = useState<TCategory | undefined>();
   const [price, setPrice] = useState('');
+
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
   const { params } = useRoute<RouteProp<ParamList, 'ExpensesIncomeScreen'>>();
 
   useEffect(() => {
     if (params?.categoryData) {
-      const { name } = params.categoryData;
+      const { _id } = params.categoryData;
 
       let categoriesToSearchFor =
         params.context === 'EXPENSES'
-          ? EXPENSES_CATEGORIES_MOCK_DATA
-          : INCOME_CATEGORIES_MOCK_DATA;
+          ? params?.expensesCategories
+          : params?.incomeCategories;
 
-      const foundCategory = categoriesToSearchFor.find(
-        data => data.label === name
+      const foundCategory = categoriesToSearchFor?.find(
+        data => data.value === _id
       );
 
-      setCategory(foundCategory ?? categoriesToSearchFor[0]);
+      setCategory(foundCategory ?? categoriesToSearchFor?.[0]);
     }
   }, []);
 
-  const handleApply = () => {
-    console.log(`Add new ${params.context}: ${category?.label}: ${price}`);
-    navigation.navigate('ExpensesIncomeScreen');
+  const handleApply = async () => {
+    if (currentUser && 'token' in currentUser) {
+      const options = {
+        body: JSON.stringify({
+          amount: price,
+          id: category?.value
+        }),
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`,
+          'Content-Type': 'application/json'
+        },
+        method: 'POST'
+      };
+      const url = `${API_URL}/api/finance/${params.context.toLowerCase()}/add-${
+        params.context === 'EXPENSES' ? 'expense' : 'income'
+      }`;
+
+      try {
+        const response = await fetch(url, options);
+        const data = await response.json();
+
+        if (params.context === 'EXPENSES' && data.expenses) {
+          navigation.navigate('ExpensesIncomeScreen', {
+            newExpenses: data.expenses
+          });
+        } else if (params.context === 'INCOME' && data.income) {
+          navigation.navigate('ExpensesIncomeScreen', {
+            newIncome: data.income
+          });
+        }
+      } catch (error: unknown) {
+        if (error instanceof Error) console.error(error.message);
+      }
+    }
   };
 
   const handleCategoryChange = (category: TCategory) => setCategory(category);
@@ -120,8 +138,8 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
             }}
             data={
               params.context === 'EXPENSES'
-                ? EXPENSES_CATEGORIES_MOCK_DATA
-                : INCOME_CATEGORIES_MOCK_DATA
+                ? params?.expensesCategories || []
+                : params?.incomeCategories || []
             }
             defaultSelected={category}
             onSelect={handleCategoryChange}
