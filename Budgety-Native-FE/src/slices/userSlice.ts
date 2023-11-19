@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface UserSlice {
+export interface UserSlice {
   currentUser:
     | {
         currency: string;
@@ -20,11 +20,12 @@ const userSlice = createSlice({
   initialState,
   name: 'user',
   reducers: {
+    logout: () => initialState,
     setUser(state, action: PayloadAction<any>) {
       state.currentUser = action.payload;
     }
   }
 });
 
-export const { setUser } = userSlice.actions;
+export const { logout, setUser } = userSlice.actions;
 export default userSlice.reducer;
