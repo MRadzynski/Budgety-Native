@@ -2,7 +2,7 @@ import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useAppSelector } from '../../hooks/redux';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import HistoryTab from '../../components/HistoryTab/HistoryTab';
 import Title from '../../components/Title/Title';

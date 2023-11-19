@@ -27,6 +27,7 @@ router.delete('/income/delete-category', handleDeleteIncomeCategory);
 
 router.get('/get-balance', handleGetBalance);
 
+// not used yet
 router.get('/get-categories', handleGetCategories);
 
 router.get('/get-categories-history', handleGetHistoryCategories);

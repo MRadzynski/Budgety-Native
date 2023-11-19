@@ -1,4 +1,5 @@
 import { API_URL } from '@env';
+import { CATEGORY_FORM_TYPES, CONTEXT } from '../../data/constants';
 import { COLORS } from '../../styles/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { RouteProp, useRoute } from '@react-navigation/native';
@@ -10,14 +11,9 @@ import CustomTextInput from '../CustomTextInput/CustomTextInput';
 import IconPickerModal from '../IconPickerModal/IconPickerModal';
 import React, { useEffect, useState } from 'react';
 
-type FormTypes = 'ADD' | 'EDIT';
+type TFormTypes = 'ADD' | 'EDIT';
 
-interface IProps {
-  navigation: any;
-  type: FormTypes;
-}
-
-type ParamList = {
+type TParamList = {
   ExpensesIncomeScreen: {
     categoryData?: {
       _id: string;
@@ -25,20 +21,24 @@ type ParamList = {
       categoryName: string;
       icon: string;
     };
-    context: string;
+    type: TFormTypes;
   };
 };
+interface IProps {
+  navigation: any;
+}
 
-const CategoryForm = ({ navigation, type }: IProps) => {
+const CategoryForm = ({ navigation }: IProps) => {
   const [color, setColor] = useState('#0000ff');
   const [icon, setIcon] = useState<any>('home');
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
   const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
   const [name, setName] = useState('');
 
+  const context = useAppSelector(state => state.expensesIncome.context);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
-  const { params } = useRoute<RouteProp<ParamList, 'ExpensesIncomeScreen'>>();
+  const { params } = useRoute<RouteProp<TParamList, 'ExpensesIncomeScreen'>>();
 
   useEffect(() => {
     if (params?.categoryData) {
@@ -52,8 +52,9 @@ const CategoryForm = ({ navigation, type }: IProps) => {
 
   const handleApply = async () => {
     if (currentUser && 'token' in currentUser) {
-      const financeType = params.context === 'EXPENSES' ? 'expenses' : 'income';
-      if (type === 'EDIT') {
+      const financeType = context === CONTEXT.EXPENSES ? 'expenses' : 'income';
+
+      if (params.type === CATEGORY_FORM_TYPES.EDIT) {
         const options = {
           body: JSON.stringify({
             bgColor: color,
@@ -70,18 +71,8 @@ const CategoryForm = ({ navigation, type }: IProps) => {
         const url = `${API_URL}/api/finance/${financeType}/edit-category`;
 
         try {
-          const response = await fetch(url, options);
-          const data = await response.json();
-
-          if (params.context === 'EXPENSES' && data.expenses) {
-            navigation.navigate('ExpensesIncomeScreen', {
-              newExpenses: data.expenses
-            });
-          } else if (params.context === 'INCOME' && data.income) {
-            navigation.navigate('ExpensesIncomeScreen', {
-              newIncome: data.income
-            });
-          }
+          await fetch(url, options);
+          navigation.navigate('CategoriesList');
         } catch (error: unknown) {
           if (error instanceof Error) {
             console.error(error.message);
@@ -89,7 +80,7 @@ const CategoryForm = ({ navigation, type }: IProps) => {
         }
       }
 
-      if (type === 'ADD') {
+      if (params.type === CATEGORY_FORM_TYPES.ADD) {
         const options = {
           body: JSON.stringify({
             bgColor: color,
@@ -105,18 +96,8 @@ const CategoryForm = ({ navigation, type }: IProps) => {
         const url = `${API_URL}/api/finance/${financeType}/add-category`;
 
         try {
-          const response = await fetch(url, options);
-          const data = await response.json();
-
-          if (params.context === 'EXPENSES' && data.expenses) {
-            navigation.navigate('ExpensesIncomeScreen', {
-              newExpenses: data.expenses
-            });
-          } else if (params.context === 'INCOME' && data.income) {
-            navigation.navigate('ExpensesIncomeScreen', {
-              newIncome: data.income
-            });
-          }
+          await fetch(url, options);
+          navigation.navigate('CategoriesList');
         } catch (error: unknown) {
           if (error instanceof Error) console.error(error.message);
         }
@@ -124,7 +105,7 @@ const CategoryForm = ({ navigation, type }: IProps) => {
     }
   };
 
-  const handleClose = () => navigation.navigate('ExpensesIncomeScreen');
+  const handleClose = () => navigation.navigate('CategoriesList');
 
   const handleColorPickerApply = (selectedColor: string) =>
     setColor(selectedColor);
@@ -144,7 +125,7 @@ const CategoryForm = ({ navigation, type }: IProps) => {
   return (
     <View style={styles.container}>
       <Text style={styles.formTitle}>
-        {type === 'ADD' ? 'Add' : 'Edit'} Category
+        {params.type === CATEGORY_FORM_TYPES.ADD ? 'Add' : 'Edit'} Category
       </Text>
       <View style={styles.exitContainer}>
         <MaterialIcons
@@ -164,10 +145,10 @@ const CategoryForm = ({ navigation, type }: IProps) => {
               content: styles.nameInputContent
             }}
             defaultValue={name}
-            selectionColor={COLORS.PRIMARY}
             onChangeText={handleNameChange}
-            placeholderTextColor="#757575"
             placeholderText="i.e. Food"
+            placeholderTextColor="#757575"
+            selectionColor={COLORS.PRIMARY}
           />
         </View>
         <View style={styles.formRow}>

@@ -6,11 +6,9 @@ import { useEffect } from 'react';
 import AuthStack from '../AuthStack/AuthStack';
 import DrawerNavigator from '../DrawerNavigator/DrawerNavigator';
 
-interface IProps {
-  isAuthed: boolean;
-}
-const AppRouter: React.FC<any> = ({ isAuthed }: IProps) => {
+const AppRouter: React.FC<any> = () => {
   const currentUser = useAppSelector(state => state.user.currentUser);
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {

@@ -1,25 +1,20 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import ExpensesIncomeScreen from '../../screens/ExpensesIncomeScreen/ExpensesIncomeScreen';
+import CategoryForm from '../../components/CategoryForm/CategoryForm';
+import CategoryRoute from '../../components/CategoryList/CategoryList';
+import ExpenseIncomeForm from '../../components/ExpenseIncomeForm/ExpenseIncomeForm';
 
 const Stack = createStackNavigator();
 
 const ExpensesIncomeStack = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="CategoriesList">
       <Stack.Screen
-        component={ExpensesIncomeScreen}
-        name="ExpensesIncomeScreen"
-        options={{
-          headerShown: false
-        }}
-      />
-      <Stack.Screen
-        component={ExpensesIncomeScreen}
+        component={CategoryForm}
         name="AddCategory"
         options={{ animationEnabled: false, headerShown: false }}
       />
       <Stack.Screen
-        component={ExpensesIncomeScreen}
+        component={ExpenseIncomeForm}
         name="AddExpenseIncome"
         options={{
           animationEnabled: false,
@@ -27,7 +22,12 @@ const ExpensesIncomeStack = () => {
         }}
       />
       <Stack.Screen
-        component={ExpensesIncomeScreen}
+        component={CategoryRoute}
+        name="CategoriesList"
+        options={{ animationEnabled: false, headerShown: false }}
+      />
+      <Stack.Screen
+        component={CategoryForm}
         name="EditCategory"
         options={{ animationEnabled: false, headerShown: false }}
       />

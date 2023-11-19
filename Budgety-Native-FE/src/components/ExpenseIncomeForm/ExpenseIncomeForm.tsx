@@ -1,5 +1,6 @@
 import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
+import { CONTEXT } from '../../data/constants';
 import { MaterialIcons } from '@expo/vector-icons';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { StyleSheet, Text, View } from 'react-native';
@@ -13,7 +14,7 @@ interface IProps {
   navigation: any;
 }
 
-type ParamList = {
+type TParamList = {
   ExpensesIncomeScreen: {
     categoryData: {
       _id: string;
@@ -21,9 +22,6 @@ type ParamList = {
       categoryName: string;
       iconName: string;
     };
-    context: string;
-    expensesCategories: TCategory[];
-    incomeCategories: TCategory[];
   };
 };
 
@@ -36,24 +34,36 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
   const [category, setCategory] = useState<TCategory | undefined>();
   const [price, setPrice] = useState('');
 
+  const context = useAppSelector(state => state.expensesIncome.context);
   const currentUser = useAppSelector(state => state.user.currentUser);
+  const expensesCategories = useAppSelector(
+    state => state.expensesIncome.expensesCategories
+  );
+  const incomeCategories = useAppSelector(
+    state => state.expensesIncome.incomeCategories
+  );
 
-  const { params } = useRoute<RouteProp<ParamList, 'ExpensesIncomeScreen'>>();
+  const { params } = useRoute<RouteProp<TParamList, 'ExpensesIncomeScreen'>>();
 
   useEffect(() => {
     if (params?.categoryData) {
       const { _id } = params.categoryData;
 
       let categoriesToSearchFor =
-        params.context === 'EXPENSES'
-          ? params?.expensesCategories
-          : params?.incomeCategories;
+        context === CONTEXT.EXPENSES ? expensesCategories : incomeCategories;
 
-      const foundCategory = categoriesToSearchFor?.find(
+      const formattedCategoriesToSearchFor = categoriesToSearchFor.map(
+        category => ({
+          label: category.categoryName,
+          value: category._id
+        })
+      );
+
+      const foundCategory = formattedCategoriesToSearchFor?.find(
         data => data.value === _id
       );
 
-      setCategory(foundCategory ?? categoriesToSearchFor?.[0]);
+      setCategory(foundCategory ?? formattedCategoriesToSearchFor?.[0]);
     }
   }, []);
 
@@ -70,23 +80,13 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
         },
         method: 'POST'
       };
-      const url = `${API_URL}/api/finance/${params.context.toLowerCase()}/add-${
-        params.context === 'EXPENSES' ? 'expense' : 'income'
+      const url = `${API_URL}/api/finance/${context.toLowerCase()}/add-${
+        context === CONTEXT.EXPENSES ? 'expense' : 'income'
       }`;
 
       try {
-        const response = await fetch(url, options);
-        const data = await response.json();
-
-        if (params.context === 'EXPENSES' && data.expenses) {
-          navigation.navigate('ExpensesIncomeScreen', {
-            newExpenses: data.expenses
-          });
-        } else if (params.context === 'INCOME' && data.income) {
-          navigation.navigate('ExpensesIncomeScreen', {
-            newIncome: data.income
-          });
-        }
+        await fetch(url, options);
+        navigation.navigate('CategoriesList');
       } catch (error: unknown) {
         if (error instanceof Error) console.error(error.message);
       }
@@ -95,14 +95,14 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
 
   const handleCategoryChange = (category: TCategory) => setCategory(category);
 
-  const handleClose = () => navigation.navigate('ExpensesIncomeScreen');
+  const handleClose = () => navigation.navigate('CategoriesList');
 
   const handlePriceChange = (value: string) => setPrice(value);
 
   return (
     <View style={styles.container}>
       <Text style={styles.formTitle}>
-        Add {params.context === 'EXPENSES' ? 'Expense' : 'Income'}
+        Add {context === CONTEXT.EXPENSES ? 'Expense' : 'Income'}
       </Text>
       <View style={styles.exitContainer}>
         <MaterialIcons
@@ -121,10 +121,10 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
               container: styles.priceInputContainer,
               content: styles.priceInputContent
             }}
-            selectionColor={COLORS.PRIMARY}
             onChangeText={handlePriceChange}
-            placeholderTextColor="#757575"
             placeholderText="1.00"
+            placeholderTextColor="#757575"
+            selectionColor={COLORS.PRIMARY}
             type="decimal-pad"
           />
         </View>
@@ -137,9 +137,15 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
               dropdownListItemValue: styles.categoryDropdownListItemValue
             }}
             data={
-              params.context === 'EXPENSES'
-                ? params?.expensesCategories || []
-                : params?.incomeCategories || []
+              context === CONTEXT.EXPENSES
+                ? expensesCategories.map(item => ({
+                    label: item.categoryName,
+                    value: item._id
+                  }))
+                : incomeCategories.map(item => ({
+                    label: item.categoryName,
+                    value: item._id
+                  }))
             }
             defaultSelected={category}
             onSelect={handleCategoryChange}

@@ -232,11 +232,11 @@ export const handleGetCategoriesMonthly = async (
       );
 
       return {
+        _id,
         amount: monthlyAmount,
         bgColor,
         categoryName,
-        icon,
-        id: _id
+        icon
       };
     });
 
@@ -253,11 +253,11 @@ export const handleGetCategoriesMonthly = async (
       );
 
       return {
+        _id,
         amount: monthlyAmount,
         bgColor,
         categoryName,
-        icon,
-        id: _id
+        icon
       };
     });
 
