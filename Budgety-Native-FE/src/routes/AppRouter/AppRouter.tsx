@@ -1,4 +1,7 @@
-import { getFromSecureStore } from '../../utils/secureStorage';
+import {
+  getFromSecureStore,
+  saveToSecureStore
+} from '../../utils/secureStorage';
 import { NavigationContainer } from '@react-navigation/native';
 import { setUser } from '../../slices/userSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
@@ -22,6 +25,12 @@ const AppRouter: React.FC<any> = () => {
 
     fetchUserFromSecureStore();
   }, []);
+
+  useEffect(() => {
+    currentUser &&
+      'token' in currentUser &&
+      saveToSecureStore('user', JSON.stringify(currentUser));
+  }, [currentUser]);
 
   return (
     <NavigationContainer>

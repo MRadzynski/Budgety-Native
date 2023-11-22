@@ -3,6 +3,7 @@ import { authChecker } from '../middlewares/authChecker';
 import {
   handleDeleteExpensesCategory,
   handleDeleteIncomeCategory,
+  handleEraseAllData,
   handleGetBalance,
   handleGetCategories,
   handleGetCategoriesMonthly,
@@ -24,6 +25,8 @@ router.use(authChecker);
 router.delete('/expenses/delete-category', handleDeleteExpensesCategory);
 
 router.delete('/income/delete-category', handleDeleteIncomeCategory);
+
+router.delete('/erase-all-data', handleEraseAllData);
 
 router.get('/get-balance', handleGetBalance);
 

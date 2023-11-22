@@ -101,6 +101,12 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
   const EXPENSE_BAR_DATA = useMemo(() => {
     if (!expensesCategories) return [];
 
+    const hasAtLeastOneValueAdded = expensesCategories.some(
+      expCat => expCat.amount > 0
+    );
+
+    if (!hasAtLeastOneValueAdded) return [];
+
     return expensesCategories.map(expCategory => ({
       color: expCategory.bgColor,
       name: expCategory.categoryName,
@@ -110,6 +116,12 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
 
   const INCOME_BAR_DATA = useMemo(() => {
     if (!incomeCategories) return [];
+
+    const hasAtLeastOneValueAdded = incomeCategories.some(
+      incCat => incCat.amount > 0
+    );
+
+    if (!hasAtLeastOneValueAdded) return [];
 
     return incomeCategories.map(incCategory => ({
       color: incCategory.bgColor,
@@ -121,7 +133,9 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
   return (
     <View style={styles.container}>
       <Text style={styles.welcomeText}>{`Hey ${
-        currentUser && 'username' in currentUser ? currentUser.username : 'User'
+        'username' in currentUser && currentUser.username
+          ? currentUser.username
+          : 'User'
       }! 👋`}</Text>
       <View style={styles.section}>
         <View style={styles.chartContainer}>

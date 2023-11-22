@@ -1,23 +1,14 @@
-import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { CONTEXT } from '../../data/constants';
-import {
-  setExpensesCategories,
-  setIncomeCategories
-} from '../../slices/expenseIncomeSlice';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
-import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useAppSelector } from '../../hooks/redux';
+import { useMemo } from 'react';
 import ExpensesIncomeStack from '../../routes/ExpensesIncomeStack/ExpensesIncomeStack';
 import PieChartWrapper from '../../components/PieChartWrapper/PieChartWrapper';
 import Title from '../../components/Title/Title';
-import { useFocusEffect } from '@react-navigation/native';
 
 const ExpensesIncomeScreen = () => {
-  const dispatch = useAppDispatch();
-
   const context = useAppSelector(state => state.expensesIncome.context);
-  const currentUser = useAppSelector(state => state.user.currentUser);
   const expensesCategories = useAppSelector(
     state => state.expensesIncome.expensesCategories
   );
@@ -26,72 +17,6 @@ const ExpensesIncomeScreen = () => {
   );
 
   const { width } = useWindowDimensions();
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     const fetchCategories = async () => {
-  //       if (currentUser && 'token' in currentUser) {
-  //         const options = {
-  //           headers: {
-  //             Authorization: `Bearer ${currentUser.token}`,
-  //             'Content-Type': 'application/json'
-  //           },
-  //           method: 'GET'
-  //         };
-  //         const url = `${API_URL}/api/finance/get-categories-monthly`;
-
-  //         try {
-  //           const response = await fetch(url, options);
-  //           const data = await response.json();
-
-  //           data.monthlyExpenses &&
-  //             dispatch(setExpensesCategories(data.monthlyExpenses));
-  //           data.monthlyIncome &&
-  //             dispatch(setIncomeCategories(data.monthlyIncome));
-  //         } catch (error: unknown) {
-  //           if (error instanceof Error) console.error(error.message);
-  //         }
-  //       }
-  //     };
-
-  //     fetchCategories();
-  //   }, [])
-  // );
-  // useEffect(() => {
-  //   const fetchCategories = async () => {
-  //     if (currentUser && 'token' in currentUser) {
-  //       const options = {
-  //         headers: {
-  //           Authorization: `Bearer ${currentUser.token}`,
-  //           'Content-Type': 'application/json'
-  //         },
-  //         method: 'GET'
-  //       };
-  //       const url = `${API_URL}/api/finance/get-categories-monthly`;
-
-  //       try {
-  //         const response = await fetch(url, options);
-  //         const data = await response.json();
-
-  //         data.monthlyExpenses &&
-  //           dispatch(setExpensesCategories(data.monthlyExpenses));
-  //         data.monthlyIncome &&
-  //           dispatch(setIncomeCategories(data.monthlyIncome));
-  //       } catch (error: unknown) {
-  //         if (error instanceof Error) console.error(error.message);
-  //       }
-  //     }
-  //   };
-
-  //   fetchCategories();
-
-  //   console.log('mount', context);
-  //   return () => {
-  //     console.log('-------');
-  //     console.log('unmount screen');
-  //     console.log('-------');
-  //   };
-  // }, []);
 
   const EXPENSES_CATEGORIES_PIE_DATA = useMemo(
     () =>
@@ -189,7 +114,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     flex: 6,
-    paddingBottom: 8
+    overflow: 'hidden'
   },
   chartContainer: {
     borderRadius: 100,

@@ -1,11 +1,18 @@
+import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
+import { deleteFromSecureStore } from '../../utils/secureStorage';
 import {
+  logout,
   setCurrency,
   setLanguage,
   setUsername
-} from '../../slices/settingsSlice';
+} from '../../slices/userSlice';
+import {
+  setExpensesCategories,
+  setIncomeCategories
+} from '../../slices/expenseIncomeSlice';
 import { StyleSheet, Text, View } from 'react-native';
-import { useAppDispatch } from '../../hooks/redux';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useState } from 'react';
 import CURRENCIES from '../../data/currencies.json';
 import CustomButton from '../../components/CustomButton/CustomButton';
@@ -22,21 +29,140 @@ interface IDrawerProps {
 const SettingsScreen = ({ navigation }: IDrawerProps) => {
   const [isDeletedModalVisible, setIsDeletedModalVisible] = useState(false);
   const [isErasedModalVisible, setIsErasedModalVisible] = useState(false);
+  const [usernameTemp, setUsernameTemp] = useState('');
 
   const dispatch = useAppDispatch();
+
+  const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const handleCurrencyChange = async (currency: string) => {
+    if (currentUser && 'token' in currentUser) {
+      const options = {
+        body: JSON.stringify({ currency }),
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`,
+          'Content-Type': 'application/json'
+        },
+        method: 'PATCH'
+      };
+      const url = `${API_URL}/api/user/update-currency`;
+
+      try {
+        const response = await fetch(url, options);
+        const data = await response.json();
+        data.currency && dispatch(setCurrency(data.currency));
+      } catch (error: unknown) {
+        if (error instanceof Error) console.error(error.message);
+      }
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    if (currentUser && 'token' in currentUser) {
+      const options = {
+        headers: {
+          Authorization: `Bearer ${currentUser?.token}`,
+          'Content-Type': 'application/json'
+        },
+        method: 'DELETE'
+      };
+      const url = `${API_URL}/api/user/delete-user`;
+
+      try {
+        const response = await fetch(url, options);
+        const data = await response.json();
+
+        if (data?.message === 'User deleted') {
+          dispatch(logout());
+          await deleteFromSecureStore('user');
+        }
+      } catch (error: unknown) {
+        if (error instanceof Error) console.error(error.message);
+      }
+    }
+  };
+
+  const handleEraseUserData = async () => {
+    if (currentUser && 'token' in currentUser) {
+      const options = {
+        headers: {
+          Authorization: `Bearer ${currentUser?.token}`,
+          'Content-Type': 'application/json'
+        },
+        method: 'DELETE'
+      };
+      const url = `${API_URL}/api/finance/erase-all-data`;
+
+      try {
+        const response = await fetch(url, options);
+        const data = await response.json();
+
+        data.expenses && dispatch(setExpensesCategories(data.expenses));
+        data.income && dispatch(setIncomeCategories(data.income));
+      } catch (error: unknown) {
+        if (error instanceof Error) console.error(error.message);
+      }
+    }
+  };
+
+  const handleLanguageChange = async (language: string) => {
+    if (currentUser && 'token' in currentUser) {
+      const options = {
+        body: JSON.stringify({ language }),
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`,
+          'Content-Type': 'application/json'
+        },
+        method: 'PATCH'
+      };
+      const url = `${API_URL}/api/user/update-language`;
+
+      try {
+        const response = await fetch(url, options);
+        const data = await response.json();
+        data.language && dispatch(setLanguage(data.language));
+      } catch (error: unknown) {
+        if (error instanceof Error) console.error(error.message);
+      }
+    }
+  };
+
+  const handleUsernameBlur = async () => {
+    if (currentUser && 'token' in currentUser) {
+      const options = {
+        body: JSON.stringify({ username: usernameTemp }),
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`,
+          'Content-Type': 'application/json'
+        },
+        method: 'PATCH'
+      };
+      const url = `${API_URL}/api/user/update-username`;
+
+      try {
+        const response = await fetch(url, options);
+        const data = await response.json();
+        data.username && dispatch(setUsername(data.username));
+      } catch (error: unknown) {
+        if (error instanceof Error) console.error(error.message);
+      }
+    }
+  };
+
+  const handleUsernameChange = (username: string) => setUsernameTemp(username);
 
   return (
     <View style={styles.container}>
       <CustomModal
         isVisible={isErasedModalVisible}
         message="You are about to erase your data."
-        onConfirm={() => console.log('erased')}
+        onConfirm={handleEraseUserData}
         setIsVisible={setIsErasedModalVisible}
       />
       <CustomModal
         isVisible={isDeletedModalVisible}
         message="You are about to delete your account."
-        onConfirm={() => console.log('deleted')}
+        onConfirm={handleDeleteUser}
         setIsVisible={setIsDeletedModalVisible}
       />
       <Title customStyles={{ content: styles.titleContent }} text="Settings" />
@@ -52,7 +178,11 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
                   content: styles.textInput,
                   container: styles.textInputContainer
                 }}
-                onChangeText={val => dispatch(setUsername(val))}
+                defaultValue={
+                  'username' in currentUser ? currentUser?.username : undefined
+                }
+                onBlur={handleUsernameBlur}
+                onChangeText={handleUsernameChange}
                 placeholderText="John Doe"
                 placeholderTextColor="#757575"
                 selectionColor={COLORS.PRIMARY}
@@ -71,8 +201,14 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
                   dropdownList: styles.dropdownList
                 }}
                 data={CURRENCIES}
-                defaultSelected={CURRENCIES[0]}
-                onSelect={currency => dispatch(setCurrency(currency.value))}
+                defaultSelected={
+                  'currency' in currentUser
+                    ? CURRENCIES.find(
+                        curr => curr.value === currentUser.currency
+                      )
+                    : CURRENCIES[0]
+                }
+                onSelect={currency => handleCurrencyChange(currency.value)}
               />
             </View>
             <View style={styles.sectionItemContainer}>
@@ -83,8 +219,14 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
                   dropdownList: styles.dropdownList
                 }}
                 data={LANGUAGES}
-                defaultSelected={LANGUAGES[0]}
-                onSelect={language => dispatch(setLanguage(language.value))}
+                defaultSelected={
+                  'language' in currentUser
+                    ? LANGUAGES.find(
+                        lang => lang.value === currentUser.language
+                      )
+                    : CURRENCIES[0]
+                }
+                onSelect={language => handleLanguageChange(language.value)}
               />
             </View>
           </View>
@@ -95,7 +237,7 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
           </Text>
           <View style={styles.sectionContentContainer}>
             <View style={styles.sectionItemContainer}>
-              <Text>Erase balance</Text>
+              <Text>Erase financial data</Text>
               <CustomButton
                 customStyles={{
                   container: styles.dangerZoneButtonContainer,

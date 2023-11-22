@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
   confirmBtnContainer: {
     alignSelf: 'center',
     backgroundColor: COLORS.PRIMARY,
+    marginBottom: 8,
     width: '70%'
   },
   confirmBtnText: {

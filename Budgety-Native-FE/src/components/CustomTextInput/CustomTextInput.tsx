@@ -7,6 +7,7 @@ interface IProps {
   customStyles?: ITextInputCustomStyle;
   defaultValue?: string;
   hashText?: boolean;
+  onBlur?: () => void;
   onChangeText: (event: string) => void;
   placeholderText: string;
   placeholderTextColor?: string;
@@ -25,6 +26,7 @@ const CustomTextInput = ({
   customStyles,
   defaultValue,
   hashText,
+  onBlur,
   onChangeText,
   placeholderText,
   placeholderTextColor = COLORS.LIGHT_GRAY,
@@ -41,6 +43,7 @@ const CustomTextInput = ({
         cursorColor={cursorColor}
         defaultValue={defaultValue}
         keyboardType={type}
+        onBlur={onBlur}
         onChangeText={onChangeText}
         placeholder={placeholderText}
         placeholderTextColor={placeholderTextColor}

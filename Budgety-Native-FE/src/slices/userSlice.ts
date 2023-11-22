@@ -21,11 +21,27 @@ const userSlice = createSlice({
   name: 'user',
   reducers: {
     logout: () => initialState,
+    setCurrency(state, action: PayloadAction<any>) {
+      if ('currency' in state.currentUser) {
+        state.currentUser.currency = action.payload;
+      }
+    },
+    setLanguage(state, action: PayloadAction<any>) {
+      if ('language' in state.currentUser) {
+        state.currentUser.language = action.payload;
+      }
+    },
     setUser(state, action: PayloadAction<any>) {
       state.currentUser = action.payload;
+    },
+    setUsername(state, action: PayloadAction<any>) {
+      if ('username' in state.currentUser) {
+        state.currentUser.username = action.payload;
+      }
     }
   }
 });
 
-export const { logout, setUser } = userSlice.actions;
+export const { logout, setCurrency, setLanguage, setUser, setUsername } =
+  userSlice.actions;
 export default userSlice.reducer;
