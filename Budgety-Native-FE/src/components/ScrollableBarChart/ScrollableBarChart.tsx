@@ -1,5 +1,6 @@
 import { BarChart, ChartSelectEvent } from 'react-native-charts-wrapper';
 import {
+  Dimensions,
   processColor,
   ScrollView,
   StyleProp,
@@ -8,6 +9,7 @@ import {
   View,
   ViewStyle
 } from 'react-native';
+import { useAppSelector } from '../../hooks/redux';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -21,12 +23,16 @@ interface Props {
   label: string;
 }
 
+const windowWidth = Dimensions.get('window').width;
+
 const ScrollableBarChart = ({ containerStyles, data, label }: Props) => {
   const [barIndex, setBarIndex] = useState<number | undefined>();
   const [coords, setCoords] = useState({
     left: 40,
     top: 30
   });
+
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
   useFocusEffect(
     useCallback(() => {
@@ -38,7 +44,13 @@ const ScrollableBarChart = ({ containerStyles, data, label }: Props) => {
     if (barIndex !== undefined) {
       let left = barIndex * 65;
       if (barIndex === 0) left = 40;
-      if (barIndex === data.length - 1) left = barIndex * 65 - 50;
+      if (barIndex === data.length - 1 && data.length > 1)
+        left = barIndex * 65 - 50;
+
+      if (data.length < 5) left = barIndex * 60;
+      if (data.length < 4) left = barIndex * 90;
+      if (data.length < 3) left = barIndex * 120;
+      if (data.length < 2) left = 100;
 
       setCoords({
         left,
@@ -84,7 +96,11 @@ const ScrollableBarChart = ({ containerStyles, data, label }: Props) => {
           ).toFixed(2)}%`}</Text>
           <Text style={styles.tooltipValue}>{`Value: ${new Intl.NumberFormat(
             'en-US',
-            { currency: 'USD', style: 'currency' }
+            {
+              currency:
+                'currency' in currentUser ? currentUser.currency : 'USD',
+              style: 'currency'
+            }
           ).format(data[barIndex].value)}`}</Text>
         </View>
       )}
@@ -92,7 +108,7 @@ const ScrollableBarChart = ({ containerStyles, data, label }: Props) => {
         chartDescription={{ text: '' }}
         data={{
           config: {
-            barWidth: 0.9
+            barWidth: data.length < 5 ? 100 / windowWidth : 0.8
           },
           dataSets: [
             {
@@ -112,7 +128,7 @@ const ScrollableBarChart = ({ containerStyles, data, label }: Props) => {
         legend={{ enabled: false }}
         onSelect={handleSelect}
         pinchZoom={false}
-        style={{ width: data.length * 65 }}
+        style={{ width: data.length < 5 ? windowWidth - 70 : data.length * 65 }}
         xAxis={{
           granularity: 1,
           labelCount: data.length,

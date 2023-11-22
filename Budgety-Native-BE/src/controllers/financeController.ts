@@ -130,6 +130,34 @@ export const handleDeleteIncomeCategory = async (
   }
 };
 
+export const handleEraseAllData = async (req: Request, res: Response) => {
+  const { userId } = req;
+
+  if (!userId) return res.status(401).json({ error: 'You are not authorized' });
+
+  const financeDoc = (await FinanceModel.findOne({
+    userId: userId
+  })) as IFinanceDocument;
+
+  if (!financeDoc) return res.status(404).json({ error: 'Data not found' });
+
+  financeDoc.expenses = [];
+  financeDoc.expensesLogs = [];
+  financeDoc.historyLogs = [];
+  financeDoc.income = [];
+  financeDoc.incomeLogs = [];
+
+  const savedFinanceDoc = await financeDoc.save();
+
+  if (!savedFinanceDoc)
+    return res.status(404).json({ error: 'An error occurred' });
+
+  res.status(200).json({
+    expenses: savedFinanceDoc.expenses,
+    income: savedFinanceDoc.income
+  });
+};
+
 export const handleGetBalance = async (req: Request, res: Response) => {
   const { userId } = req;
 

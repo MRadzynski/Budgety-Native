@@ -241,6 +241,7 @@ const styles = StyleSheet.create({
   addExpenseIncomeBtnContainer: {
     alignSelf: 'center',
     backgroundColor: COLORS.PRIMARY,
+    marginBottom: 8,
     width: '70%'
   },
   addExpenseIncomeBtnContent: {

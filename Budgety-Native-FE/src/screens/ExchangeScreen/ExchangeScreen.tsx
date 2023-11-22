@@ -100,8 +100,10 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
             const response = await fetch(url, options);
             const data = await response.json();
 
-            data.allTimeBalance && setAllTimeBalance(data.allTimeBalance);
-            data.monthlyBalance && setMonthlyBalance(data.monthlyBalance);
+            Number.isFinite(data?.allTimeBalance) &&
+              setAllTimeBalance(data.allTimeBalance);
+            Number.isFinite(data?.monthlyBalance) &&
+              setMonthlyBalance(data.monthlyBalance);
             setIsLoading(false);
           } catch (error: unknown) {
             if (error instanceof Error) console.error(error.message);

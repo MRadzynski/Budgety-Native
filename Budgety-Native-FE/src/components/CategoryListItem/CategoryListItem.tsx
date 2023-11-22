@@ -1,6 +1,7 @@
 import { formatNumber } from '../../utils/helpers';
 import { MaterialIcons } from '@expo/vector-icons';
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { useAppSelector } from '../../hooks/redux';
 
 interface IProps {
   amount: number;
@@ -23,6 +24,8 @@ const CategoryListItem = ({
   id,
   name
 }: IProps) => {
+  const currentUser = useAppSelector(state => state.user.currentUser);
+
   return (
     <TouchableWithoutFeedback onPress={handleQuickAdd}>
       <View style={styles.container}>
@@ -31,7 +34,12 @@ const CategoryListItem = ({
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.name}>{name}</Text>
-          <Text style={styles.amount}>{formatNumber(amount, 'USD')}</Text>
+          <Text style={styles.amount}>
+            {formatNumber(
+              amount,
+              'currency' in currentUser ? currentUser.currency : 'USD'
+            )}
+          </Text>
         </View>
         <View style={styles.actionsContainer}>
           <MaterialIcons
