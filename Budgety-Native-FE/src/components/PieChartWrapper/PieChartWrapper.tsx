@@ -1,5 +1,6 @@
 import { COLORS } from '../../styles/Colors';
 import { formatNumber } from '../../utils/helpers';
+import { LANGUAGES_LOCALES } from '../../data/constants';
 import { PieChart } from 'react-native-charts-wrapper';
 import {
   processColor,
@@ -10,6 +11,7 @@ import {
   ViewStyle
 } from 'react-native';
 import { useAppSelector } from '../../hooks/redux';
+import { useMemo } from 'react';
 
 interface Props {
   centerValue?: string;
@@ -30,6 +32,11 @@ const PieChartWrapper = ({
 }: Props) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
 
+  const HAS_AT_LEAST_ONE_VALUE_ADDED = useMemo(
+    () => data.some(({ value }) => value > 0),
+    [data]
+  );
+
   return (
     <View style={[containerStyles, { position: 'relative' }]}>
       <PieChart
@@ -38,19 +45,23 @@ const PieChartWrapper = ({
           dataSets: [
             {
               config: {
-                colors: data.map(({ color }) => processColor(color)),
+                colors: HAS_AT_LEAST_ONE_VALUE_ADDED
+                  ? data.map(({ color }) => processColor(color))
+                  : [processColor('#ffffffee')],
                 drawValues: false,
                 sliceSpace: 3
               },
               label,
-              values: data.map(({ name, value }) => ({ label: name, value }))
+              values: HAS_AT_LEAST_ONE_VALUE_ADDED
+                ? data.map(({ name, value }) => ({ label: name, value }))
+                : [{ label: 'defaultName', value: 1 }]
             }
           ]
         }}
         drawEntryLabels={false}
         highlightPerTapEnabled={false}
         holeColor={processColor(COLORS.PRIMARY)}
-        holeRadius={Number(centerValue) === 0 ? 100 : 60}
+        holeRadius={60}
         legend={{ enabled: false }}
         maxAngle={360}
         rotationEnabled={false}
@@ -63,7 +74,12 @@ const PieChartWrapper = ({
               Number(centerValue),
               currentUser && 'currency' in currentUser
                 ? currentUser.currency
-                : 'USD'
+                : 'USD',
+              'language' in currentUser
+                ? LANGUAGES_LOCALES[
+                    currentUser.language as keyof typeof LANGUAGES_LOCALES
+                  ]
+                : LANGUAGES_LOCALES['EN']
             )}
           </Text>
         </View>

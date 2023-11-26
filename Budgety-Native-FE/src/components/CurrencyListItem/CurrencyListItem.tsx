@@ -12,22 +12,27 @@ interface ICurrencyListItemProps {
   item: ICurrencyList;
 }
 
-const CurrencyListItem = ({ item, index }: ICurrencyListItemProps) => {
-  return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor:
-            index % 2 === 0 ? COLORS.WHITE_SHADE : COLORS.LIGHT_GRAY
-        }
-      ]}
+const CurrencyListItem = ({ index, item }: ICurrencyListItemProps) => (
+  <View
+    style={[
+      styles.container,
+      {
+        backgroundColor:
+          index % 2 === 0 ? COLORS.WHITE_SHADE : COLORS.LIGHT_GRAY
+      }
+    ]}
+  >
+    <Text style={styles.itemName}>{item.name}</Text>
+    <Text
+      style={{
+        ...styles.itemValue,
+        fontSize: item.value.length - item.name.length + 1 > 16 ? 16 : 20
+      }}
     >
-      <Text style={styles.itemName}>{item.name}</Text>
-      <Text style={styles.itemValue}>{item.value}</Text>
-    </View>
-  );
-};
+      {item.value}
+    </Text>
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -42,8 +47,7 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   itemValue: {
-    color: COLORS.BLACK_SHADE,
-    fontSize: 20
+    color: COLORS.BLACK_SHADE
   }
 });
 

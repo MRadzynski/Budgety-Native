@@ -3,11 +3,20 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Link } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from 'react';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Title from '../../components/Title/Title';
 
 const SignUpScreen = () => {
+  const [email, setEmail] = useState('');
+
+  const handleApply = () => {};
+
+  const handleEmailChange = (e: string) => setEmail(e);
+
+  const isSubmitBtnDisabled = email.trim().length === 0;
+
   return (
     <SafeAreaView style={{ backgroundColor: COLORS.PRIMARY, flex: 1 }}>
       <KeyboardAwareScrollView
@@ -45,7 +54,7 @@ const SignUpScreen = () => {
             Enter your email for instructions on resetting your password
           </Text>
           <CustomTextInput
-            onChangeText={e => console.log('email')}
+            onChangeText={handleEmailChange}
             placeholderText="Email"
             type="email-address"
           />
@@ -58,7 +67,8 @@ const SignUpScreen = () => {
               width: 240
             }
           }}
-          onPress={e => console.log('submit')}
+          isDisabled={isSubmitBtnDisabled}
+          onPress={handleApply}
           title="Reset Password"
         />
         <View style={styles.paragraphContainer}>

@@ -8,11 +8,12 @@ interface IProps {
   defaultValue?: string;
   hashText?: boolean;
   onBlur?: () => void;
-  onChangeText: (event: string) => void;
+  onChangeText?: (event: string) => void;
   placeholderText: string;
   placeholderTextColor?: string;
   selectionColor?: string;
   type?: KeyboardTypeOptions;
+  value?: string;
 }
 
 interface ITextInputCustomStyle {
@@ -31,7 +32,8 @@ const CustomTextInput = ({
   placeholderText,
   placeholderTextColor = COLORS.LIGHT_GRAY,
   selectionColor = 'white',
-  type = 'default'
+  type = 'default',
+  value
 }: IProps) => {
   const containerStyle = customStyles?.container || {};
   const contentStyle = customStyles?.content || {};
@@ -51,6 +53,7 @@ const CustomTextInput = ({
         selectionColor={selectionColor}
         style={[styles.textInput, contentStyle]}
         textContentType="oneTimeCode"
+        value={value}
       />
     </View>
   );
