@@ -52,6 +52,11 @@ const ScrollableBarChart = ({ containerStyles, data, label }: Props) => {
       if (data.length < 3) left = barIndex * 120;
       if (data.length < 2) left = 100;
 
+      if (barIndex === data.length - 1 && data.length < 5)
+        left = windowWidth - 230;
+      if (barIndex === data.length - 1 && data.length >= 5)
+        left = barIndex * 65 - 50 - 70;
+
       setCoords({
         left,
         top: 30
@@ -66,7 +71,7 @@ const ScrollableBarChart = ({ containerStyles, data, label }: Props) => {
     setBarIndex(index);
   };
 
-  const sumOfAllData = useMemo(
+  const SUM_OF_ALL_DATA = useMemo(
     () => data?.reduce((acc, record) => acc + record.value, 0) || 0,
     [data]
   );
@@ -84,14 +89,20 @@ const ScrollableBarChart = ({ containerStyles, data, label }: Props) => {
             styles.tooltipContainer,
             {
               left: coords.left,
-              top: coords.top,
-              width: data[barIndex].value.toString().length * 10 + 20
+              minWidth: data[barIndex].value.toString().length * 10 + 20,
+              top: coords.top
             }
           ]}
         >
-          <Text style={styles.tooltipHeader}>{data[barIndex].name}</Text>
+          <Text
+            ellipsizeMode="tail"
+            numberOfLines={1}
+            style={styles.tooltipHeader}
+          >
+            {data[barIndex].name}
+          </Text>
           <Text style={styles.tooltipValue}>{`Percent: ${(
-            (data[barIndex].value / sumOfAllData) *
+            (data[barIndex].value / SUM_OF_ALL_DATA) *
             100
           ).toFixed(2)}%`}</Text>
           <Text style={styles.tooltipValue}>{`Value: ${new Intl.NumberFormat(
@@ -118,7 +129,7 @@ const ScrollableBarChart = ({ containerStyles, data, label }: Props) => {
               },
               label,
               values: data.map(({ value }) => ({
-                y: (value / sumOfAllData) * 100
+                y: (value / SUM_OF_ALL_DATA) * 100
               }))
             }
           ]
@@ -156,8 +167,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderStyle: 'solid',
     borderWidth: 1,
-    height: 60,
-    minWidth: 100,
+    maxWidth: 150,
     padding: 6,
     position: 'absolute',
     zIndex: 1

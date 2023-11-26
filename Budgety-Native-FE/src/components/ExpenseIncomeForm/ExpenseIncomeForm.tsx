@@ -1,6 +1,6 @@
 import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
-import { CONTEXT } from '../../data/constants';
+import { CONTEXT, CURRENCIES_SIGNS } from '../../data/constants';
 import { MaterialIcons } from '@expo/vector-icons';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { StyleSheet, Text, View } from 'react-native';
@@ -71,7 +71,7 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
     if (currentUser && 'token' in currentUser) {
       const options = {
         body: JSON.stringify({
-          amount: price,
+          amount: Number(price.replace(',', '.')),
           id: category?.value
         }),
         headers: {
@@ -97,7 +97,24 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
 
   const handleClose = () => navigation.navigate('CategoriesList');
 
-  const handlePriceChange = (value: string) => setPrice(value);
+  const handlePriceChange = (value: string) => {
+    if (
+      'language' in currentUser &&
+      currentUser.language === 'EN' &&
+      value.includes(',')
+    )
+      value = value.replace(',', '.');
+    else if (
+      'language' in currentUser &&
+      currentUser.language !== 'EN' &&
+      value.includes('.')
+    )
+      value = value.replace('.', ',');
+
+    if (value === '' || /^\d+([.,]\d{0,2})?$/.test(value)) {
+      setPrice(value);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -114,7 +131,13 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
       </View>
       <View style={styles.formBody}>
         <View style={styles.formRow}>
-          <Text style={styles.formFieldName}>Price($)</Text>
+          <Text style={styles.formFieldName}>{`Price(${
+            'currency' in currentUser
+              ? CURRENCIES_SIGNS[
+                  currentUser.currency as keyof typeof CURRENCIES_SIGNS
+                ]
+              : '$'
+          })`}</Text>
           <CustomTextInput
             cursorColor={COLORS.PRIMARY}
             customStyles={{
@@ -122,10 +145,15 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
               content: styles.priceInputContent
             }}
             onChangeText={handlePriceChange}
-            placeholderText="1.00"
+            placeholderText={
+              'language' in currentUser && currentUser.language === 'EN'
+                ? '1.00'
+                : '1,00'
+            }
             placeholderTextColor="#757575"
             selectionColor={COLORS.PRIMARY}
             type="decimal-pad"
+            value={price}
           />
         </View>
         <View style={styles.formRow}>
@@ -157,6 +185,7 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
           container: styles.confirmBtnContainer,
           textContent: styles.confirmBtnText
         }}
+        isDisabled={!category || !price}
         onPress={handleApply}
         title="Confirm"
       />
@@ -172,7 +201,8 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderStyle: 'solid',
     borderWidth: 1,
-    height: 140,
+    maxHeight: 140,
+    minHeight: 30,
     width: 120
   },
   categoryDropdownListItemValue: {

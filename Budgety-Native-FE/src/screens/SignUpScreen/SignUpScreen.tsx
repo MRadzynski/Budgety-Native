@@ -11,6 +11,7 @@ import { useAppDispatch } from '../../hooks/redux';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Title from '../../components/Title/Title';
+import Toast from 'react-native-toast-message';
 
 const validateEmail = (email: string) => {
   const re =
@@ -21,7 +22,6 @@ const validateEmail = (email: string) => {
 const SignUpScreen = () => {
   const [confirmationPassword, setConfirmationPassword] = useState('');
   const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
 
@@ -37,8 +37,6 @@ const SignUpScreen = () => {
   const handlePasswordChange = (e: string) => setPassword(e);
 
   const handleSubmit = async () => {
-    setError('');
-
     if (validateData()) {
       const url = `${API_URL}/api/user/signup`;
       const body = {
@@ -76,13 +74,25 @@ const SignUpScreen = () => {
             })
           );
         } else {
-          setError(data?.error);
+          Toast.show({
+            text1: data?.error,
+            type: 'error',
+            visibilityTime: 2500
+          });
         }
       } catch (error: unknown) {
         if (error instanceof Error) {
-          setError(error.message);
+          Toast.show({
+            text1: error.message,
+            type: 'error',
+            visibilityTime: 2500
+          });
         } else {
-          setError('Something went wrong');
+          Toast.show({
+            text1: 'Something went wrong',
+            type: 'error',
+            visibilityTime: 2500
+          });
         }
       }
     }
@@ -92,32 +102,71 @@ const SignUpScreen = () => {
 
   const validateData = () => {
     if (!validateEmail(email)) {
-      setError('Email is not valid');
+      Toast.show({
+        text1: 'Email is not valid',
+        type: 'error',
+        visibilityTime: 2500
+      });
       return false;
     }
 
     if (password.length < 8) {
-      setError('Password should contain at least 8 characters');
+      Toast.show({
+        props: {
+          text1FontSize: 12
+        },
+        text1: 'Password should contain at least 8 characters',
+        type: 'error',
+        visibilityTime: 2500
+      });
       return false;
     }
 
     if (!/[A-Z]/.test(password)) {
-      setError('Password should contain at least 1 uppercase letter');
+      Toast.show({
+        props: {
+          text1FontSize: 12
+        },
+        text1: 'Password should contain at least 1 uppercase letter',
+        type: 'error',
+        visibilityTime: 2500
+      });
       return false;
     }
 
     if (!/[0-9]/.test(password)) {
-      setError('Password should contain at least 1 number');
+      Toast.show({
+        props: {
+          text1FontSize: 12
+        },
+        text1: 'Password should contain at least 1 number',
+        type: 'error',
+        visibilityTime: 2500
+      });
       return false;
     }
 
     if (!/[!@#$%^&*]/.test(password)) {
-      setError('Password should contain at least 1 special character');
+      Toast.show({
+        props: {
+          text1FontSize: 11
+        },
+        text1: 'Password should contain at least 1 special character',
+        type: 'error',
+        visibilityTime: 2500
+      });
       return false;
     }
 
     if (password !== confirmationPassword) {
-      setError('Passwords do not match');
+      Toast.show({
+        props: {
+          text1FontSize: 12
+        },
+        text1: 'Passwords do not match',
+        type: 'error',
+        visibilityTime: 2500
+      });
       return false;
     }
 
@@ -186,7 +235,6 @@ const SignUpScreen = () => {
             onChangeText={handleConfirmationPasswordChange}
             placeholderText="Confirm Password"
           />
-          {error && <Text style={{ color: COLORS.ERROR }}>{error}</Text>}
         </View>
         <CustomButton
           customStyles={{

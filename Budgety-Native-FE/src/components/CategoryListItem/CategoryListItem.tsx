@@ -1,4 +1,5 @@
 import { formatNumber } from '../../utils/helpers';
+import { LANGUAGES_LOCALES } from '../../data/constants';
 import { MaterialIcons } from '@expo/vector-icons';
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { useAppSelector } from '../../hooks/redux';
@@ -37,7 +38,12 @@ const CategoryListItem = ({
           <Text style={styles.amount}>
             {formatNumber(
               amount,
-              'currency' in currentUser ? currentUser.currency : 'USD'
+              'currency' in currentUser ? currentUser.currency : 'USD',
+              'language' in currentUser
+                ? LANGUAGES_LOCALES[
+                    currentUser.language as keyof typeof LANGUAGES_LOCALES
+                  ]
+                : LANGUAGES_LOCALES['EN']
             )}
           </Text>
         </View>
@@ -71,6 +77,7 @@ const styles = StyleSheet.create({
     fontSize: 12
   },
   container: {
+    alignItems: 'center',
     backgroundColor: '#efefef',
     borderRadius: 8,
     elevation: 3,

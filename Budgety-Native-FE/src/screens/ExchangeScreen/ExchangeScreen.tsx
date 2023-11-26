@@ -7,7 +7,8 @@ import {
 } from 'react-native';
 import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
-import { formatNumber } from '../../utils/helpers';
+import { formatDate, formatNumber } from '../../utils/helpers';
+import { LANGUAGES_LOCALES } from '../../data/constants';
 import { useAppSelector } from '../../hooks/redux';
 import { useCallback, useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
@@ -37,6 +38,7 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
     ICurrencyListState[] | null
   >(null);
   const [context, setContext] = useState('monthly');
+  const [currenciesDate, setCurrenciesDate] = useState('');
   const [currenciesList, setCurrenciesList] = useState<
     ICurrencyListBaseState[]
   >([]);
@@ -62,6 +64,7 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
 
       if (data.rates) {
         const ratesAsEntries = Object.entries(data.rates);
+        data.date && setCurrenciesDate(data.date);
         const formattedList = ratesAsEntries.map(entry => ({
           id: entry[0],
           name: entry[0],
@@ -80,7 +83,7 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
     };
 
     fetchCurrencies();
-  }, []);
+  }, [currentUser]);
 
   useFocusEffect(
     useCallback(() => {
@@ -114,6 +117,8 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
       };
 
       fetchData();
+
+      return () => setContext('monthly');
     }, [])
   );
 
@@ -123,12 +128,17 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
         ...currency,
         value: formatNumber(
           Number(currency.value) * allTimeBalance,
-          currency.name
+          currency.name,
+          'language' in currentUser
+            ? LANGUAGES_LOCALES[
+                currentUser.language as keyof typeof LANGUAGES_LOCALES
+              ]
+            : LANGUAGES_LOCALES['EN']
         )
       }));
       setAllTimeCurrenciesList(newCurrenciesList);
     }
-  }, [allTimeBalance, currenciesList]);
+  }, [allTimeBalance, currenciesList, currentUser]);
 
   useEffect(() => {
     if (currenciesList.length > 0) {
@@ -136,14 +146,19 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
         ...currency,
         value: formatNumber(
           Number(currency.value) * monthlyBalance,
-          currency.name
+          currency.name,
+          'language' in currentUser
+            ? LANGUAGES_LOCALES[
+                currentUser.language as keyof typeof LANGUAGES_LOCALES
+              ]
+            : LANGUAGES_LOCALES['EN']
         )
       }));
       setMonthlyCurrenciesList(newCurrenciesList);
     }
-  }, [currenciesList, monthlyBalance]);
+  }, [currenciesList, currentUser, monthlyBalance]);
 
-  const handleContextChange = (context: 'all-time' | 'monthly') =>
+  const handleContextChange = (context: 'all-time' | 'monthly') => () =>
     setContext(context);
 
   return (
@@ -165,28 +180,52 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
             style={styles.loader}
           />
         ) : (
-          <FlatList
-            data={
-              context === 'monthly'
-                ? monthlyCurrenciesList
-                : allTimeCurrenciesList
-            }
-            renderItem={({ item, index }) => (
-              <CurrencyListItem item={item} index={index} />
-            )}
-            style={styles.listContent}
-          />
+          <>
+            <FlatList
+              data={
+                context === 'monthly'
+                  ? monthlyCurrenciesList
+                  : allTimeCurrenciesList
+              }
+              renderItem={({ item, index }) => (
+                <CurrencyListItem item={item} index={index} />
+              )}
+              style={styles.listContent}
+            />
+            <Text
+              style={{ textAlign: 'center' }}
+            >{`Currencies rates as of: ${formatDate(
+              new Date(currenciesDate || Date.now()),
+              'language' in currentUser
+                ? LANGUAGES_LOCALES[
+                    currentUser.language as keyof typeof LANGUAGES_LOCALES
+                  ]
+                : LANGUAGES_LOCALES['EN']
+            )}`}</Text>
+          </>
         )}
       </View>
       <View style={styles.buttonsContainer}>
         <CustomButton
-          customStyles={{ container: styles.singleButtonContainer }}
-          onPress={() => handleContextChange('monthly')}
+          customStyles={{
+            container: {
+              ...styles.singleButtonContainer,
+              borderColor:
+                context === 'monthly' ? COLORS.SECONDARY : 'transparent'
+            }
+          }}
+          onPress={handleContextChange('monthly')}
           title="Current Month"
         />
         <CustomButton
-          customStyles={{ container: styles.singleButtonContainer }}
-          onPress={() => handleContextChange('all-time')}
+          customStyles={{
+            container: {
+              ...styles.singleButtonContainer,
+              borderColor:
+                context === 'all-time' ? COLORS.SECONDARY : 'transparent'
+            }
+          }}
+          onPress={handleContextChange('all-time')}
           title="All Time"
         />
       </View>
@@ -197,7 +236,7 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
 const styles = StyleSheet.create({
   buttonsContainer: {
     flexDirection: 'row',
-    gap: 20,
+    gap: 16,
     marginBottom: 10,
     marginTop: 20
   },
@@ -210,7 +249,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     backgroundColor: 'white',
-    borderRadius: 8,
+    borderRadius: 15,
     flex: 1,
     justifyContent: 'center',
     overflow: 'hidden'
@@ -222,7 +261,8 @@ const styles = StyleSheet.create({
     transform: [{ scaleX: 1.25 }, { scaleY: 1.25 }]
   },
   singleButtonContainer: {
-    borderRadius: 8,
+    borderRadius: 15,
+    borderWidth: 2,
     flex: 1
   },
   subText: {

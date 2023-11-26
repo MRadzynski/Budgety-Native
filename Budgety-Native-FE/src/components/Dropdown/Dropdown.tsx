@@ -146,7 +146,9 @@ const Dropdown: FC<IProps> = ({
       ref={dropdownButton}
       style={[styles.button, buttonStyle]}
     >
-      <Text style={styles.buttonText}>{selected?.label || label}</Text>
+      <Text ellipsizeMode="tail" numberOfLines={2} style={styles.buttonText}>
+        {selected?.label || label}
+      </Text>
       <Entypo
         color={COLORS.BLACK_SHADE}
         name="chevron-up"

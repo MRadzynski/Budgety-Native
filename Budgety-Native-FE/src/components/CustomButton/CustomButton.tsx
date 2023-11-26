@@ -29,7 +29,7 @@ const CustomButton = ({ customStyles, isDisabled, onPress, title }: IProps) => {
       activeOpacity={0.8}
       disabled={isDisabled}
       onPress={onPress}
-      style={[styles.container, containerStyle]}
+      style={[styles.container, containerStyle, isDisabled && { opacity: 0.6 }]}
     >
       <Text style={[styles.textContent, textContentStyle]}>{title}</Text>
     </TouchableOpacity>

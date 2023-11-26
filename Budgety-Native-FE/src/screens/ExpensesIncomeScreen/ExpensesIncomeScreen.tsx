@@ -1,13 +1,25 @@
 import { COLORS } from '../../styles/Colors';
 import { CONTEXT } from '../../data/constants';
+import { setContext } from '../../slices/expenseIncomeSlice';
+import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
-import { useAppSelector } from '../../hooks/redux';
-import { useMemo } from 'react';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { useCallback, useMemo } from 'react';
 import ExpensesIncomeStack from '../../routes/ExpensesIncomeStack/ExpensesIncomeStack';
 import PieChartWrapper from '../../components/PieChartWrapper/PieChartWrapper';
 import Title from '../../components/Title/Title';
 
-const ExpensesIncomeScreen = () => {
+interface IProps {
+  navigation: any;
+}
+
+type TParamList = {
+  ExpensesIncomeScreen: {
+    context: 'EXPENSES' | 'INCOME';
+  };
+};
+
+const ExpensesIncomeScreen = ({ navigation }: IProps) => {
   const context = useAppSelector(state => state.expensesIncome.context);
   const expensesCategories = useAppSelector(
     state => state.expensesIncome.expensesCategories
@@ -16,7 +28,18 @@ const ExpensesIncomeScreen = () => {
     state => state.expensesIncome.incomeCategories
   );
 
+  const dispatch = useAppDispatch();
+
   const { width } = useWindowDimensions();
+
+  const { params } = useRoute<RouteProp<TParamList, 'ExpensesIncomeScreen'>>();
+
+  useFocusEffect(
+    useCallback(() => {
+      if (params?.context) dispatch(setContext(params.context));
+      navigation.navigate('CategoriesList');
+    }, [params])
+  );
 
   const EXPENSES_CATEGORIES_PIE_DATA = useMemo(
     () =>

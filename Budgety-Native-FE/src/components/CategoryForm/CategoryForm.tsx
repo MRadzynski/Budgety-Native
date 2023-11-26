@@ -187,6 +187,7 @@ const CategoryForm = ({ navigation }: IProps) => {
           container: styles.confirmBtnContainer,
           textContent: styles.confirmBtnText
         }}
+        isDisabled={!name}
         onPress={handleApply}
         title="Confirm"
       />

@@ -1,6 +1,7 @@
 import { COLORS } from '../../styles/Colors';
 import { Entypo } from '@expo/vector-icons';
-import { formatNumber } from '../../utils/helpers';
+import { formatNumber, getMonthNameByNumber } from '../../utils/helpers';
+import { LANGUAGES_LOCALES } from '../../data/constants';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAppSelector } from '../../hooks/redux';
 import { useCallback, useMemo, useState } from 'react';
@@ -56,6 +57,18 @@ const HistoryTab = ({ data }: IProps) => {
     [data.income]
   );
 
+  const BALANCE = useMemo(
+    () => data.sumOfIncome - data.sumOfExpenses,
+    [data.sumOfIncome, data.sumOfExpenses]
+  );
+
+  const DATE_TO_DISPLAY = useMemo(() => {
+    if (data.date === 'All Time') return 'All time';
+
+    const splitDate = data.date.split('/');
+    return `${getMonthNameByNumber(splitDate[0])} ${splitDate[1]}`;
+  }, [data.date]);
+
   return (
     <>
       <TouchableOpacity
@@ -75,7 +88,7 @@ const HistoryTab = ({ data }: IProps) => {
           size={16}
           style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
         />
-        <Text style={styles.tabTitle}>{data.date}</Text>
+        <Text style={styles.tabTitle}>{DATE_TO_DISPLAY}</Text>
       </TouchableOpacity>
       {isOpen && (
         <View style={styles.tabContent}>
@@ -84,7 +97,12 @@ const HistoryTab = ({ data }: IProps) => {
               data.sumOfExpenses,
               currentUser && 'currency' in currentUser
                 ? currentUser.currency
-                : 'USD'
+                : 'USD',
+              'language' in currentUser
+                ? LANGUAGES_LOCALES[
+                    currentUser.language as keyof typeof LANGUAGES_LOCALES
+                  ]
+                : LANGUAGES_LOCALES['EN']
             )}`}</Text>
             <ScrollableBarChart
               containerStyles={styles.barChartContainer}
@@ -97,7 +115,12 @@ const HistoryTab = ({ data }: IProps) => {
               data.sumOfIncome,
               currentUser && 'currency' in currentUser
                 ? currentUser.currency
-                : 'USD'
+                : 'USD',
+              'language' in currentUser
+                ? LANGUAGES_LOCALES[
+                    currentUser.language as keyof typeof LANGUAGES_LOCALES
+                  ]
+                : LANGUAGES_LOCALES['EN']
             )}`}</Text>
             <ScrollableBarChart
               containerStyles={styles.barChartContainer}
@@ -105,11 +128,26 @@ const HistoryTab = ({ data }: IProps) => {
               label="Income"
             />
           </View>
-          <Text style={styles.chartTitle}>{`Balance: ${formatNumber(
-            data.sumOfIncome - data.sumOfExpenses,
+          <Text
+            style={{
+              ...styles.chartTitle,
+              color:
+                BALANCE > 0
+                  ? COLORS.SUCCESS
+                  : BALANCE === 0
+                  ? COLORS.PRIMARY
+                  : COLORS.ERROR
+            }}
+          >{`Balance: ${formatNumber(
+            BALANCE,
             currentUser && 'currency' in currentUser
               ? currentUser.currency
-              : 'USD'
+              : 'USD',
+            'language' in currentUser
+              ? LANGUAGES_LOCALES[
+                  currentUser.language as keyof typeof LANGUAGES_LOCALES
+                ]
+              : LANGUAGES_LOCALES['EN']
           )}`}</Text>
         </View>
       )}

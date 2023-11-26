@@ -7,10 +7,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { saveToSecureStore } from '../../utils/secureStorage';
 import { setUser } from '../../slices/userSlice';
 import { useAppDispatch } from '../../hooks/redux';
-import { useReducer, useRef, useState } from 'react';
+import { useReducer, useRef } from 'react';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Title from '../../components/Title/Title';
+import Toast from 'react-native-toast-message';
 
 interface IState {
   email: string;
@@ -39,7 +40,6 @@ const reducer = (state: IState, action: TAction): IState => {
 
 const LoginScreen: React.FC<any> = ({ navigation }) => {
   const [state, reducerDispatch] = useReducer(reducer, INITIAL_STATE);
-  const [error, setError] = useState('');
 
   const dispatch = useAppDispatch();
 
@@ -88,13 +88,26 @@ const LoginScreen: React.FC<any> = ({ navigation }) => {
           })
         );
       } else {
-        setError(data?.error);
+        Toast.show({
+          text1: data?.error,
+          text2: 'Please check the credentials and try again.',
+          type: 'error',
+          visibilityTime: 2500
+        });
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
-        setError(error.message);
+        Toast.show({
+          text1: error.message,
+          type: 'error',
+          visibilityTime: 2500
+        });
       } else {
-        setError('Something went wrong');
+        Toast.show({
+          text1: 'Something went wrong',
+          type: 'error',
+          visibilityTime: 2500
+        });
       }
     }
   };
@@ -155,7 +168,6 @@ const LoginScreen: React.FC<any> = ({ navigation }) => {
           >
             Forgot password?
           </Link>
-          {error && <Text style={{ color: COLORS.ERROR }}>{error}</Text>}
         </View>
         <CustomButton
           customStyles={{

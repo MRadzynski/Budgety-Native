@@ -1,5 +1,6 @@
 import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
+import { CONTEXT, LANGUAGES_LOCALES } from '../../data/constants';
 import { formatNumber } from '../../utils/helpers';
 import { PieChartSelectEvent } from 'react-native-charts-wrapper';
 import { StyleSheet, Text, View } from 'react-native';
@@ -66,9 +67,8 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
     if (!event.nativeEvent || !event.nativeEvent.label) return;
     const context = event.nativeEvent.label;
 
-    //TODO: navigate to the proper tab with context ^
     navigation.navigate('ExpensesIncome', {
-      screen: 'ExpensesIncomeScreen'
+      context: context === 'Expenses' ? CONTEXT.EXPENSES : CONTEXT.INCOME
     });
   };
 
@@ -89,6 +89,16 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
         0
       );
     }
+
+    const hasAtLeastOneValueAddedExp = expensesCategories?.some(
+      expCat => expCat.amount > 0
+    );
+
+    const hasAtLeastOneValueAddedInc = incomeCategories?.some(
+      incCat => incCat.amount > 0
+    );
+
+    if (!hasAtLeastOneValueAddedExp && !hasAtLeastOneValueAddedInc) return [];
 
     setBalance(incomeSum - expensesSum);
 
@@ -132,48 +142,74 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>{`Hey ${
+      <Text
+        ellipsizeMode="tail"
+        numberOfLines={2}
+        style={styles.welcomeText}
+      >{`Hey ${
         'username' in currentUser && currentUser.username
-          ? currentUser.username
+          ? `${currentUser.username}`
           : 'User'
       }! 👋`}</Text>
       <View style={styles.section}>
-        <View style={styles.chartContainer}>
-          <SemiPieChart
-            chartStyles={styles.chart}
-            data={BALANCE_PIE_DATA}
-            label="Balance"
-            onSelectHandler={handleSemiPieChartClick}
-          />
-        </View>
+        {BALANCE_PIE_DATA.length ? (
+          <View style={styles.chartContainer}>
+            <SemiPieChart
+              chartStyles={styles.chart}
+              data={BALANCE_PIE_DATA}
+              label="Balance"
+              onSelectHandler={handleSemiPieChartClick}
+            />
+          </View>
+        ) : (
+          <Text style={styles.notFoundText}>No Data To Present 😔</Text>
+        )}
         <Text
           style={[
             styles.balanceText,
             {
-              color: balance > 0 ? COLORS.SUCCESS : COLORS.ERROR
+              color:
+                balance > 0
+                  ? COLORS.SUCCESS
+                  : balance === 0
+                  ? COLORS.BLACK_SHADE
+                  : COLORS.ERROR
             }
           ]}
         >{`Balance: ${formatNumber(
           balance,
           currentUser && 'currency' in currentUser
             ? currentUser.currency
-            : 'USD'
+            : 'USD',
+          'language' in currentUser
+            ? LANGUAGES_LOCALES[
+                currentUser.language as keyof typeof LANGUAGES_LOCALES
+              ]
+            : LANGUAGES_LOCALES['EN']
         )}`}</Text>
       </View>
       <View style={styles.section}>
-        <ScrollableBarChart
-          containerStyles={styles.barChartContainer}
-          data={EXPENSE_BAR_DATA}
-          label="Expenses"
-        />
+        {EXPENSE_BAR_DATA.length ? (
+          <ScrollableBarChart
+            containerStyles={styles.barChartContainer}
+            data={EXPENSE_BAR_DATA}
+            label="Expenses"
+          />
+        ) : (
+          <Text style={styles.notFoundText}>No Data To Present 😔</Text>
+        )}
         <Text style={styles.sectionValueText}>Expenses</Text>
       </View>
       <View style={styles.section}>
-        <ScrollableBarChart
-          containerStyles={styles.barChartContainer}
-          data={INCOME_BAR_DATA}
-          label="Income"
-        />
+        {INCOME_BAR_DATA.length ? (
+          <ScrollableBarChart
+            containerStyles={styles.barChartContainer}
+            data={INCOME_BAR_DATA}
+            label="Income"
+          />
+        ) : (
+          <Text style={styles.notFoundText}>No Data To Present 😔</Text>
+        )}
         <Text style={styles.sectionValueText}>Income</Text>
       </View>
     </View>
@@ -207,6 +243,13 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 16,
     paddingBottom: 32
+  },
+  notFoundText: {
+    alignSelf: 'center',
+    color: COLORS.BLACK_SHADE,
+    flex: 1,
+    fontSize: 20,
+    textAlignVertical: 'center'
   },
   section: {
     backgroundColor: 'white',

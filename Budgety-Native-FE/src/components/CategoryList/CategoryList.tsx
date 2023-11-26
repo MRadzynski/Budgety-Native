@@ -1,3 +1,4 @@
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { CONTEXT } from '../../data/constants';
@@ -8,7 +9,6 @@ import {
   setExpensesCategories,
   setIncomeCategories
 } from '../../slices/expenseIncomeSlice';
-import { StyleSheet, Text, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useFocusEffect } from '@react-navigation/native';
 import CategoryListItem from '../CategoryListItem/CategoryListItem';
@@ -23,6 +23,7 @@ interface IProps {
 const CategoryRoute = ({ navigation }: IProps) => {
   const [categoryIdToBeRemoved, setCategoryIdToBeRemoved] = useState('');
   const [categoryToBeRemoved, setCategoryToBeRemoved] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [isModalShown, setIsModalShown] = useState(false);
 
   const context = useAppSelector(state => state.expensesIncome.context);
@@ -50,6 +51,9 @@ const CategoryRoute = ({ navigation }: IProps) => {
           const url = `${API_URL}/api/finance/get-categories-monthly`;
 
           try {
+            if (!expensesCategories.length && !incomeCategories.length)
+              setIsLoading(true);
+
             const response = await fetch(url, options);
             const data = await response.json();
 
@@ -58,7 +62,10 @@ const CategoryRoute = ({ navigation }: IProps) => {
             data.monthlyIncome &&
               dispatch(setIncomeCategories(data.monthlyIncome));
           } catch (error: unknown) {
+            isLoading && setIsLoading(false);
             if (error instanceof Error) console.error(error.message);
+          } finally {
+            setIsLoading(false);
           }
         }
       };
@@ -162,42 +169,52 @@ const CategoryRoute = ({ navigation }: IProps) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <ScrollView style={styles.categoryListContainer}>
-        {(context === CONTEXT.EXPENSES
-          ? expensesCategories
-          : incomeCategories
-        ).map(item => (
-          <CategoryListItem
-            amount={item.amount}
-            bgColor={item.bgColor}
-            handleEditCategory={() => handleEditCategory(item)}
-            handleQuickAdd={() => handleAddExpenseIncome(item)}
-            handleRemoveCategory={handleRemoveCategory}
-            iconName={item.icon}
-            id={item._id}
-            key={item.categoryName}
-            name={item.categoryName}
-          />
-        ))}
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={handleAddCategory}
-          style={styles.addCategoryContainer}
-        >
-          <View style={styles.addCategoryIconContainer}>
-            <MaterialIcons color="white" name="add" size={32} />
-          </View>
-          <View style={styles.addCategoryInfoContainer}>
-            <Text style={styles.addCategoryInfoText}>Add new category</Text>
-          </View>
-        </TouchableOpacity>
-      </ScrollView>
+
+      {isLoading ? (
+        <ActivityIndicator
+          color={COLORS.PRIMARY}
+          size="large"
+          style={styles.loader}
+        />
+      ) : (
+        <ScrollView style={styles.categoryListContainer}>
+          {(context === CONTEXT.EXPENSES
+            ? expensesCategories
+            : incomeCategories
+          ).map(item => (
+            <CategoryListItem
+              amount={item.amount}
+              bgColor={item.bgColor}
+              handleEditCategory={() => handleEditCategory(item)}
+              handleQuickAdd={() => handleAddExpenseIncome(item)}
+              handleRemoveCategory={handleRemoveCategory}
+              iconName={item.icon}
+              id={item._id}
+              key={item.categoryName}
+              name={item.categoryName}
+            />
+          ))}
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={handleAddCategory}
+            style={styles.addCategoryContainer}
+          >
+            <View style={styles.addCategoryIconContainer}>
+              <MaterialIcons color="white" name="add" size={32} />
+            </View>
+            <View style={styles.addCategoryInfoContainer}>
+              <Text style={styles.addCategoryInfoText}>Add new category</Text>
+            </View>
+          </TouchableOpacity>
+        </ScrollView>
+      )}
       <View style={styles.addExpenseIncomeContainer}>
         <CustomButton
           customStyles={{
             container: styles.addExpenseIncomeBtnContainer,
             textContent: styles.addExpenseIncomeBtnContent
           }}
+          isDisabled={isLoading}
           onPress={() => handleAddExpenseIncome()}
           title={`Add ${context === CONTEXT.EXPENSES ? 'Expense' : 'Income'}`}
         />
@@ -259,6 +276,10 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.PRIMARY,
     flex: 1
+  },
+  loader: {
+    flex: 1,
+    transform: [{ scaleX: 1.25 }, { scaleY: 1.25 }]
   },
   tab: {
     alignItems: 'center',

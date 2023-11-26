@@ -16,9 +16,10 @@ const CustomDrawerContent: React.FC<any> = ({ navigation }) => {
   const handleLogout = async () => {
     dispatch(setUser({}));
     await deleteFromSecureStore('user');
+    navigation.dispatch(DrawerActions.closeDrawer());
   };
 
-  const navigateToScreen = (route: string) => {
+  const navigateToScreen = (route: string) => () => {
     navigation.dispatch(DrawerActions.closeDrawer());
     navigation.navigate(route);
   };
@@ -28,7 +29,7 @@ const CustomDrawerContent: React.FC<any> = ({ navigation }) => {
       {ROUTES.map(({ name, route }: IRoute) => (
         <TouchableOpacity
           key={route}
-          onPress={() => navigateToScreen(route)}
+          onPress={navigateToScreen(route)}
           style={styles.menuItem}
         >
           <Text style={styles.menuItemText}>{name}</Text>
@@ -37,7 +38,7 @@ const CustomDrawerContent: React.FC<any> = ({ navigation }) => {
       <TouchableOpacity
         key="logout"
         onPress={handleLogout}
-        style={styles.menuItem}
+        style={styles.menuItemLogout}
       >
         <Text style={styles.menuItemText}>Log Out</Text>
       </TouchableOpacity>
@@ -55,6 +56,11 @@ const styles = StyleSheet.create({
   menuItem: {
     paddingHorizontal: 20,
     paddingVertical: 20,
+    width: '100%'
+  },
+  menuItemLogout: {
+    paddingHorizontal: 20,
+    paddingTop: 50,
     width: '100%'
   },
   menuItemText: {
