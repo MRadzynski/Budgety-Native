@@ -2,83 +2,65 @@ import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Link } from '@react-navigation/native';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { saveToSecureStore } from '../../utils/secureStorage';
-import { setUser } from '../../slices/userSlice';
-import { useRef, useState } from 'react';
-import { useAppDispatch } from '../../hooks/redux';
+import { useState } from 'react';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Title from '../../components/Title/Title';
 import Toast from 'react-native-toast-message';
 
-const validateEmail = (email: string) => {
-  const re =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(email.trim().toLowerCase());
+interface IProps {
+  navigation: any;
+}
+
+type TParamList = {
+  ResetPasswordScreen: {
+    token: string;
+  };
 };
 
-const SignUpScreen = () => {
-  const [confirmationPassword, setConfirmationPassword] = useState('');
-  const [email, setEmail] = useState('');
+const ResetPasswordScreen = ({ navigation }: IProps) => {
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
 
-  const dispatch = useAppDispatch();
+  const { params } = useRoute<RouteProp<TParamList, 'ResetPasswordScreen'>>();
 
-  const abortControllerRef = useRef<AbortController>(new AbortController());
-
-  const handleConfirmationPasswordChange = (e: string) =>
-    setConfirmationPassword(e);
-
-  const handleEmailChange = (e: string) => setEmail(e);
-
-  const handlePasswordChange = (e: string) => setPassword(e);
-
-  const handleSubmit = async () => {
-    if (validateData()) {
-      const url = `${API_URL}/api/user/signup`;
-      const body = {
-        email: email.trim().toLowerCase(),
-        password: password.trim(),
-        username
+  const handleApply = async () => {
+    if (validateData() && params?.token) {
+      const url = `${API_URL}/api/user/reset-password`;
+      const options = {
+        body: JSON.stringify({
+          password: password.trim(),
+          token: params.token
+        }),
+        headers: {
+          Authorization: `Bearer ${params.token}`,
+          'Content-Type': 'application/json'
+        },
+        method: 'POST'
       };
 
       try {
-        const response = await fetch(url, {
-          body: JSON.stringify(body),
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          method: 'POST',
-          signal: abortControllerRef.current?.signal
-        });
-
+        const response = await fetch(url, options);
         const data = await response.json();
 
-        if (response.ok && data?.user) {
-          const { currency, email, language, username } = data.user;
-
-          dispatch(
-            setUser({ currency, email, language, token: data?.token, username })
-          );
-          await saveToSecureStore(
-            'user',
-            JSON.stringify({
-              currency,
-              email,
-              language,
-              token: data?.token,
-              username
-            })
-          );
-        } else {
-          Toast.show({
-            text1: data?.error,
+        if (data.error) {
+          return Toast.show({
+            text1: data.error,
             type: 'error',
             visibilityTime: 2500
           });
+        }
+
+        if (data.message === 'Password has been changed') {
+          Toast.show({
+            text1: 'Password reset successfully',
+            type: 'success',
+            visibilityTime: 2500
+          });
+
+          navigation.navigate('Login');
         }
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -98,18 +80,11 @@ const SignUpScreen = () => {
     }
   };
 
-  const handleUsernameChange = (e: string) => setUsername(e);
+  const handleConfirmPasswordChange = (e: string) => setConfirmPassword(e);
+
+  const handlePasswordChange = (e: string) => setPassword(e);
 
   const validateData = () => {
-    if (!validateEmail(email)) {
-      Toast.show({
-        text1: 'Email is not valid',
-        type: 'error',
-        visibilityTime: 2500
-      });
-      return false;
-    }
-
     if (password.length < 8) {
       Toast.show({
         props: {
@@ -158,7 +133,7 @@ const SignUpScreen = () => {
       return false;
     }
 
-    if (password !== confirmationPassword) {
+    if (password !== confirmPassword) {
       Toast.show({
         props: {
           text1FontSize: 12
@@ -174,10 +149,7 @@ const SignUpScreen = () => {
   };
 
   const isSubmitBtnDisabled =
-    email.trim().length === 0 ||
-    password.trim().length === 0 ||
-    confirmationPassword.trim().length === 0 ||
-    password.trim() !== confirmationPassword.trim();
+    password.trim().length === 0 && confirmPassword.trim().length === 0;
 
   return (
     <SafeAreaView style={{ backgroundColor: COLORS.PRIMARY, flex: 1 }}>
@@ -185,7 +157,7 @@ const SignUpScreen = () => {
         contentContainerStyle={{
           backgroundColor: COLORS.PRIMARY,
           flex: 1,
-          gap: 40
+          gap: 50
         }}
         enableOnAndroid={true}
         extraScrollHeight={180}
@@ -211,29 +183,19 @@ const SignUpScreen = () => {
           source={require('../../../assets/logo.png')}
           style={styles.image}
         />
-
         <View style={styles.inputContainer}>
+          <Text style={styles.infoText}>Enter your new password</Text>
           <CustomTextInput
-            onChangeText={handleUsernameChange}
-            placeholderText="Name (optional)"
-          />
-          <CustomTextInput
-            autoCapitalize="none"
-            onChangeText={handleEmailChange}
-            placeholderText="Email"
-            type="email-address"
-          />
-          <CustomTextInput
-            autoCapitalize="none"
             hashText
             onChangeText={handlePasswordChange}
-            placeholderText="Password"
+            placeholderText="New password"
+            type="default"
           />
           <CustomTextInput
-            autoCapitalize="none"
             hashText
-            onChangeText={handleConfirmationPasswordChange}
-            placeholderText="Confirm Password"
+            onChangeText={handleConfirmPasswordChange}
+            placeholderText="Confirm new password"
+            type="default"
           />
         </View>
         <CustomButton
@@ -245,17 +207,9 @@ const SignUpScreen = () => {
             }
           }}
           isDisabled={isSubmitBtnDisabled}
-          onPress={handleSubmit}
-          title="Sign Up"
+          onPress={handleApply}
+          title="Reset Password"
         />
-        <View style={styles.paragraphContainer}>
-          <Text style={styles.paragraph}>
-            Already have an account?{' '}
-            <Link style={styles.link} to={{ screen: 'Login' }}>
-              Sign In!
-            </Link>
-          </Text>
-        </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );
@@ -271,6 +225,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%'
   },
+  infoText: {
+    color: COLORS.WHITE_SHADE,
+    fontSize: 16,
+    textAlign: 'center'
+  },
   input: {
     borderColor: '#888888',
     borderWidth: 1,
@@ -281,8 +240,8 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     alignSelf: 'center',
-    gap: 20,
-    height: 160,
+    gap: 40,
+    height: 140,
     width: '60%'
   },
   link: {
@@ -290,17 +249,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textDecorationLine: 'underline',
     textDecorationStyle: 'solid'
-  },
-  paragraph: {
-    color: COLORS.WHITE_SHADE
-  },
-  paragraphContainer: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'flex-end',
-    marginBottom: '5%',
-    textAlign: 'center'
   }
 });
 
-export default SignUpScreen;
+export default ResetPasswordScreen;

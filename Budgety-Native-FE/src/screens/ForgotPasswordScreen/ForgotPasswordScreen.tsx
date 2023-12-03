@@ -1,3 +1,4 @@
+import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -7,11 +8,72 @@ import { useState } from 'react';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Title from '../../components/Title/Title';
+import Toast from 'react-native-toast-message';
+
+const validateEmail = (email: string) => {
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email.trim().toLowerCase());
+};
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState('');
 
-  const handleApply = () => {};
+  const handleApply = async () => {
+    if (validateEmail(email)) {
+      const url = `${API_URL}/api/user/forgot-password`;
+      const options = {
+        body: JSON.stringify({
+          email: email.trim().toLowerCase()
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST'
+      };
+
+      try {
+        const response = await fetch(url, options);
+        const data = await response.json();
+
+        if (data.error) {
+          return Toast.show({
+            text1: data.error,
+            type: 'error',
+            visibilityTime: 2500
+          });
+        }
+
+        if (data.message === 'Email was been sent, please check your inbox') {
+          Toast.show({
+            text1: data.message,
+            type: 'success',
+            visibilityTime: 2500
+          });
+        }
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          Toast.show({
+            text1: error.message,
+            type: 'error',
+            visibilityTime: 2500
+          });
+        } else {
+          Toast.show({
+            text1: 'Something went wrong',
+            type: 'error',
+            visibilityTime: 2500
+          });
+        }
+      }
+    } else {
+      Toast.show({
+        text1: 'Email is not valid',
+        type: 'error',
+        visibilityTime: 2500
+      });
+    }
+  };
 
   const handleEmailChange = (e: string) => setEmail(e);
 

@@ -11,10 +11,12 @@
       "image": "./assets/splash.png",
       "resizeMode": "contain"
     },
+    "scheme": "budgety",
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.mradzynski.Budgety",
       "supportsTablet": true
     },
     "android": {
@@ -22,6 +24,19 @@
         "backgroundColor": "#ffffff",
         "foregroundImage": "./assets/icon.png"
       },
+      "intentFilters": [
+        {
+        "action": "VIEW",
+        "data": [
+            {
+            "scheme": "https",
+            "host": "budgety.com",
+            "pathPrefix": "/"
+            }
+        ],
+        "category": ["BROWSABLE", "DEFAULT"]
+        }
+    ],
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.mradzynski.Budgety"
     },
@@ -47,6 +62,5 @@
         }
       ]
     ]
-
   }
 }

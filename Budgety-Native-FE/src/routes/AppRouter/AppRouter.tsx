@@ -1,3 +1,4 @@
+import * as Linking from 'expo-linking';
 import {
   getFromSecureStore,
   saveToSecureStore
@@ -8,6 +9,8 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useEffect } from 'react';
 import AuthStack from '../AuthStack/AuthStack';
 import DrawerNavigator from '../DrawerNavigator/DrawerNavigator';
+
+const prefix = Linking.createURL('/');
 
 const AppRouter: React.FC<any> = () => {
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -32,8 +35,22 @@ const AppRouter: React.FC<any> = () => {
       saveToSecureStore('user', JSON.stringify(currentUser));
   }, [currentUser]);
 
+  const linking = {
+    config: {
+      screens: {
+        ResetPassword: {
+          parse: {
+            token: (token: string) => token
+          },
+          path: 'reset-password/:token'
+        }
+      }
+    },
+    prefixes: [prefix]
+  };
+
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       {currentUser && 'email' in currentUser && currentUser?.email !== '' ? (
         <DrawerNavigator />
       ) : (

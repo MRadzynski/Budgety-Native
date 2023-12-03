@@ -2,6 +2,8 @@ import express from 'express';
 import { authChecker } from '../middlewares/authChecker';
 import {
   handleDeleteUser,
+  handleForgotPassword,
+  handleResetPassword,
   loginUser,
   signupUser,
   updateCurrency,
@@ -12,6 +14,10 @@ import {
 const router = express.Router();
 
 router.post('/login', loginUser);
+
+router.post('/forgot-password', handleForgotPassword);
+
+router.post('/reset-password', handleResetPassword);
 
 router.post('/signup', signupUser);
 
