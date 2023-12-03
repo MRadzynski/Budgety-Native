@@ -35,6 +35,7 @@ const SemiPieChart = ({ chartStyles, data, label, onSelectHandler }: Props) => {
               }0.00`,
               valueLineColor: processColor('#999999aa'),
               valueLinePart2Length: 0,
+              valueTextColor: processColor('black'),
               valueTextSize: 11,
               yValuePosition: 'OUTSIDE_SLICE'
             },

@@ -10,6 +10,8 @@ interface IUser {
   email: string;
   language: string;
   password: string;
+  resetToken?: string;
+  resetTokenExpiration?: number;
   username: string;
 }
 
@@ -41,6 +43,12 @@ const userSchema = new Schema<IUser>(
       required: true,
       type: String
     },
+    resetToken: {
+      type: String
+    },
+    resetTokenExpiration: {
+      type: Number
+    },
     username: {
       type: String
     }
@@ -52,15 +60,26 @@ userSchema.statics.login = async function (email: string, password: string) {
   if (!email?.trim() || !password?.trim())
     throw new Error('All fields must be filled');
 
-  const user = await this.findOne({ email });
+  const userDoc = await this.findOne({ email });
 
-  if (!user) throw new Error('Incorrect email');
+  if (!userDoc) throw new Error('Incorrect email');
 
-  const isMatch = await bcrypt.compare(password, user.password);
+  const isMatch = await bcrypt.compare(password, userDoc.password);
 
   if (!isMatch) throw new Error('Incorrect email or password');
 
-  return user;
+  let finalUserDoc = userDoc;
+
+  if (userDoc.resetToken || userDoc.resetTokenExpiration) {
+    userDoc.resetToken = undefined;
+    userDoc.resetTokenExpiration = undefined;
+
+    const updatedUser = await userDoc.save();
+
+    if (updatedUser) finalUserDoc = updatedUser;
+  }
+
+  return finalUserDoc;
 };
 
 userSchema.statics.signup = async function (
