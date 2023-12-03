@@ -1,14 +1,7 @@
-import {
-  ActivityIndicator,
-  Platform,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { CONTEXT } from '../../data/constants';
-import { generateBoxShadowStyle } from '../../utils/helpers';
 import { MaterialIcons } from '@expo/vector-icons';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import {
@@ -238,16 +231,9 @@ const styles = StyleSheet.create({
     color: COLORS.PRIMARY
   },
   addCategoryContainer: {
-    ...generateBoxShadowStyle(
-      0,
-      3,
-      Platform.OS === 'ios' ? '#00000020' : '#000',
-      3,
-      3,
-      3
-    ),
     backgroundColor: '#efefef',
     borderRadius: 8,
+    elevation: 3,
     flexDirection: 'row',
     gap: 16,
     marginBottom: 10,

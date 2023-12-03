@@ -1,8 +1,5 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
-import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
-import { sendEmail } from '../utils/users';
 import FinanceModel from '../models/financeModel';
 import User from '../models/userModel';
 
@@ -21,72 +18,6 @@ export const handleDeleteUser = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Data not found' });
 
     return res.status(200).json({ message: 'User deleted' });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'Something went wrong' });
-    }
-  }
-};
-
-export const handleForgotPassword = async (req: Request, res: Response) => {
-  const { email } = req.body;
-
-  try {
-    const userDoc = await User.findOne({ email: email });
-
-    if (!userDoc)
-      return res
-        .status(404)
-        .json({ error: 'There is no user with given email address' });
-
-    const token = crypto.randomBytes(32).toString('hex');
-    userDoc.resetToken = token;
-    userDoc.resetTokenExpiration = Date.now() + 3600000;
-
-    await userDoc.save();
-
-    sendEmail(email, token);
-    return res
-      .status(200)
-      .json({ message: 'Email was been sent, please check your inbox' });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'Something went wrong' });
-    }
-  }
-};
-
-export const handleResetPassword = async (req: Request, res: Response) => {
-  const { password, token } = req.body;
-
-  try {
-    const userDoc = await User.findOne({ resetToken: token });
-
-    if (!userDoc)
-      return res.status(404).json({ error: 'The link has expired' });
-
-    if (
-      'resetTokenExpiration' in userDoc &&
-      userDoc.resetTokenExpiration &&
-      Date.now() > userDoc.resetTokenExpiration
-    ) {
-      return res.status(401).json({ error: 'The link has expired' });
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    userDoc.resetToken = undefined;
-    userDoc.resetTokenExpiration = undefined;
-    userDoc.password = hashedPassword;
-
-    await userDoc.save();
-
-    return res.status(200).json({ message: 'Password has been changed' });
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });

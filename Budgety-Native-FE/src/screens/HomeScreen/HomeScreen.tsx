@@ -151,12 +151,7 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
           ? `${currentUser.username}`
           : 'User'
       }! 👋`}</Text>
-      <View
-        style={{
-          ...styles.section,
-          justifyContent: BALANCE_PIE_DATA.length ? undefined : 'center'
-        }}
-      >
+      <View style={styles.section}>
         {BALANCE_PIE_DATA.length ? (
           <View style={styles.chartContainer}>
             <SemiPieChart
@@ -193,12 +188,7 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
             : LANGUAGES_LOCALES['EN']
         )}`}</Text>
       </View>
-      <View
-        style={{
-          ...styles.section,
-          justifyContent: EXPENSE_BAR_DATA.length ? undefined : 'center'
-        }}
-      >
+      <View style={styles.section}>
         {EXPENSE_BAR_DATA.length ? (
           <ScrollableBarChart
             containerStyles={styles.barChartContainer}
@@ -210,12 +200,7 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
         )}
         <Text style={styles.sectionValueText}>Expenses</Text>
       </View>
-      <View
-        style={{
-          ...styles.section,
-          justifyContent: INCOME_BAR_DATA.length ? undefined : 'center'
-        }}
-      >
+      <View style={styles.section}>
         {INCOME_BAR_DATA.length ? (
           <ScrollableBarChart
             containerStyles={styles.barChartContainer}
@@ -262,7 +247,9 @@ const styles = StyleSheet.create({
   notFoundText: {
     alignSelf: 'center',
     color: COLORS.BLACK_SHADE,
-    fontSize: 20
+    flex: 1,
+    fontSize: 20,
+    textAlignVertical: 'center'
   },
   section: {
     backgroundColor: 'white',

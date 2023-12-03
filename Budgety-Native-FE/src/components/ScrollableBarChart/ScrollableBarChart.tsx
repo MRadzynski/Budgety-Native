@@ -144,14 +144,11 @@ const ScrollableBarChart = ({ containerStyles, data, label }: Props) => {
           granularity: 1,
           labelCount: data.length,
           position: 'BOTTOM',
-          textColor: processColor('black'),
           valueFormatter: data.map(({ name }) => name)
         }}
         yAxis={{
           left: {
-            // valueFormatter: 'percent',
-            textColor: processColor('black'),
-            valueFormatter: "#.#'%'"
+            valueFormatter: 'percent'
           },
           right: { enabled: false }
         }}

@@ -1,15 +1,9 @@
 import { formatNumber } from '../../utils/helpers';
-import { generateBoxShadowStyle } from '../../utils/helpers';
 import { LANGUAGES_LOCALES } from '../../data/constants';
 import { MaterialIcons } from '@expo/vector-icons';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-  View
-} from 'react-native';
+import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { useAppSelector } from '../../hooks/redux';
+
 interface IProps {
   amount: number;
   bgColor: string;
@@ -83,17 +77,10 @@ const styles = StyleSheet.create({
     fontSize: 12
   },
   container: {
-    ...generateBoxShadowStyle(
-      0,
-      3,
-      Platform.OS === 'ios' ? '#00000020' : '#000',
-      3,
-      3,
-      3
-    ),
     alignItems: 'center',
     backgroundColor: '#efefef',
     borderRadius: 8,
+    elevation: 3,
     flexDirection: 'row',
     gap: 16,
     marginBottom: 10,
