@@ -37,25 +37,37 @@ const HistoryTab = ({ data }: IProps) => {
     }, [])
   );
 
-  const EXPENSES_BAR_DATA = useMemo(
-    () =>
-      data.expenses.map(expCategory => ({
-        color: expCategory.bgColor,
-        name: expCategory.categoryName,
-        value: expCategory.amount
-      })),
-    [data.expenses]
-  );
+  const EXPENSES_BAR_DATA = useMemo(() => {
+    if (!data.expenses) return [];
 
-  const INCOME_BAR_DATA = useMemo(
-    () =>
-      data.income.map(incCategory => ({
-        color: incCategory.bgColor,
-        name: incCategory.categoryName,
-        value: incCategory.amount
-      })),
-    [data.income]
-  );
+    const hasAtLeastOneValueAdded = data.expenses.some(
+      expCat => expCat.amount > 0
+    );
+
+    if (!hasAtLeastOneValueAdded) return [];
+
+    return data.expenses.map(expCategory => ({
+      color: expCategory.bgColor,
+      name: expCategory.categoryName,
+      value: expCategory.amount
+    }));
+  }, [data.expenses]);
+
+  const INCOME_BAR_DATA = useMemo(() => {
+    if (!data.income) return [];
+
+    const hasAtLeastOneValueAdded = data.income.some(
+      incCat => incCat.amount > 0
+    );
+
+    if (!hasAtLeastOneValueAdded) return [];
+
+    return data.expenses.map(incCategory => ({
+      color: incCategory.bgColor,
+      name: incCategory.categoryName,
+      value: incCategory.amount
+    }));
+  }, [data.income]);
 
   const BALANCE = useMemo(
     () => data.sumOfIncome - data.sumOfExpenses,
@@ -92,7 +104,7 @@ const HistoryTab = ({ data }: IProps) => {
       </TouchableOpacity>
       {isOpen && (
         <View style={styles.tabContent}>
-          <View>
+          <View style={styles.chartContainer}>
             <Text style={styles.chartTitle}>{`Expenses: ${formatNumber(
               data.sumOfExpenses,
               currentUser && 'currency' in currentUser
@@ -104,13 +116,17 @@ const HistoryTab = ({ data }: IProps) => {
                   ]
                 : LANGUAGES_LOCALES['EN']
             )}`}</Text>
-            <ScrollableBarChart
-              containerStyles={styles.barChartContainer}
-              data={EXPENSES_BAR_DATA}
-              label="Expenses"
-            />
+            {EXPENSES_BAR_DATA.length ? (
+              <ScrollableBarChart
+                containerStyles={styles.barChartContainer}
+                data={EXPENSES_BAR_DATA}
+                label="Expenses"
+              />
+            ) : (
+              <Text style={styles.notFoundText}>No Data To Present 😔</Text>
+            )}
           </View>
-          <View>
+          <View style={styles.chartContainer}>
             <Text style={styles.chartTitle}>{`Income: ${formatNumber(
               data.sumOfIncome,
               currentUser && 'currency' in currentUser
@@ -122,11 +138,15 @@ const HistoryTab = ({ data }: IProps) => {
                   ]
                 : LANGUAGES_LOCALES['EN']
             )}`}</Text>
-            <ScrollableBarChart
-              containerStyles={styles.barChartContainer}
-              data={INCOME_BAR_DATA}
-              label="Income"
-            />
+            {INCOME_BAR_DATA.length ? (
+              <ScrollableBarChart
+                containerStyles={styles.barChartContainer}
+                data={INCOME_BAR_DATA}
+                label="Income"
+              />
+            ) : (
+              <Text style={styles.notFoundText}>No Data To Present 😔</Text>
+            )}
           </View>
           <Text
             style={{
@@ -160,10 +180,20 @@ const styles = StyleSheet.create({
     height: 140,
     marginTop: -8
   },
+  chartContainer: {
+    minHeight: 120
+  },
   chartTitle: {
     color: COLORS.PRIMARY,
     fontSize: 16,
     textAlign: 'center'
+  },
+  notFoundText: {
+    alignSelf: 'center',
+    color: COLORS.BLACK_SHADE,
+    flex: 1,
+    fontSize: 20,
+    textAlignVertical: 'center'
   },
   tabContainer: {
     alignItems: 'center',

@@ -63,7 +63,7 @@ interface IFinanceDocInc {
   income: IExpenseIncome[];
 }
 
-interface IFinanceDocument {
+export interface IFinanceDocument {
   expenses: IExpenseIncome[];
   expensesLogs: IExpensesIncomeLog[];
   historyLogs: IHistoryLog[];
