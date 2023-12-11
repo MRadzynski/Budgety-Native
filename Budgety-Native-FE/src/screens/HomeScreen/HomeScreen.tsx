@@ -7,6 +7,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useAppSelector } from '../../hooks/redux';
 import { useCallback, useMemo, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import ScrollableBarChart from '../../components/ScrollableBarChart/ScrollableBarChart';
 import SemiPieChart from '../../components/SemiPieChart/SemiPieChart';
 
@@ -32,6 +33,8 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
   >(null);
 
   const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const { t } = useTranslation();
 
   useFocusEffect(
     useCallback(() => {
@@ -146,10 +149,10 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
         ellipsizeMode="tail"
         numberOfLines={2}
         style={styles.welcomeText}
-      >{`Hey ${
+      >{`${t('welcome')} ${
         'username' in currentUser && currentUser.username
           ? `${currentUser.username}`
-          : 'User'
+          : t('defaultUserWelcome')
       }! 👋`}</Text>
       <View
         style={{
@@ -167,7 +170,7 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
             />
           </View>
         ) : (
-          <Text style={styles.notFoundText}>No Data To Present 😔</Text>
+          <Text style={styles.notFoundText}>{t('noData')} 😔</Text>
         )}
         <Text
           style={[
@@ -181,7 +184,7 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
                   : COLORS.ERROR
             }
           ]}
-        >{`Balance: ${formatNumber(
+        >{`${t('balance')}: ${formatNumber(
           balance,
           currentUser && 'currency' in currentUser
             ? currentUser.currency
@@ -206,9 +209,9 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
             label="Expenses"
           />
         ) : (
-          <Text style={styles.notFoundText}>No Data To Present 😔</Text>
+          <Text style={styles.notFoundText}>{t('noData')} 😔</Text>
         )}
-        <Text style={styles.sectionValueText}>Expenses</Text>
+        <Text style={styles.sectionValueText}>{t('expenses')}</Text>
       </View>
       <View
         style={{
@@ -223,9 +226,9 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
             label="Income"
           />
         ) : (
-          <Text style={styles.notFoundText}>No Data To Present 😔</Text>
+          <Text style={styles.notFoundText}>{t('noData')} 😔</Text>
         )}
-        <Text style={styles.sectionValueText}>Income</Text>
+        <Text style={styles.sectionValueText}>{t('income')}</Text>
       </View>
     </View>
   );
@@ -262,7 +265,9 @@ const styles = StyleSheet.create({
   notFoundText: {
     alignSelf: 'center',
     color: COLORS.BLACK_SHADE,
-    fontSize: 20
+    fontSize: 20,
+    padding: 20,
+    textAlign: 'center'
   },
   section: {
     backgroundColor: 'white',

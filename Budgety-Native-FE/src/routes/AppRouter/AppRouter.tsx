@@ -7,6 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { setUser } from '../../slices/userSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useEffect } from 'react';
+import { useUserLocalization } from '../../hooks/useUserLocalization';
 import AuthStack from '../AuthStack/AuthStack';
 import DrawerNavigator from '../DrawerNavigator/DrawerNavigator';
 
@@ -16,6 +17,8 @@ const AppRouter: React.FC<any> = () => {
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const dispatch = useAppDispatch();
+
+  useUserLocalization();
 
   useEffect(() => {
     const fetchUserFromSecureStore = async () => {

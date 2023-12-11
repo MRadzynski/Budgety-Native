@@ -47,7 +47,7 @@ export const handleForgotPassword = async (req: Request, res: Response) => {
 
     await userDoc.save();
 
-    sendEmail(email, token);
+    sendEmail(email, token, userDoc.language, userDoc?.username);
     return res
       .status(200)
       .json({ message: 'Email was been sent, please check your inbox' });
@@ -113,14 +113,20 @@ export const loginUser = async (req: Request, res: Response) => {
 };
 
 export const signupUser = async (req: Request, res: Response) => {
-  const { email, password, username } = req.body;
+  const { currency, email, language, password, username } = req.body;
 
   try {
-    const user = await User.signup(email, password, username);
+    const user = await User.signup(
+      email,
+      password,
+      username,
+      currency,
+      language
+    );
 
     const JWTtoken = createToken(user._id);
 
-    res.status(200).json({ user, token: JWTtoken });
+    res.status(200).json({ token: JWTtoken, user });
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(400).json({ error: error.message });

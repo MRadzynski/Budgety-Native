@@ -5,6 +5,7 @@ import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import ExpensesIncomeStack from '../../routes/ExpensesIncomeStack/ExpensesIncomeStack';
 import PieChartWrapper from '../../components/PieChartWrapper/PieChartWrapper';
 import Title from '../../components/Title/Title';
@@ -30,6 +31,7 @@ const ExpensesIncomeScreen = ({ navigation }: IProps) => {
 
   const dispatch = useAppDispatch();
 
+  const { i18n, t } = useTranslation();
   const { width } = useWindowDimensions();
 
   const { params } = useRoute<RouteProp<TParamList, 'ExpensesIncomeScreen'>>();
@@ -100,9 +102,12 @@ const ExpensesIncomeScreen = ({ navigation }: IProps) => {
         <Title
           customStyles={{
             container: styles.titleContainer,
-            content: styles.titleContent
+            content: {
+              ...styles.titleContent,
+              fontSize: i18n.language === 'de' ? 24 : 28
+            }
           }}
-          text={context === CONTEXT.EXPENSES ? 'Expenses' : 'Income'}
+          text={context === CONTEXT.EXPENSES ? t('expenses') : t('income')}
         />
         <PieChartWrapper
           centerValue={

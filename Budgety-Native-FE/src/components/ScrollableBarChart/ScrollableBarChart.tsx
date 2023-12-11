@@ -12,6 +12,7 @@ import {
 import { useAppSelector } from '../../hooks/redux';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   containerStyles?: StyleProp<ViewStyle>;
@@ -33,6 +34,8 @@ const ScrollableBarChart = ({ containerStyles, data, label }: Props) => {
   });
 
   const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const { t } = useTranslation();
 
   useFocusEffect(
     useCallback(() => {
@@ -101,18 +104,16 @@ const ScrollableBarChart = ({ containerStyles, data, label }: Props) => {
           >
             {data[barIndex].name}
           </Text>
-          <Text style={styles.tooltipValue}>{`Percent: ${(
+          <Text style={styles.tooltipValue}>{`${t('percent')}: ${(
             (data[barIndex].value / SUM_OF_ALL_DATA) *
             100
           ).toFixed(2)}%`}</Text>
-          <Text style={styles.tooltipValue}>{`Value: ${new Intl.NumberFormat(
-            'en-US',
-            {
-              currency:
-                'currency' in currentUser ? currentUser.currency : 'USD',
-              style: 'currency'
-            }
-          ).format(data[barIndex].value)}`}</Text>
+          <Text style={styles.tooltipValue}>{`${t(
+            'value'
+          )}: ${new Intl.NumberFormat('en-US', {
+            currency: 'currency' in currentUser ? currentUser.currency : 'USD',
+            style: 'currency'
+          }).format(data[barIndex].value)}`}</Text>
         </View>
       )}
       <BarChart
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderStyle: 'solid',
     borderWidth: 1,
-    maxWidth: 150,
+    maxWidth: 160,
     padding: 6,
     position: 'absolute',
     zIndex: 1

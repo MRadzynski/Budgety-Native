@@ -5,6 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { StyleSheet, Text, View } from 'react-native';
 import { useAppSelector } from '../../hooks/redux';
+import { useTranslation } from 'react-i18next';
 import CustomButton from '../CustomButton/CustomButton';
 import CustomTextInput from '../CustomTextInput/CustomTextInput';
 import Dropdown from '../Dropdown/Dropdown';
@@ -44,6 +45,7 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
   );
 
   const { params } = useRoute<RouteProp<TParamList, 'ExpensesIncomeScreen'>>();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (params?.categoryData) {
@@ -119,7 +121,7 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
   return (
     <View style={styles.container}>
       <Text style={styles.formTitle}>
-        Add {context === CONTEXT.EXPENSES ? 'Expense' : 'Income'}
+        {context === CONTEXT.EXPENSES ? t('addExpense') : t('addIncome')}
       </Text>
       <View style={styles.exitContainer}>
         <MaterialIcons
@@ -131,7 +133,7 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
       </View>
       <View style={styles.formBody}>
         <View style={styles.formRow}>
-          <Text style={styles.formFieldName}>{`Price(${
+          <Text style={styles.formFieldName}>{`${t('price')} (${
             'currency' in currentUser
               ? CURRENCIES_SIGNS[
                   currentUser.currency as keyof typeof CURRENCIES_SIGNS
@@ -157,7 +159,7 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
           />
         </View>
         <View style={styles.formRow}>
-          <Text style={styles.formFieldName}>Category</Text>
+          <Text style={styles.formFieldName}>{t('category')}</Text>
           <Dropdown
             customStyles={{
               button: styles.categoryDropdownBtn,
@@ -187,7 +189,7 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
         }}
         isDisabled={!category || !price}
         onPress={handleApply}
-        title="Confirm"
+        title={t('confirm')}
       />
     </View>
   );

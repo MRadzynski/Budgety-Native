@@ -18,6 +18,7 @@ import {
 } from '../../slices/expenseIncomeSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import CategoryListItem from '../CategoryListItem/CategoryListItem';
 import CustomButton from '../CustomButton/CustomButton';
 import CustomModal from '../CustomModal/CustomModal';
@@ -43,6 +44,8 @@ const CategoryRoute = ({ navigation }: IProps) => {
   );
 
   const dispatch = useAppDispatch();
+
+  const { i18n, t } = useTranslation();
 
   useFocusEffect(
     useCallback(() => {
@@ -138,7 +141,9 @@ const CategoryRoute = ({ navigation }: IProps) => {
     <>
       <CustomModal
         isVisible={isModalShown}
-        message={`You are about to delete the "${categoryToBeRemoved}" category.`}
+        message={`${t('deleteCategoryMsg')}"${categoryToBeRemoved}"${t(
+          'deleteCategoryMsg2'
+        )}`}
         onConfirm={confirmCategoryDeletion}
         setIsVisible={setIsModalShown}
       />
@@ -156,7 +161,7 @@ const CategoryRoute = ({ navigation }: IProps) => {
               context === CONTEXT.EXPENSES ? styles.activeTabText : {}
             ]}
           >
-            Expenses
+            {t('expenses')}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -172,7 +177,7 @@ const CategoryRoute = ({ navigation }: IProps) => {
               context === CONTEXT.INCOME ? styles.activeTabText : {}
             ]}
           >
-            Income
+            {t('income')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -210,7 +215,9 @@ const CategoryRoute = ({ navigation }: IProps) => {
               <MaterialIcons color="white" name="add" size={32} />
             </View>
             <View style={styles.addCategoryInfoContainer}>
-              <Text style={styles.addCategoryInfoText}>Add new category</Text>
+              <Text style={styles.addCategoryInfoText}>
+                {t('addNewCategory')}
+              </Text>
             </View>
           </TouchableOpacity>
         </ScrollView>
@@ -219,11 +226,16 @@ const CategoryRoute = ({ navigation }: IProps) => {
         <CustomButton
           customStyles={{
             container: styles.addExpenseIncomeBtnContainer,
-            textContent: styles.addExpenseIncomeBtnContent
+            textContent: {
+              ...styles.addExpenseIncomeBtnContent,
+              fontSize: i18n.language === 'de' ? 16 : 18
+            }
           }}
           isDisabled={isLoading}
           onPress={() => handleAddExpenseIncome()}
-          title={`Add ${context === CONTEXT.EXPENSES ? 'Expense' : 'Income'}`}
+          title={`${
+            context === CONTEXT.EXPENSES ? t('addExpense') : t('addIncome')
+          }`}
         />
       </View>
     </>

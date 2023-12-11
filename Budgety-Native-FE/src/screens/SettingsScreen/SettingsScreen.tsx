@@ -14,6 +14,7 @@ import {
 import { StyleSheet, Text, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import CURRENCIES from '../../data/currencies.json';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomModal from '../../components/CustomModal/CustomModal';
@@ -34,6 +35,8 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
   const dispatch = useAppDispatch();
 
   const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const { t } = useTranslation();
 
   const handleCurrencyChange = async (currency: string) => {
     if (currentUser && 'token' in currentUser) {
@@ -142,7 +145,8 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
       try {
         const response = await fetch(url, options);
         const data = await response.json();
-        data.username && dispatch(setUsername(data.username));
+
+        dispatch(setUsername(data.username));
       } catch (error: unknown) {
         if (error instanceof Error) console.error(error.message);
       }
@@ -155,23 +159,26 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
     <View style={styles.container}>
       <CustomModal
         isVisible={isErasedModalVisible}
-        message="You are about to erase your data."
+        message={t('eraseDataMsg')}
         onConfirm={handleEraseUserData}
         setIsVisible={setIsErasedModalVisible}
       />
       <CustomModal
         isVisible={isDeletedModalVisible}
-        message="You are about to delete your account."
+        message={t('deleteAccountMsg')}
         onConfirm={handleDeleteUser}
         setIsVisible={setIsDeletedModalVisible}
       />
-      <Title customStyles={{ content: styles.titleContent }} text="Settings" />
+      <Title
+        customStyles={{ content: styles.titleContent }}
+        text={t('settings')}
+      />
       <View style={styles.sectionsContainer}>
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>User</Text>
+          <Text style={styles.sectionTitle}>{t('user')}</Text>
           <View style={styles.sectionContentContainer}>
             <View style={styles.sectionItemContainer}>
-              <Text style={styles.sectionItemTitle}>Display Name</Text>
+              <Text style={styles.sectionItemTitle}>{t('displayName')}</Text>
               <CustomTextInput
                 cursorColor={COLORS.PRIMARY}
                 customStyles={{
@@ -183,7 +190,7 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
                 }
                 onBlur={handleUsernameBlur}
                 onChangeText={handleUsernameChange}
-                placeholderText="John Doe"
+                placeholderText={t('exampleUsername')}
                 placeholderTextColor="#757575"
                 selectionColor={COLORS.PRIMARY}
               />
@@ -191,10 +198,10 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
           </View>
         </View>
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Preferences</Text>
+          <Text style={styles.sectionTitle}>{t('preferences')}</Text>
           <View style={styles.sectionContentContainer}>
             <View style={styles.sectionItemContainer}>
-              <Text style={styles.sectionItemTitle}>Currency</Text>
+              <Text style={styles.sectionItemTitle}>{t('currency')}</Text>
               <Dropdown
                 customStyles={{
                   button: styles.dropdownButton,
@@ -212,7 +219,7 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
               />
             </View>
             <View style={styles.sectionItemContainer}>
-              <Text style={styles.sectionItemTitle}>Language</Text>
+              <Text style={styles.sectionItemTitle}>{t('language')}</Text>
               <Dropdown
                 customStyles={{
                   button: styles.dropdownButton,
@@ -233,22 +240,30 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
         </View>
         <View style={styles.sectionContainer}>
           <Text style={[styles.sectionTitle, styles.sectionDangerZone]}>
-            Danger Zone
+            {t('dangerZone')}
           </Text>
           <View style={styles.sectionContentContainer}>
             <View style={styles.sectionItemContainer}>
-              <Text>Erase financial data</Text>
+              <Text
+                style={{
+                  height: 40,
+                  maxWidth: '60%',
+                  textAlignVertical: 'center'
+                }}
+              >
+                {t('eraseData')}
+              </Text>
               <CustomButton
                 customStyles={{
                   container: styles.dangerZoneButtonContainer,
                   textContent: styles.dangerZoneButtonContent
                 }}
                 onPress={() => setIsErasedModalVisible(true)}
-                title="Erase"
+                title={t('erase')}
               />
             </View>
             <View style={styles.sectionItemContainer}>
-              <Text>Delete account</Text>
+              <Text>{t('deleteAccount')}</Text>
               <CustomButton
                 customStyles={{
                   container: {
@@ -261,7 +276,7 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
                   }
                 }}
                 onPress={() => setIsDeletedModalVisible(true)}
-                title="Delete"
+                title={t('delete')}
               />
             </View>
           </View>
@@ -284,7 +299,7 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     paddingVertical: 6,
-    width: 80
+    width: 94
   },
   dangerZoneButtonContent: {
     fontSize: 16

@@ -26,17 +26,20 @@
       },
       "intentFilters": [
         {
-        "action": "VIEW",
-        "data": [
+          "action": "VIEW",
+          "data": [
             {
-            "scheme": "https",
-            "host": "budgety.com",
-            "pathPrefix": "/"
+              "scheme": "https",
+              "host": "budgety.com",
+              "pathPrefix": "/"
             }
-        ],
-        "category": ["BROWSABLE", "DEFAULT"]
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
-    ],
+      ],
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.mradzynski.Budgety"
     },
@@ -60,7 +63,8 @@
             "deploymentTarget": "15.0"
           }
         }
-      ]
+      ],
+      "expo-localization"
     ]
   }
 }
