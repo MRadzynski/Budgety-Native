@@ -6,6 +6,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAppSelector } from '../../hooks/redux';
 import { useCallback, useMemo, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import ScrollableBarChart from '../ScrollableBarChart/ScrollableBarChart';
 
 interface IProps {
@@ -30,6 +31,8 @@ const HistoryTab = ({ data }: IProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const { t } = useTranslation();
 
   useFocusEffect(
     useCallback(() => {
@@ -75,11 +78,11 @@ const HistoryTab = ({ data }: IProps) => {
   );
 
   const DATE_TO_DISPLAY = useMemo(() => {
-    if (data.date === 'All Time') return 'All time';
+    if (data.date === 'All Time') return t('allTime');
 
     const splitDate = data.date.split('/');
-    return `${getMonthNameByNumber(splitDate[0])} ${splitDate[1]}`;
-  }, [data.date]);
+    return `${t(getMonthNameByNumber(splitDate[0]))} ${splitDate[1]}`;
+  }, [data.date, currentUser]);
 
   return (
     <>
@@ -105,7 +108,7 @@ const HistoryTab = ({ data }: IProps) => {
       {isOpen && (
         <View style={styles.tabContent}>
           <View style={styles.chartContainer}>
-            <Text style={styles.chartTitle}>{`Expenses: ${formatNumber(
+            <Text style={styles.chartTitle}>{`${t('expenses')}: ${formatNumber(
               data.sumOfExpenses,
               currentUser && 'currency' in currentUser
                 ? currentUser.currency
@@ -123,11 +126,11 @@ const HistoryTab = ({ data }: IProps) => {
                 label="Expenses"
               />
             ) : (
-              <Text style={styles.notFoundText}>No Data To Present 😔</Text>
+              <Text style={styles.notFoundText}>`${t('noData')} 😔`</Text>
             )}
           </View>
           <View style={styles.chartContainer}>
-            <Text style={styles.chartTitle}>{`Income: ${formatNumber(
+            <Text style={styles.chartTitle}>{`${t('income')}: ${formatNumber(
               data.sumOfIncome,
               currentUser && 'currency' in currentUser
                 ? currentUser.currency
@@ -145,7 +148,7 @@ const HistoryTab = ({ data }: IProps) => {
                 label="Income"
               />
             ) : (
-              <Text style={styles.notFoundText}>No Data To Present 😔</Text>
+              <Text style={styles.notFoundText}>{t('noData')} 😔</Text>
             )}
           </View>
           <Text
@@ -158,7 +161,7 @@ const HistoryTab = ({ data }: IProps) => {
                   ? COLORS.PRIMARY
                   : COLORS.ERROR
             }}
-          >{`Balance: ${formatNumber(
+          >{`${t('balance')}: ${formatNumber(
             BALANCE,
             currentUser && 'currency' in currentUser
               ? currentUser.currency
@@ -193,6 +196,8 @@ const styles = StyleSheet.create({
     color: COLORS.BLACK_SHADE,
     flex: 1,
     fontSize: 20,
+    padding: 20,
+    textAlign: 'center',
     textAlignVertical: 'center'
   },
   tabContainer: {

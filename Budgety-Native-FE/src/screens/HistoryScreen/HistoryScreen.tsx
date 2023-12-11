@@ -2,8 +2,9 @@ import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useAppSelector } from '../../hooks/redux';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import HistoryTab from '../../components/HistoryTab/HistoryTab';
 import Title from '../../components/Title/Title';
 
@@ -31,6 +32,8 @@ const HistoryScreen = ({ navigation }: DrawerProps) => {
   const [historyData, setHistoryData] = useState<IHistoryData[]>([]);
 
   const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const { t } = useTranslation();
 
   useFocusEffect(
     useCallback(() => {
@@ -67,13 +70,13 @@ const HistoryScreen = ({ navigation }: DrawerProps) => {
           customStyles={{
             content: styles.titleContent
           }}
-          text="History"
+          text={t('history')}
         />
         <Title
           customStyles={{
             content: styles.subTitleContent
           }}
-          text="Summary of your previous months"
+          text={t('historySubTitle')}
         />
       </View>
       <ScrollView style={styles.tabsContainer}>
@@ -97,6 +100,7 @@ const styles = StyleSheet.create({
     color: COLORS.WHITE_SHADE,
     fontSize: 18,
     marginTop: 8,
+    textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.25)',
     textShadowOffset: { height: 3, width: 3 },
     textShadowRadius: 1

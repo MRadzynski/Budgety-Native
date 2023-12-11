@@ -45,18 +45,18 @@ export const getMonthNameByNumber = (monthNumber: string) => {
     monthNumber[0] === '0' ? Number(monthNumber[1]) : Number(monthNumber);
 
   const MONTHS = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'Mai',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
+    'january',
+    'february',
+    'march',
+    'april',
+    'may',
+    'june',
+    'july',
+    'august',
+    'september',
+    'october',
+    'november',
+    'december'
   ];
 
   return MONTHS[monthNumberAsNumber - 1];

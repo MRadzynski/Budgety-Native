@@ -5,6 +5,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Link } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Title from '../../components/Title/Title';
@@ -18,6 +19,17 @@ const validateEmail = (email: string) => {
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState('');
+
+  const { i18n, t } = useTranslation();
+
+  const getTranslatedServerErrorMessages = (message: string) => {
+    switch (message) {
+      case 'There is no user with given email address':
+        return t('toastErrorNoUserWithGivenEmail');
+      default:
+        return t('toastErrorSomethingWentWrong');
+    }
+  };
 
   const handleApply = async () => {
     if (validateEmail(email)) {
@@ -36,41 +48,42 @@ const SignUpScreen = () => {
         const response = await fetch(url, options);
         const data = await response.json();
 
-        if (data.error) {
+        if (data?.error) {
           return Toast.show({
-            text1: data.error,
-            type: 'error',
-            visibilityTime: 2500
+            props: {
+              text1FontSize: 15
+            },
+            text1: getTranslatedServerErrorMessages(data.error),
+            type: 'error'
           });
         }
 
-        if (data.message === 'Email was been sent, please check your inbox') {
+        if (data?.message === 'Email was been sent, please check your inbox') {
           Toast.show({
-            text1: data.message,
-            type: 'success',
-            visibilityTime: 2500
+            props: {
+              text1FontSize: i18n.language === 'ru' ? 13 : 15
+            },
+            text1: t('toastSuccessEmailSent'),
+            type: 'success'
           });
         }
       } catch (error: unknown) {
         if (error instanceof Error) {
           Toast.show({
-            text1: error.message,
-            type: 'error',
-            visibilityTime: 2500
+            text1: getTranslatedServerErrorMessages(error.message),
+            type: 'error'
           });
         } else {
           Toast.show({
-            text1: 'Something went wrong',
-            type: 'error',
-            visibilityTime: 2500
+            text1: t('toastErrorSomethingWentWrong'),
+            type: 'error'
           });
         }
       }
     } else {
       Toast.show({
-        text1: 'Email is not valid',
-        type: 'error',
-        visibilityTime: 2500
+        text1: t('toastErrorInvalidEmail'),
+        type: 'error'
       });
     }
   };
@@ -112,12 +125,10 @@ const SignUpScreen = () => {
           style={styles.image}
         />
         <View style={styles.inputContainer}>
-          <Text style={styles.infoText}>
-            Enter your email for instructions on resetting your password
-          </Text>
+          <Text style={styles.infoText}>{t('forgotPasswordMsg')}</Text>
           <CustomTextInput
             onChangeText={handleEmailChange}
-            placeholderText="Email"
+            placeholderText={t('email')}
             type="email-address"
           />
         </View>
@@ -125,19 +136,18 @@ const SignUpScreen = () => {
           customStyles={{
             container: {
               alignSelf: 'center',
-              marginTop: 20,
-              width: 240
+              width: i18n.language === 'fr' ? 260 : 240
             }
           }}
           isDisabled={isSubmitBtnDisabled}
           onPress={handleApply}
-          title="Reset Password"
+          title={t('resetPassword')}
         />
         <View style={styles.paragraphContainer}>
           <Text style={styles.paragraph}>
-            Don't have an account?{' '}
+            {t('doNotHaveAccount')}{' '}
             <Link style={styles.link} to={{ screen: 'SignUp' }}>
-              Sign Up!
+              {t('signUp')}
             </Link>
           </Text>
         </View>
@@ -188,7 +198,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     justifyContent: 'flex-end',
-    marginBottom: '5%',
+    marginBottom: '7%',
     textAlign: 'center'
   }
 });

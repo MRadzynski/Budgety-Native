@@ -1,22 +1,22 @@
 [
   {
-    "name": "Home",
+    "name": "home",
     "route": "Home"
   },
   {
-    "name": "Expenses & Income",
+    "name": "expensesIncome",
     "route": "ExpensesIncome"
   },
   {
-    "name": "Exchange",
+    "name": "exchange",
     "route": "Exchange"
   },
   {
-    "name": "History",
+    "name": "history",
     "route": "History"
   },
   {
-    "name": "Settings",
+    "name": "settings",
     "route": "Settings"
   }
 ]

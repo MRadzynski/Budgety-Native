@@ -5,6 +5,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Title from '../../components/Title/Title';
@@ -24,7 +25,17 @@ const ResetPasswordScreen = ({ navigation }: IProps) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [password, setPassword] = useState('');
 
+  const { i18n, t } = useTranslation();
   const { params } = useRoute<RouteProp<TParamList, 'ResetPasswordScreen'>>();
+
+  const getTranslatedServerErrorMessages = (message: string) => {
+    switch (message) {
+      case 'The link has expired':
+        return t('toastErrorLinkExpired');
+      default:
+        return t('toastErrorSomethingWentWrong');
+    }
+  };
 
   const handleApply = async () => {
     if (validateData() && params?.token) {
@@ -45,19 +56,17 @@ const ResetPasswordScreen = ({ navigation }: IProps) => {
         const response = await fetch(url, options);
         const data = await response.json();
 
-        if (data.error) {
+        if (data?.error) {
           return Toast.show({
-            text1: data.error,
-            type: 'error',
-            visibilityTime: 2500
+            text1: getTranslatedServerErrorMessages(data.error),
+            type: 'error'
           });
         }
 
-        if (data.message === 'Password has been changed') {
+        if (data?.message === 'Password has been changed') {
           Toast.show({
-            text1: 'Password reset successfully',
-            type: 'success',
-            visibilityTime: 2500
+            text1: t('toastSuccessPasswordChanged'),
+            type: 'success'
           });
 
           navigation.navigate('Login');
@@ -65,15 +74,13 @@ const ResetPasswordScreen = ({ navigation }: IProps) => {
       } catch (error: unknown) {
         if (error instanceof Error) {
           Toast.show({
-            text1: error.message,
-            type: 'error',
-            visibilityTime: 2500
+            text1: getTranslatedServerErrorMessages(error.message),
+            type: 'error'
           });
         } else {
           Toast.show({
-            text1: 'Something went wrong',
-            type: 'error',
-            visibilityTime: 2500
+            text1: t('toastErrorSomethingWentWrong'),
+            type: 'error'
           });
         }
       }
@@ -88,11 +95,10 @@ const ResetPasswordScreen = ({ navigation }: IProps) => {
     if (password.length < 8) {
       Toast.show({
         props: {
-          text1FontSize: 12
+          text1FontSize: 14
         },
-        text1: 'Password should contain at least 8 characters',
-        type: 'error',
-        visibilityTime: 2500
+        text1: t('toastErrorInvalidPasswordTooShort'),
+        type: 'error'
       });
       return false;
     }
@@ -100,11 +106,10 @@ const ResetPasswordScreen = ({ navigation }: IProps) => {
     if (!/[A-Z]/.test(password)) {
       Toast.show({
         props: {
-          text1FontSize: 12
+          text1FontSize: 14
         },
-        text1: 'Password should contain at least 1 uppercase letter',
-        type: 'error',
-        visibilityTime: 2500
+        text1: t('toastErrorInvalidPasswordNoUpperCaseLetter'),
+        type: 'error'
       });
       return false;
     }
@@ -112,11 +117,10 @@ const ResetPasswordScreen = ({ navigation }: IProps) => {
     if (!/[0-9]/.test(password)) {
       Toast.show({
         props: {
-          text1FontSize: 12
+          text1FontSize: 14
         },
-        text1: 'Password should contain at least 1 number',
-        type: 'error',
-        visibilityTime: 2500
+        text1: t('toastErrorInvalidPasswordNoNumber'),
+        type: 'error'
       });
       return false;
     }
@@ -124,11 +128,10 @@ const ResetPasswordScreen = ({ navigation }: IProps) => {
     if (!/[!@#$%^&*]/.test(password)) {
       Toast.show({
         props: {
-          text1FontSize: 11
+          text1FontSize: 14
         },
-        text1: 'Password should contain at least 1 special character',
-        type: 'error',
-        visibilityTime: 2500
+        text1: t('toastErrorInvalidPasswordNoSpecialChar'),
+        type: 'error'
       });
       return false;
     }
@@ -136,11 +139,10 @@ const ResetPasswordScreen = ({ navigation }: IProps) => {
     if (password !== confirmPassword) {
       Toast.show({
         props: {
-          text1FontSize: 12
+          text1FontSize: 14
         },
-        text1: 'Passwords do not match',
-        type: 'error',
-        visibilityTime: 2500
+        text1: t('toastErrorInvalidPasswordDoNotMatch'),
+        type: 'error'
       });
       return false;
     }
@@ -184,17 +186,17 @@ const ResetPasswordScreen = ({ navigation }: IProps) => {
           style={styles.image}
         />
         <View style={styles.inputContainer}>
-          <Text style={styles.infoText}>Enter your new password</Text>
+          <Text style={styles.infoText}>{t('enterNewPassword')}</Text>
           <CustomTextInput
             hashText
             onChangeText={handlePasswordChange}
-            placeholderText="New password"
+            placeholderText={t('newPassword')}
             type="default"
           />
           <CustomTextInput
             hashText
             onChangeText={handleConfirmPasswordChange}
-            placeholderText="Confirm new password"
+            placeholderText={t('confirmNewPassword')}
             type="default"
           />
         </View>
@@ -203,12 +205,12 @@ const ResetPasswordScreen = ({ navigation }: IProps) => {
             container: {
               alignSelf: 'center',
               marginTop: 20,
-              width: 240
+              width: i18n.language === 'fr' ? 260 : 240
             }
           }}
           isDisabled={isSubmitBtnDisabled}
           onPress={handleApply}
-          title="Reset Password"
+          title={t('resetPassword')}
         />
       </KeyboardAwareScrollView>
     </SafeAreaView>

@@ -12,6 +12,7 @@ import { LANGUAGES_LOCALES } from '../../data/constants';
 import { useAppSelector } from '../../hooks/redux';
 import { useCallback, useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import CurrencyListItem from '../../components/CurrencyListItem/CurrencyListItem';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import Title from '../../components/Title/Title';
@@ -49,6 +50,8 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
   >(null);
 
   const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchCurrencies = async () => {
@@ -167,11 +170,9 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
         customStyles={{
           content: styles.titleContent
         }}
-        text="Exchange"
+        text={t('exchange')}
       />
-      <Text style={styles.subText}>
-        Check your balance in different currencies
-      </Text>
+      <Text style={styles.subText}>{t('exchangeSubTitle')}</Text>
       <View style={styles.listContainer}>
         {isLoading ? (
           <ActivityIndicator
@@ -192,9 +193,9 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
               )}
               style={styles.listContent}
             />
-            <Text
-              style={{ textAlign: 'center' }}
-            >{`Currencies rates as of: ${formatDate(
+            <Text style={{ textAlign: 'center' }}>{`${t(
+              'currencyRatesDate'
+            )} ${formatDate(
               new Date(currenciesDate || Date.now()),
               'language' in currentUser
                 ? LANGUAGES_LOCALES[
@@ -215,7 +216,7 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
             }
           }}
           onPress={handleContextChange('monthly')}
-          title="Current Month"
+          title={t('currentMonth')}
         />
         <CustomButton
           customStyles={{
@@ -226,7 +227,7 @@ const ExchangeScreen = ({ navigation }: IDrawerProps) => {
             }
           }}
           onPress={handleContextChange('all-time')}
-          title="All Time"
+          title={t('allTime')}
         />
       </View>
     </View>
@@ -261,6 +262,7 @@ const styles = StyleSheet.create({
     transform: [{ scaleX: 1.25 }, { scaleY: 1.25 }]
   },
   singleButtonContainer: {
+    justifyContent: 'center',
     borderRadius: 15,
     borderWidth: 2,
     flex: 1

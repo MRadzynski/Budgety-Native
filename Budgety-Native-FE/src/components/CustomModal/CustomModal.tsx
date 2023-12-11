@@ -1,6 +1,7 @@
 import { COLORS } from '../../styles/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import CustomButton from '../CustomButton/CustomButton';
 
 interface IProps {
@@ -16,6 +17,8 @@ const CustomModal = ({
   onConfirm,
   setIsVisible
 }: IProps) => {
+  const { t } = useTranslation();
+
   const handleClose = () => setIsVisible(false);
 
   const handleConfirm = () => {
@@ -41,7 +44,7 @@ const CustomModal = ({
           </View>
           <View style={styles.infoContainer}>
             <Text style={styles.textContent}>{message}</Text>
-            <Text style={styles.textContent}>Are you sure?</Text>
+            <Text style={styles.textContent}>{t('areYouSure')}</Text>
           </View>
           <View style={styles.buttonsContainer}>
             <CustomButton
@@ -56,7 +59,7 @@ const CustomModal = ({
                 }
               }}
               onPress={handleConfirm}
-              title="Yes"
+              title={t('yes')}
             />
             <CustomButton
               customStyles={{
@@ -64,7 +67,7 @@ const CustomModal = ({
                 textContent: styles.buttonContent
               }}
               onPress={handleClose}
-              title="No"
+              title={t('no')}
             />
           </View>
         </View>

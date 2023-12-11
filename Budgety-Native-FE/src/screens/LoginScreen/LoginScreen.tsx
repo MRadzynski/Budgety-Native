@@ -8,6 +8,7 @@ import { saveToSecureStore } from '../../utils/secureStorage';
 import { setUser } from '../../slices/userSlice';
 import { useAppDispatch } from '../../hooks/redux';
 import { useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Title from '../../components/Title/Title';
@@ -44,6 +45,21 @@ const LoginScreen: React.FC<any> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
   const abortControllerRef = useRef<AbortController>(new AbortController());
+
+  const { t } = useTranslation();
+
+  const getTranslatedServerErrorMessages = (message: string) => {
+    switch (message) {
+      case 'All fields must be filled':
+        return t('toastErrorAllFieldsMustBeFilled');
+      case 'Incorrect email':
+        return t('toastErrorInvalidEmail');
+      case 'Incorrect email or password':
+        return t('toastErrorWrongEmailOrPassword');
+      default:
+        return t('toastErrorSomethingWentWrong');
+    }
+  };
 
   const handleEmailChange = (e: string) =>
     reducerDispatch({ email: e, type: 'UPDATE_EMAIL' });
@@ -89,24 +105,25 @@ const LoginScreen: React.FC<any> = ({ navigation }) => {
         );
       } else {
         Toast.show({
-          text1: data?.error,
-          text2: 'Please check the credentials and try again.',
-          type: 'error',
-          visibilityTime: 2500
+          props: {
+            text1FontSize: 16,
+            text2FontSize: 11
+          },
+          text1: getTranslatedServerErrorMessages(data?.error),
+          text2: t('toastErrorWrongCredentials'),
+          type: 'error'
         });
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
         Toast.show({
-          text1: error.message,
-          type: 'error',
-          visibilityTime: 2500
+          text1: getTranslatedServerErrorMessages(error.message),
+          type: 'error'
         });
       } else {
         Toast.show({
-          text1: 'Something went wrong',
-          type: 'error',
-          visibilityTime: 2500
+          text1: t('toastErrorSomethingWentWrong'),
+          type: 'error'
         });
       }
     }
@@ -152,40 +169,40 @@ const LoginScreen: React.FC<any> = ({ navigation }) => {
           <CustomTextInput
             autoCapitalize="none"
             onChangeText={handleEmailChange}
-            placeholderText="Email"
+            placeholderText={t('email')}
             type="email-address"
           />
           <CustomTextInput
             autoCapitalize="none"
             hashText
             onChangeText={handlePasswordChange}
-            placeholderText="Password"
+            placeholderText={t('password')}
             type="default"
           />
           <Link
             style={styles.forgotPasswordText}
             to={{ screen: 'ForgotPassword' }}
           >
-            Forgot password?
+            {t('forgotPassword')}
           </Link>
         </View>
         <CustomButton
           customStyles={{
             container: {
               alignSelf: 'center',
-              marginTop: 60,
+              marginTop: 20,
               width: 240
             }
           }}
           isDisabled={isSubmitBtnDisabled}
           onPress={handleSubmit}
-          title="Sign In"
+          title={t('signIn')}
         />
         <View style={styles.paragraphContainer}>
           <Text style={styles.paragraph}>
-            Don't have an account?{' '}
+            {t('doNotHaveAccount')}{' '}
             <Link style={styles.link} to={{ screen: 'SignUp' }}>
-              Sign Up!
+              {t('signUp')}!
             </Link>
           </Text>
         </View>
@@ -239,7 +256,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     justifyContent: 'flex-end',
-    marginBottom: '5%',
+    marginBottom: '7%',
     textAlign: 'center'
   }
 });

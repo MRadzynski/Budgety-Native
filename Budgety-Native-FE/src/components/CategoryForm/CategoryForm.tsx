@@ -5,6 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAppSelector } from '../../hooks/redux';
+import { useTranslation } from 'react-i18next';
 import ColorPickerModal from '../ColorPickerModal/ColorPickerModal';
 import CustomButton from '../CustomButton/CustomButton';
 import CustomTextInput from '../CustomTextInput/CustomTextInput';
@@ -37,6 +38,8 @@ const CategoryForm = ({ navigation }: IProps) => {
 
   const context = useAppSelector(state => state.expensesIncome.context);
   const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const { t } = useTranslation();
 
   const { params } = useRoute<RouteProp<TParamList, 'ExpensesIncomeScreen'>>();
 
@@ -125,7 +128,9 @@ const CategoryForm = ({ navigation }: IProps) => {
   return (
     <View style={styles.container}>
       <Text style={styles.formTitle}>
-        {params.type === CATEGORY_FORM_TYPES.ADD ? 'Add' : 'Edit'} Category
+        {params.type === CATEGORY_FORM_TYPES.ADD
+          ? t('addCategoryTitle')
+          : t('editCategoryTitle')}
       </Text>
       <View style={styles.exitContainer}>
         <MaterialIcons
@@ -137,7 +142,7 @@ const CategoryForm = ({ navigation }: IProps) => {
       </View>
       <View style={styles.formBody}>
         <View style={styles.formRow}>
-          <Text style={styles.formFieldName}>Name</Text>
+          <Text style={styles.formFieldName}>{t('categoryName')}</Text>
           <CustomTextInput
             cursorColor={COLORS.PRIMARY}
             customStyles={{
@@ -146,13 +151,13 @@ const CategoryForm = ({ navigation }: IProps) => {
             }}
             defaultValue={name}
             onChangeText={handleNameChange}
-            placeholderText="i.e. Food"
+            placeholderText={t('exampleCategoryName')}
             placeholderTextColor="#757575"
             selectionColor={COLORS.PRIMARY}
           />
         </View>
         <View style={styles.formRow}>
-          <Text style={styles.formFieldName}>Color</Text>
+          <Text style={styles.formFieldName}>{t('categoryColor')}</Text>
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={handleColorPickerModalOpen}
@@ -166,7 +171,7 @@ const CategoryForm = ({ navigation }: IProps) => {
           />
         </View>
         <View style={styles.formRow}>
-          <Text style={styles.formFieldName}>Icon</Text>
+          <Text style={styles.formFieldName}>{t('categoryIcon')}</Text>
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={handleIconPickerModalOpen}
@@ -189,7 +194,7 @@ const CategoryForm = ({ navigation }: IProps) => {
         }}
         isDisabled={!name}
         onPress={handleApply}
-        title="Confirm"
+        title={t('confirm')}
       />
     </View>
   );

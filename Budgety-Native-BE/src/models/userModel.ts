@@ -17,7 +17,13 @@ interface IUser {
 
 interface UserModel extends Model<IUser> {
   login(email: string, password: string): Promise<IUser>;
-  signup(email: string, password: string, username: string): Promise<IUser>;
+  signup(
+    email: string,
+    password: string,
+    username: string,
+    currency: string,
+    language: string
+  ): Promise<IUser>;
 }
 
 const Schema = mongoose.Schema;
@@ -85,7 +91,9 @@ userSchema.statics.login = async function (email: string, password: string) {
 userSchema.statics.signup = async function (
   email: string,
   password: string,
-  username: string
+  username: string,
+  currency: string,
+  language: string
 ) {
   if (!email?.trim() || !password?.trim())
     throw new Error('Email and password are required');
@@ -103,7 +111,13 @@ userSchema.statics.signup = async function (
 
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  const user = await this.create({ email, password: hashedPassword, username });
+  const user = await this.create({
+    currency,
+    email,
+    language,
+    password: hashedPassword,
+    username
+  });
 
   await Finances.create({
     userId: user._id,

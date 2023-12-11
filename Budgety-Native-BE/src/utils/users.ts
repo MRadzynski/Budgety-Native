@@ -1,13 +1,42 @@
 import nodemailer from 'nodemailer';
+import { de, en, es, fr, it, pl, ru } from '../data/emailTranslations';
 
-export const sendEmail = (recipient: string, token: string) => {
+const getTranslation = (language: string) => {
+  switch (language.toLowerCase()) {
+    case 'de':
+      return de;
+    case 'en':
+      return en;
+    case 'es':
+      return es;
+    case 'fr':
+      return fr;
+    case 'it':
+      return it;
+    case 'pl':
+      return pl;
+    case 'ru':
+      return ru;
+    default:
+      return en;
+  }
+};
+
+export const sendEmail = (
+  recipient: string,
+  token: string,
+  language: string,
+  username: string
+) => {
   let mailTransporter = nodemailer.createTransport({
-    service: 'gmail',
     auth: {
-      user: process.env.EMAIL_ADDRESS,
-      pass: process.env.EMAIL_PASSWORD
-    }
+      pass: process.env.EMAIL_PASSWORD,
+      user: process.env.EMAIL_ADDRESS
+    },
+    service: 'gmail'
   });
+
+  const translation = getTranslation(language);
 
   const emailContent = `
     <div
@@ -29,19 +58,23 @@ export const sendEmail = (recipient: string, token: string) => {
       >
         Budgety
       </h1>
-      <p style="margin-bottom: 10px; text-align: left">Dear User,</p>
+      <p style="margin-bottom: 10px; text-align: left">${translation.dear} ${
+    username || translation.user
+  },</p>
       <p style="line-height: 24px; margin: 0">
-        We received a request to reset your password for your Budgety account.
+        ${translation.receivedRequest}
       </p>
       <p style="line-height: 24px; margin: 0">
-        If you did not make this request, please ignore this email.
+        ${translation.doNotMakeRequest}
       </p>
       <p style="margin-bottom: 16px">
-        Otherwise, please click on the button below to reset your password:
+      ${translation.otherwise}
       </p>
       <p style="margin-bottom: 20px; margin-left: auto; margin-right: auto; margin-top: 20px;">
         <a
-          href="http://${process.env.EMAIL_RESET_PAGE_ADDRESS}/index.html?${token}"
+          href="http://${
+            process.env.EMAIL_RESET_PAGE_ADDRESS
+          }/index.html?${token}"
           style="
             background-color: white;
             border-radius: 8px;
@@ -51,25 +84,26 @@ export const sendEmail = (recipient: string, token: string) => {
             text-decoration: none;
             width: fit-content;
           "
-          >Reset Password</a
+          >${translation.resetPassword}</a
         >
       </p>
       <p style="margin-top: 16px;">
-        If you're unable to click the button, please copy and paste the URL into
-        your web browser.
+      ${translation.notAbleToClick}
       </p>
       <p>
         <a
-          href="http://${process.env.EMAIL_RESET_PAGE_ADDRESS}/index.html?${token}"
+          href="http://${
+            process.env.EMAIL_RESET_PAGE_ADDRESS
+          }/index.html?${token}"
           style="color: white; word-break: break-all;"
         >
           http://${process.env.EMAIL_RESET_PAGE_ADDRESS}/index.html?${token}
         </a>
       </p>
       <p style="margin: 10px 0 30px">
-        The link will expire in 1 hour for security reasons.
+      ${translation.linkExpire}
       </p>
-      <p style="margin: 4px 0; text-align: center">All the best,</p>
+      <p style="margin: 4px 0; text-align: center">${translation.allTheBest}</p>
       <p
         style="
           margin: 0;
@@ -85,11 +119,11 @@ export const sendEmail = (recipient: string, token: string) => {
   const mailDetails = {
     from: process.env.EMAIL_ADDRESS,
     to: recipient,
-    subject: 'Budgety: Reset Password',
+    subject: translation.subject,
     html: emailContent
   };
 
-  mailTransporter.sendMail(mailDetails, function (err, data) {
+  mailTransporter.sendMail(mailDetails, function (err, _data) {
     if (err) {
       console.log('Error Occurs');
     } else {

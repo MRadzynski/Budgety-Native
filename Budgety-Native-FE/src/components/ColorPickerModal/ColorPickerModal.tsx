@@ -7,6 +7,7 @@ import {
   View
 } from 'react-native';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ColorPicker from 'react-native-wheel-color-picker';
 import CustomButton from '../CustomButton/CustomButton';
 
@@ -26,6 +27,8 @@ const ColorPickerModal = ({
   onClose
 }: IProps) => {
   const [color, setColor] = useState(defaultColor);
+
+  const { t } = useTranslation();
 
   const handleApply = () => {
     onApply(color);
@@ -53,7 +56,7 @@ const ColorPickerModal = ({
             textContent: styles.buttonContent
           }}
           onPress={handleApply}
-          title="Confirm"
+          title={t('confirm')}
         />
       </TouchableOpacity>
     </Modal>

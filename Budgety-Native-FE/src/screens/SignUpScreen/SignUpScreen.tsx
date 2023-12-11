@@ -1,3 +1,4 @@
+import * as Localization from 'expo-localization';
 import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { Image, StyleSheet, Text, View } from 'react-native';
@@ -6,8 +7,9 @@ import { Link } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { saveToSecureStore } from '../../utils/secureStorage';
 import { setUser } from '../../slices/userSlice';
-import { useRef, useState } from 'react';
 import { useAppDispatch } from '../../hooks/redux';
+import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Title from '../../components/Title/Title';
@@ -29,6 +31,23 @@ const SignUpScreen = () => {
 
   const abortControllerRef = useRef<AbortController>(new AbortController());
 
+  const { i18n, t } = useTranslation();
+
+  const getTranslatedServerErrorMessages = (message: string) => {
+    switch (message) {
+      case 'Email and password are required':
+        return t('toastErrorEmailPasswordRequired');
+      case 'Email is not valid':
+        return t('toastErrorInvalidEmail');
+      case 'Password is not strong enough':
+        return t('toastErrorInvalidPasswordWeak');
+      case 'User already exists':
+        return t('toastErrorInvalidUserAlreadyExists');
+      default:
+        return t('toastErrorSomethingWentWrong');
+    }
+  };
+
   const handleConfirmationPasswordChange = (e: string) =>
     setConfirmationPassword(e);
 
@@ -40,7 +59,9 @@ const SignUpScreen = () => {
     if (validateData()) {
       const url = `${API_URL}/api/user/signup`;
       const body = {
+        currency: Localization.getLocales()?.[0]?.currencyCode || 'USD',
         email: email.trim().toLowerCase(),
+        language: i18n.language.toUpperCase() || 'EN',
         password: password.trim(),
         username
       };
@@ -75,23 +96,20 @@ const SignUpScreen = () => {
           );
         } else {
           Toast.show({
-            text1: data?.error,
-            type: 'error',
-            visibilityTime: 2500
+            text1: getTranslatedServerErrorMessages(data?.error),
+            type: 'error'
           });
         }
       } catch (error: unknown) {
         if (error instanceof Error) {
           Toast.show({
-            text1: error.message,
-            type: 'error',
-            visibilityTime: 2500
+            text1: getTranslatedServerErrorMessages(error.message),
+            type: 'error'
           });
         } else {
           Toast.show({
-            text1: 'Something went wrong',
-            type: 'error',
-            visibilityTime: 2500
+            text1: t('toastErrorSomethingWentWrong'),
+            type: 'error'
           });
         }
       }
@@ -103,9 +121,8 @@ const SignUpScreen = () => {
   const validateData = () => {
     if (!validateEmail(email)) {
       Toast.show({
-        text1: 'Email is not valid',
-        type: 'error',
-        visibilityTime: 2500
+        text1: t('toastErrorInvalidEmail'),
+        type: 'error'
       });
       return false;
     }
@@ -113,11 +130,10 @@ const SignUpScreen = () => {
     if (password.length < 8) {
       Toast.show({
         props: {
-          text1FontSize: 12
+          text1FontSize: 14
         },
-        text1: 'Password should contain at least 8 characters',
-        type: 'error',
-        visibilityTime: 2500
+        text1: t('toastErrorInvalidPasswordTooShort'),
+        type: 'error'
       });
       return false;
     }
@@ -125,11 +141,10 @@ const SignUpScreen = () => {
     if (!/[A-Z]/.test(password)) {
       Toast.show({
         props: {
-          text1FontSize: 12
+          text1FontSize: 14
         },
-        text1: 'Password should contain at least 1 uppercase letter',
-        type: 'error',
-        visibilityTime: 2500
+        text1: t('toastErrorInvalidPasswordNoUpperCaseLetter'),
+        type: 'error'
       });
       return false;
     }
@@ -137,11 +152,10 @@ const SignUpScreen = () => {
     if (!/[0-9]/.test(password)) {
       Toast.show({
         props: {
-          text1FontSize: 12
+          text1FontSize: 14
         },
-        text1: 'Password should contain at least 1 number',
-        type: 'error',
-        visibilityTime: 2500
+        text1: t('toastErrorInvalidPasswordNoNumber'),
+        type: 'error'
       });
       return false;
     }
@@ -149,11 +163,10 @@ const SignUpScreen = () => {
     if (!/[!@#$%^&*]/.test(password)) {
       Toast.show({
         props: {
-          text1FontSize: 11
+          text1FontSize: 14
         },
-        text1: 'Password should contain at least 1 special character',
-        type: 'error',
-        visibilityTime: 2500
+        text1: t('toastErrorInvalidPasswordNoSpecialChar'),
+        type: 'error'
       });
       return false;
     }
@@ -161,11 +174,10 @@ const SignUpScreen = () => {
     if (password !== confirmationPassword) {
       Toast.show({
         props: {
-          text1FontSize: 12
+          text1FontSize: 14
         },
-        text1: 'Passwords do not match',
-        type: 'error',
-        visibilityTime: 2500
+        text1: t('toastErrorInvalidPasswordDoNotMatch'),
+        type: 'error'
       });
       return false;
     }
@@ -215,44 +227,44 @@ const SignUpScreen = () => {
         <View style={styles.inputContainer}>
           <CustomTextInput
             onChangeText={handleUsernameChange}
-            placeholderText="Name (optional)"
+            placeholderText={`${t('displayName')} (${t('optional')})`}
           />
           <CustomTextInput
             autoCapitalize="none"
             onChangeText={handleEmailChange}
-            placeholderText="Email"
+            placeholderText={t('email')}
             type="email-address"
           />
           <CustomTextInput
             autoCapitalize="none"
             hashText
             onChangeText={handlePasswordChange}
-            placeholderText="Password"
+            placeholderText={t('password')}
           />
           <CustomTextInput
             autoCapitalize="none"
             hashText
             onChangeText={handleConfirmationPasswordChange}
-            placeholderText="Confirm Password"
+            placeholderText={t('confirmPassword')}
           />
         </View>
         <CustomButton
           customStyles={{
             container: {
               alignSelf: 'center',
-              marginTop: 20,
+              marginTop: 10,
               width: 240
             }
           }}
           isDisabled={isSubmitBtnDisabled}
           onPress={handleSubmit}
-          title="Sign Up"
+          title={t('signUp')}
         />
         <View style={styles.paragraphContainer}>
           <Text style={styles.paragraph}>
-            Already have an account?{' '}
+            {t('alreadyHaveAccount')}{' '}
             <Link style={styles.link} to={{ screen: 'Login' }}>
-              Sign In!
+              {t('signIn')}!
             </Link>
           </Text>
         </View>
@@ -298,7 +310,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     justifyContent: 'flex-end',
-    marginBottom: '5%',
+    marginBottom: '7%',
     textAlign: 'center'
   }
 });
