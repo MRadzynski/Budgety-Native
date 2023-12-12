@@ -4,20 +4,20 @@ import FinanceModel from '../models/financeModel';
 import { isTheSameMonthYear } from '../utils/finances';
 
 interface IExpenseIncome {
-  _id: mongoose.Schema.Types.ObjectId;
+  _id: mongoose.Types.ObjectId;
   amount: Number;
   bgColor: String;
   categoryName: String;
   icon: String;
   logs: {
-    _id?: mongoose.Schema.Types.ObjectId;
+    _id: mongoose.Types.ObjectId;
     amount: Number;
     date: Date;
   }[];
 }
 
 interface IExpensesIncomeLog {
-  _id?: mongoose.Schema.Types.ObjectId;
+  _id: mongoose.Types.ObjectId;
   amount: Number;
   categoryId: String;
   date: Date;
@@ -72,6 +72,56 @@ export interface IFinanceDocument {
   save: () => Promise<IFinanceDocument>;
 }
 
+export const handleDeleteExpense = async (req: Request, res: Response) => {
+  const { userId } = req;
+
+  const { id } = req.body as { id: string };
+
+  if (!userId) return res.status(401).json({ error: 'You are not authorized' });
+
+  try {
+    const financeDoc = (await FinanceModel.findOne({
+      userId: userId
+    })) as IFinanceDocument;
+
+    if (!financeDoc) return res.status(404).json({ error: 'Data not found' });
+
+    const foundExpense = financeDoc.expensesLogs.find(
+      log => log._id.toString() === id
+    );
+
+    const expensesCategory = financeDoc.expenses.map(expense => {
+      if (expense._id.toString() === foundExpense?.categoryId) {
+        expense.amount = Number(expense.amount) - Number(foundExpense.amount);
+        expense.logs = expense.logs.filter(log => log._id.toString() !== id);
+      }
+
+      return expense;
+    });
+
+    financeDoc.expenses = expensesCategory;
+    financeDoc.expensesLogs = financeDoc.expensesLogs.filter(
+      log => log._id.toString() !== id
+    );
+
+    const savedFinanceDoc = await financeDoc.save();
+
+    if (!savedFinanceDoc)
+      return res.status(404).json({ error: 'An error occurred' });
+
+    res.status(200).json({
+      expenses: savedFinanceDoc.expenses,
+      expensesLogs: savedFinanceDoc.expensesLogs
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'Something went wrong' });
+    }
+  }
+};
+
 export const handleDeleteExpensesCategory = async (
   req: Request,
   res: Response
@@ -92,6 +142,56 @@ export const handleDeleteExpensesCategory = async (
     if (!financeDoc) return res.status(404).json({ error: 'Data not found' });
 
     res.status(200).json({ expenses: financeDoc.expenses });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'Something went wrong' });
+    }
+  }
+};
+
+export const handleDeleteIncome = async (req: Request, res: Response) => {
+  const { userId } = req;
+
+  const { id } = req.body as { id: string };
+
+  if (!userId) return res.status(401).json({ error: 'You are not authorized' });
+
+  try {
+    const financeDoc = (await FinanceModel.findOne({
+      userId: userId
+    })) as IFinanceDocument;
+
+    if (!financeDoc) return res.status(404).json({ error: 'Data not found' });
+
+    const foundIncome = financeDoc.incomeLogs.find(
+      log => log._id.toString() === id
+    );
+
+    const incomeCategory = financeDoc.income.map(income => {
+      if (income._id.toString() === foundIncome?.categoryId) {
+        income.amount = Number(income.amount) - Number(foundIncome.amount);
+        income.logs = income.logs.filter(log => log._id.toString() !== id);
+      }
+
+      return income;
+    });
+
+    financeDoc.income = incomeCategory;
+    financeDoc.incomeLogs = financeDoc.incomeLogs.filter(
+      log => log._id.toString() !== id
+    );
+
+    const savedFinanceDoc = await financeDoc.save();
+
+    if (!savedFinanceDoc)
+      return res.status(404).json({ error: 'An error occurred' });
+
+    res.status(200).json({
+      income: savedFinanceDoc.income,
+      incomeLogs: savedFinanceDoc.incomeLogs
+    });
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
@@ -550,20 +650,25 @@ export const handlePostExpensesAddExpense = async (
     );
 
     if (!expense) return res.status(404).json({ error: 'Data not found' });
-
+    const newObjectId = new mongoose.Types.ObjectId();
     const logDate = new Date();
 
     expense.amount = Number(expense.amount) + Number(amount);
-    expense.logs.push({ amount, date: logDate });
+    expense.logs.push({ _id: newObjectId, amount, date: logDate });
 
-    financeDoc.expensesLogs.push({ amount, categoryId: id, date: logDate });
+    financeDoc.expensesLogs.push({
+      _id: newObjectId,
+      amount,
+      categoryId: id,
+      date: logDate
+    });
 
     const savedFinanceDoc = await financeDoc.save();
 
     if (!savedFinanceDoc)
       return res.status(404).json({ error: 'An error occurred' });
 
-    res.status(200).json({ expenses: savedFinanceDoc.expenses });
+    res.status(200).json({ financeEntryId: newObjectId?.toString() });
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
@@ -631,19 +736,25 @@ export const handlePostIncomeAddIncome = async (
 
     if (!income) return res.status(404).json({ error: 'Data not found' });
 
+    const newObjectId = new mongoose.Types.ObjectId();
     const logDate = new Date();
 
     income.amount = Number(income.amount) + Number(amount);
-    income.logs.push({ amount, date: logDate });
+    income.logs.push({ _id: newObjectId, amount, date: logDate });
 
-    financeDoc.incomeLogs.push({ amount, categoryId: id, date: logDate });
+    financeDoc.incomeLogs.push({
+      _id: newObjectId,
+      amount,
+      categoryId: id,
+      date: logDate
+    });
 
     const savedFinanceDoc = await financeDoc.save();
 
     if (!savedFinanceDoc)
       return res.status(404).json({ error: 'An error occurred' });
 
-    res.status(200).json({ income: savedFinanceDoc.income });
+    res.status(200).json({ financeEntryId: newObjectId?.toString() });
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });

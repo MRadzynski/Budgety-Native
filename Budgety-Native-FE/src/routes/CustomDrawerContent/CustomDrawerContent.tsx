@@ -1,6 +1,6 @@
 import { deleteFromSecureStore } from '../../utils/secureStorage';
 import { DrawerActions } from '@react-navigation/native';
-import { setUser } from '../../slices/userSlice';
+import { logout } from '../../slices/userSlice';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAppDispatch } from '../../hooks/redux';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +17,7 @@ const CustomDrawerContent: React.FC<any> = ({ navigation }) => {
   const { t } = useTranslation();
 
   const handleLogout = async () => {
-    dispatch(setUser({}));
+    dispatch(logout());
     await deleteFromSecureStore('user');
     navigation.dispatch(DrawerActions.closeDrawer());
   };
