@@ -109,9 +109,29 @@ export const handleDeleteExpense = async (req: Request, res: Response) => {
     if (!savedFinanceDoc)
       return res.status(404).json({ error: 'An error occurred' });
 
+    const monthlyExpenses = savedFinanceDoc.expenses.map(expense => {
+      const { _id, bgColor, categoryName, icon } = expense;
+
+      const monthlyLogs = expense.logs.filter(log =>
+        isTheSameMonthYear(log.date)
+      );
+
+      const monthlyAmount = monthlyLogs.reduce(
+        (acc, log) => (acc += Number(log.amount)),
+        0
+      );
+
+      return {
+        _id,
+        amount: monthlyAmount,
+        bgColor,
+        categoryName,
+        icon
+      };
+    });
+
     res.status(200).json({
-      expenses: savedFinanceDoc.expenses,
-      expensesLogs: savedFinanceDoc.expensesLogs
+      monthlyExpenses
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -188,9 +208,29 @@ export const handleDeleteIncome = async (req: Request, res: Response) => {
     if (!savedFinanceDoc)
       return res.status(404).json({ error: 'An error occurred' });
 
+    const monthlyIncome = savedFinanceDoc.income.map(income => {
+      const { _id, bgColor, categoryName, icon } = income;
+
+      const monthlyLogs = income.logs.filter(log =>
+        isTheSameMonthYear(log.date)
+      );
+
+      const monthlyAmount = monthlyLogs.reduce(
+        (acc, log) => (acc += Number(log.amount)),
+        0
+      );
+
+      return {
+        _id,
+        amount: monthlyAmount,
+        bgColor,
+        categoryName,
+        icon
+      };
+    });
+
     res.status(200).json({
-      income: savedFinanceDoc.income,
-      incomeLogs: savedFinanceDoc.incomeLogs
+      monthlyIncome
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -668,7 +708,30 @@ export const handlePostExpensesAddExpense = async (
     if (!savedFinanceDoc)
       return res.status(404).json({ error: 'An error occurred' });
 
-    res.status(200).json({ financeEntryId: newObjectId?.toString() });
+    const monthlyExpenses = savedFinanceDoc.expenses.map(expense => {
+      const { _id, bgColor, categoryName, icon } = expense;
+
+      const monthlyLogs = expense.logs.filter(log =>
+        isTheSameMonthYear(log.date)
+      );
+
+      const monthlyAmount = monthlyLogs.reduce(
+        (acc, log) => (acc += Number(log.amount)),
+        0
+      );
+
+      return {
+        _id,
+        amount: monthlyAmount,
+        bgColor,
+        categoryName,
+        icon
+      };
+    });
+
+    res
+      .status(200)
+      .json({ financeEntryId: newObjectId?.toString(), monthlyExpenses });
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
@@ -754,7 +817,30 @@ export const handlePostIncomeAddIncome = async (
     if (!savedFinanceDoc)
       return res.status(404).json({ error: 'An error occurred' });
 
-    res.status(200).json({ financeEntryId: newObjectId?.toString() });
+    const monthlyIncome = savedFinanceDoc.income.map(income => {
+      const { _id, bgColor, categoryName, icon } = income;
+
+      const monthlyLogs = income.logs.filter(log =>
+        isTheSameMonthYear(log.date)
+      );
+
+      const monthlyAmount = monthlyLogs.reduce(
+        (acc, log) => (acc += Number(log.amount)),
+        0
+      );
+
+      return {
+        _id,
+        amount: monthlyAmount,
+        bgColor,
+        categoryName,
+        icon
+      };
+    });
+
+    res
+      .status(200)
+      .json({ financeEntryId: newObjectId?.toString(), monthlyIncome });
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });

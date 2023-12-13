@@ -19,6 +19,11 @@ interface IProps {
   navigation: any;
 }
 
+type TCategory = {
+  label: string;
+  value: string;
+};
+
 type TParamList = {
   ExpensesIncomeScreen: {
     categoryData: {
@@ -28,11 +33,6 @@ type TParamList = {
       iconName: string;
     };
   };
-};
-
-type TCategory = {
-  label: string;
-  value: string;
 };
 
 const ExpenseIncomeForm = ({ navigation }: IProps) => {
@@ -76,31 +76,6 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
     }
   }, []);
 
-  const fetchCategories = async () => {
-    if (currentUser && 'token' in currentUser) {
-      const options = {
-        headers: {
-          Authorization: `Bearer ${currentUser.token}`,
-          'Content-Type': 'application/json'
-        },
-        method: 'GET'
-      };
-      const url = `${API_URL}/api/finance/get-categories-monthly`;
-
-      try {
-        const response = await fetch(url, options);
-        const data = await response.json();
-
-        data?.monthlyExpenses &&
-          dispatch(setExpensesCategories(data.monthlyExpenses));
-        data?.monthlyIncome &&
-          dispatch(setIncomeCategories(data.monthlyIncome));
-      } catch (error: unknown) {
-        if (error instanceof Error) console.error(error.message);
-      }
-    }
-  };
-
   const handleApply = async () => {
     if (currentUser && 'token' in currentUser) {
       const options = {
@@ -120,12 +95,13 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
 
       try {
         const response = await fetch(url, options);
-        const { financeEntryId } = await response.json();
+        const { financeEntryId, monthlyExpenses, monthlyIncome } =
+          await response.json();
 
         if (financeEntryId) setAddedEntryId(financeEntryId);
+        if (monthlyExpenses) dispatch(setExpensesCategories(monthlyExpenses));
+        if (monthlyIncome) dispatch(setIncomeCategories(monthlyIncome));
         setPrice('');
-
-        fetchCategories();
       } catch (error: unknown) {
         if (error instanceof Error) console.error(error.message);
       }
@@ -172,10 +148,12 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
       }`;
 
       try {
-        await fetch(url, options);
-        setAddedEntryId(null);
+        const response = await fetch(url, options);
+        const { monthlyExpenses, monthlyIncome } = await response.json();
 
-        fetchCategories();
+        if (monthlyExpenses) dispatch(setExpensesCategories(monthlyExpenses));
+        if (monthlyIncome) dispatch(setIncomeCategories(monthlyIncome));
+        setAddedEntryId(null);
       } catch (error: unknown) {
         if (error instanceof Error) console.error(error.message);
       }
@@ -282,7 +260,9 @@ const styles = StyleSheet.create({
   confirmBtnContainer: {
     alignSelf: 'center',
     backgroundColor: COLORS.PRIMARY,
+    bottom: '0%',
     marginBottom: 8,
+    position: 'absolute',
     width: '70%'
   },
   confirmBtnText: {
