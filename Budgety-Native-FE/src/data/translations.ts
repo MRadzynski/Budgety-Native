@@ -74,6 +74,7 @@ export const de = {
   singleIncome: 'Einkommen',
   toastErrorAllFieldsMustBeFilled: 'Alle Felder müssen ausgefüllt sein',
   toastErrorEmailPasswordRequired: 'E-Mail und Passwort sind erforderlich',
+  toastErrorIncorrectPassword: 'Falsches Passwort',
   toastErrorInvalidEmail: 'E-Mail ist ungültig',
   toastErrorInvalidPasswordDoNotMatch: 'Passwörter stimmen nicht überein',
   toastErrorInvalidPasswordNoNumber:
@@ -178,6 +179,7 @@ export const en = {
   singleIncome: 'Income',
   toastErrorAllFieldsMustBeFilled: 'All fields must be filled',
   toastErrorEmailPasswordRequired: 'Email and password are required',
+  toastErrorIncorrectPassword: 'Incorrect password',
   toastErrorInvalidEmail: 'Invalid email',
   toastErrorInvalidPasswordDoNotMatch: 'Passwords do not match',
   toastErrorInvalidPasswordNoNumber:
@@ -280,6 +282,7 @@ export const es = {
   toastErrorAllFieldsMustBeFilled: 'Todos los campos deben estar llenos',
   toastErrorEmailPasswordRequired:
     'Se requiere correo electrónico y contraseña',
+  toastErrorIncorrectPassword: 'Contraseña incorrecta',
   toastErrorInvalidEmail: 'El correo electrónico no es válido',
   toastErrorInvalidPasswordDoNotMatch: 'Las contraseñas no coinciden',
   toastErrorInvalidPasswordNoNumber:
@@ -386,6 +389,7 @@ export const fr = {
   toastErrorAllFieldsMustBeFilled: 'Tous les champs doivent être remplis',
   toastErrorEmailPasswordRequired:
     "L'adresse e-mail et le mot de passe sont obligatoires",
+  toastErrorIncorrectPassword: 'Mot de passe incorrect',
   toastErrorInvalidEmail: "L'adresse e-mail n'est pas valide",
   toastErrorInvalidPasswordDoNotMatch: 'Les mots de passe ne correspondent pas',
   toastErrorInvalidPasswordNoNumber:
@@ -490,6 +494,7 @@ export const it = {
   singleIncome: 'Entrate',
   toastErrorAllFieldsMustBeFilled: 'Tutti i campi devono essere compilati',
   toastErrorEmailPasswordRequired: 'Sono obbligatori e-mail e password',
+  toastErrorIncorrectPassword: 'Password errata',
   toastErrorInvalidEmail: "L'indirizzo email non è valido",
   toastErrorInvalidPasswordDoNotMatch: 'Le password non corrispondono',
   toastErrorInvalidPasswordNoNumber:
@@ -593,6 +598,7 @@ export const pl = {
   singleIncome: 'Przychód',
   toastErrorAllFieldsMustBeFilled: 'Wszystkie pola muszą być wypełnione',
   toastErrorEmailPasswordRequired: 'Adres e-mail i hasło są wymagane',
+  toastErrorIncorrectPassword: 'Niepoprawne hasło',
   toastErrorInvalidEmail: 'Adres e-mail jest nieprawidłowy',
   toastErrorInvalidPasswordDoNotMatch: 'Hasła nie pasują do siebie',
   toastErrorInvalidPasswordNoNumber: 'Hasło musi zawierać co najmniej 1 liczbę',
@@ -693,6 +699,7 @@ export const ru = {
   singleIncome: 'Доход',
   toastErrorAllFieldsMustBeFilled: 'Все поля должны быть заполнены',
   toastErrorEmailPasswordRequired: 'Требуется электронная почта и пароль',
+  toastErrorIncorrectPassword: 'Неверный пароль',
   toastErrorInvalidEmail: 'Неверный адрес электронной почты',
   toastErrorInvalidPasswordDoNotMatch: 'Пароли не совпадают',
   toastErrorInvalidPasswordNoNumber: 'Пароль должен содержать хотя бы 1 цифру',
