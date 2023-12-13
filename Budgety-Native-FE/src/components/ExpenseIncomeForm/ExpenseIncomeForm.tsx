@@ -3,17 +3,26 @@ import { COLORS } from '../../styles/Colors';
 import { CONTEXT, CURRENCIES_SIGNS } from '../../data/constants';
 import { MaterialIcons } from '@expo/vector-icons';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { StyleSheet, Text, View } from 'react-native';
-import { useAppSelector } from '../../hooks/redux';
+import {
+  setExpensesCategories,
+  setIncomeCategories
+} from '../../slices/expenseIncomeSlice';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import CustomButton from '../CustomButton/CustomButton';
 import CustomTextInput from '../CustomTextInput/CustomTextInput';
 import Dropdown from '../Dropdown/Dropdown';
-import React, { useEffect, useState } from 'react';
 
 interface IProps {
   navigation: any;
 }
+
+type TCategory = {
+  label: string;
+  value: string;
+};
 
 type TParamList = {
   ExpensesIncomeScreen: {
@@ -26,12 +35,8 @@ type TParamList = {
   };
 };
 
-type TCategory = {
-  label: string;
-  value: string;
-};
-
 const ExpenseIncomeForm = ({ navigation }: IProps) => {
+  const [addedEntryId, setAddedEntryId] = useState<string | null>(null);
   const [category, setCategory] = useState<TCategory | undefined>();
   const [price, setPrice] = useState('');
 
@@ -43,6 +48,8 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
   const incomeCategories = useAppSelector(
     state => state.expensesIncome.incomeCategories
   );
+
+  const dispatch = useAppDispatch();
 
   const { params } = useRoute<RouteProp<TParamList, 'ExpensesIncomeScreen'>>();
   const { t } = useTranslation();
@@ -87,8 +94,14 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
       }`;
 
       try {
-        await fetch(url, options);
-        navigation.navigate('CategoriesList');
+        const response = await fetch(url, options);
+        const { financeEntryId, monthlyExpenses, monthlyIncome } =
+          await response.json();
+
+        if (financeEntryId) setAddedEntryId(financeEntryId);
+        if (monthlyExpenses) dispatch(setExpensesCategories(monthlyExpenses));
+        if (monthlyIncome) dispatch(setIncomeCategories(monthlyIncome));
+        setPrice('');
       } catch (error: unknown) {
         if (error instanceof Error) console.error(error.message);
       }
@@ -118,8 +131,42 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
     }
   };
 
+  const handleUndo = async () => {
+    if (addedEntryId && currentUser && 'token' in currentUser) {
+      const options = {
+        body: JSON.stringify({
+          id: addedEntryId
+        }),
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`,
+          'Content-Type': 'application/json'
+        },
+        method: 'DELETE'
+      };
+      const url = `${API_URL}/api/finance/${context.toLowerCase()}/delete-${
+        context === CONTEXT.EXPENSES ? 'expense' : 'income'
+      }`;
+
+      try {
+        const response = await fetch(url, options);
+        const { monthlyExpenses, monthlyIncome } = await response.json();
+
+        if (monthlyExpenses) dispatch(setExpensesCategories(monthlyExpenses));
+        if (monthlyIncome) dispatch(setIncomeCategories(monthlyIncome));
+        setAddedEntryId(null);
+      } catch (error: unknown) {
+        if (error instanceof Error) console.error(error.message);
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
+      {addedEntryId && (
+        <TouchableOpacity onPress={handleUndo} style={styles.undoContainer}>
+          <MaterialIcons color={COLORS.BLACK_SHADE} name="replay" size={28} />
+        </TouchableOpacity>
+      )}
       <Text style={styles.formTitle}>
         {context === CONTEXT.EXPENSES ? t('addExpense') : t('addIncome')}
       </Text>
@@ -213,7 +260,9 @@ const styles = StyleSheet.create({
   confirmBtnContainer: {
     alignSelf: 'center',
     backgroundColor: COLORS.PRIMARY,
+    bottom: '0%',
     marginBottom: 8,
+    position: 'absolute',
     width: '70%'
   },
   confirmBtnText: {
@@ -264,6 +313,12 @@ const styles = StyleSheet.create({
     color: 'black',
     padding: 8,
     textAlign: 'right'
+  },
+  undoContainer: {
+    left: 16,
+    position: 'absolute',
+    top: 16,
+    zIndex: 1
   }
 });
 

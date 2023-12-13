@@ -3,11 +3,13 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const expensesIncomeInnerLogsSchema = new Schema({
+  _id: mongoose.Schema.Types.ObjectId,
   amount: Number,
   date: Date
 });
 
 const expensesIncomeLogsSchema = new Schema({
+  _id: mongoose.Schema.Types.ObjectId,
   amount: Number,
   categoryId: String,
   date: Date

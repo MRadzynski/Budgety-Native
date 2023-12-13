@@ -1,7 +1,9 @@
 import express from 'express';
 import { authChecker } from '../middlewares/authChecker';
 import {
+  handleDeleteExpense,
   handleDeleteExpensesCategory,
+  handleDeleteIncome,
   handleDeleteIncomeCategory,
   handleEraseAllData,
   handleGetBalance,
@@ -24,7 +26,11 @@ router.use(authChecker);
 
 router.delete('/expenses/delete-category', handleDeleteExpensesCategory);
 
+router.delete('/expenses/delete-expense', handleDeleteExpense);
+
 router.delete('/income/delete-category', handleDeleteIncomeCategory);
+
+router.delete('/income/delete-income', handleDeleteIncome);
 
 router.delete('/erase-all-data', handleEraseAllData);
 

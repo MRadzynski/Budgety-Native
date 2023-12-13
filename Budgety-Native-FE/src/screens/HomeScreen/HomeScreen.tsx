@@ -1,12 +1,15 @@
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { CONTEXT, LANGUAGES_LOCALES } from '../../data/constants';
 import { formatNumber } from '../../utils/helpers';
 import { PieChartSelectEvent } from 'react-native-charts-wrapper';
-import { StyleSheet, Text, View } from 'react-native';
-import { useAppSelector } from '../../hooks/redux';
-import { useCallback, useMemo, useState } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import {
+  setExpensesCategories,
+  setIncomeCategories
+} from '../../slices/expenseIncomeSlice';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ScrollableBarChart from '../../components/ScrollableBarChart/ScrollableBarChart';
 import SemiPieChart from '../../components/SemiPieChart/SemiPieChart';
@@ -15,56 +18,54 @@ interface DrawerProps {
   navigation: any;
 }
 
-interface IExpensesIncomeCategory {
-  _id: string;
-  amount: number;
-  bgColor: string;
-  categoryName: string;
-  icon: string;
-}
-
 const HomeScreen = ({ navigation }: DrawerProps) => {
   const [balance, setBalance] = useState(0);
-  const [expensesCategories, setExpensesCategories] = useState<
-    IExpensesIncomeCategory[] | null
-  >(null);
-  const [incomeCategories, setIncomeCategories] = useState<
-    IExpensesIncomeCategory[] | null
-  >(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const currentUser = useAppSelector(state => state.user.currentUser);
+  const expensesCategories = useAppSelector(
+    state => state.expensesIncome.expensesCategories
+  );
+  const incomeCategories = useAppSelector(
+    state => state.expensesIncome.incomeCategories
+  );
+
+  const dispatch = useAppDispatch();
 
   const { t } = useTranslation();
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        if (currentUser && 'token' in currentUser) {
-          const options = {
-            headers: {
-              Authorization: `Bearer ${currentUser.token}`,
-              'Content-Type': 'application/json'
-            },
-            method: 'GET'
-          };
-          const url = `${API_URL}/api/finance/get-categories-monthly`;
+  useEffect(() => {
+    const fetchData = async () => {
+      if (currentUser && 'token' in currentUser) {
+        const options = {
+          headers: {
+            Authorization: `Bearer ${currentUser.token}`,
+            'Content-Type': 'application/json'
+          },
+          method: 'GET'
+        };
+        const url = `${API_URL}/api/finance/get-categories-monthly`;
 
-          try {
-            const response = await fetch(url, options);
-            const data = await response.json();
+        try {
+          setIsLoading(true);
 
-            data?.monthlyExpenses &&
-              setExpensesCategories(data.monthlyExpenses);
-            data?.monthlyIncome && setIncomeCategories(data.monthlyIncome);
-          } catch (error: unknown) {
-            if (error instanceof Error) console.error(error.message);
-          }
+          const response = await fetch(url, options);
+          const data = await response.json();
+
+          data?.monthlyExpenses &&
+            dispatch(setExpensesCategories(data.monthlyExpenses));
+          data?.monthlyIncome &&
+            dispatch(setIncomeCategories(data.monthlyIncome));
+        } catch (error: unknown) {
+          if (error instanceof Error) console.error(error.message);
+        } finally {
+          setIsLoading(false);
         }
-      };
+      }
+    };
 
-      fetchData();
-    }, [])
-  );
+    fetchData();
+  }, []);
 
   const handleSemiPieChartClick = (event: PieChartSelectEvent) => {
     if (!event.nativeEvent || !event.nativeEvent.label) return;
@@ -160,7 +161,13 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
           justifyContent: BALANCE_PIE_DATA.length ? undefined : 'center'
         }}
       >
-        {BALANCE_PIE_DATA.length ? (
+        {isLoading ? (
+          <ActivityIndicator
+            color={COLORS.PRIMARY}
+            size="large"
+            style={styles.loader}
+          />
+        ) : BALANCE_PIE_DATA.length ? (
           <View style={styles.chartContainer}>
             <SemiPieChart
               chartStyles={styles.chart}
@@ -202,7 +209,13 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
           justifyContent: EXPENSE_BAR_DATA.length ? undefined : 'center'
         }}
       >
-        {EXPENSE_BAR_DATA.length ? (
+        {isLoading ? (
+          <ActivityIndicator
+            color={COLORS.PRIMARY}
+            size="large"
+            style={styles.loader}
+          />
+        ) : EXPENSE_BAR_DATA.length ? (
           <ScrollableBarChart
             containerStyles={styles.barChartContainer}
             data={EXPENSE_BAR_DATA}
@@ -219,7 +232,13 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
           justifyContent: INCOME_BAR_DATA.length ? undefined : 'center'
         }}
       >
-        {INCOME_BAR_DATA.length ? (
+        {isLoading ? (
+          <ActivityIndicator
+            color={COLORS.PRIMARY}
+            size="large"
+            style={styles.loader}
+          />
+        ) : INCOME_BAR_DATA.length ? (
           <ScrollableBarChart
             containerStyles={styles.barChartContainer}
             data={INCOME_BAR_DATA}
@@ -261,6 +280,10 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 16,
     paddingBottom: 32
+  },
+  loader: {
+    flex: 1,
+    transform: [{ scaleX: 1.25 }, { scaleY: 1.25 }]
   },
   notFoundText: {
     alignSelf: 'center',
