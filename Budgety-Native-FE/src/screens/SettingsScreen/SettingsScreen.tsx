@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import CURRENCIES from '../../data/currencies.json';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomModal from '../../components/CustomModal/CustomModal';
+import CustomProtectedModal from '../../components/CustomProtectedModal/CustomProtectedModal';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import LANGUAGES from '../../data/languages.json';
@@ -28,6 +29,7 @@ interface IDrawerProps {
 }
 
 const SettingsScreen = ({ navigation }: IDrawerProps) => {
+  const [errorMsg, setErrorMsg] = useState('');
   const [isDeletedModalVisible, setIsDeletedModalVisible] = useState(false);
   const [isErasedModalVisible, setIsErasedModalVisible] = useState(false);
   const [usernameTemp, setUsernameTemp] = useState('');
@@ -37,6 +39,15 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const { t } = useTranslation();
+
+  const getTranslatedServerErrorMessages = (message: string) => {
+    switch (message) {
+      case 'Incorrect password':
+        return t('toastErrorIncorrectPassword');
+      default:
+        return t('toastErrorSomethingWentWrong');
+    }
+  };
 
   const handleCurrencyChange = async (currency: string) => {
     if (currentUser && 'token' in currentUser) {
@@ -60,9 +71,10 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
     }
   };
 
-  const handleDeleteUser = async () => {
+  const handleDeleteUser = async (password: string) => {
     if (currentUser && 'token' in currentUser) {
       const options = {
+        body: JSON.stringify({ password }),
         headers: {
           Authorization: `Bearer ${currentUser?.token}`,
           'Content-Type': 'application/json'
@@ -75,7 +87,11 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
         const response = await fetch(url, options);
         const data = await response.json();
 
+        if (data?.error)
+          setErrorMsg(getTranslatedServerErrorMessages(data.error));
+
         if (data?.message === 'User deleted') {
+          setIsDeletedModalVisible(false);
           dispatch(logout());
           await deleteFromSecureStore('user');
         }
@@ -163,10 +179,12 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
         onConfirm={handleEraseUserData}
         setIsVisible={setIsErasedModalVisible}
       />
-      <CustomModal
+      <CustomProtectedModal
+        errorMsg={errorMsg}
         isVisible={isDeletedModalVisible}
         message={t('deleteAccountMsg')}
         onConfirm={handleDeleteUser}
+        setErrorMsg={setErrorMsg}
         setIsVisible={setIsDeletedModalVisible}
       />
       <Title

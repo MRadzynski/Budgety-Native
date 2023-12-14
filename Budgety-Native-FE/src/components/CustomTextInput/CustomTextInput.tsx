@@ -65,10 +65,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center'
   },
-  content: {
-    color: COLORS.WHITE_SHADE,
-    fontSize: 20
-  },
   textInput: {
     alignItems: 'center',
     borderBottomColor: COLORS.WHITE_SHADE,

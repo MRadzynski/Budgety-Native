@@ -10,10 +10,20 @@ const createToken = (id: string) => jwt.sign({ id }, process.env.JWT_SECRET!);
 
 export const handleDeleteUser = async (req: Request, res: Response) => {
   const { userId } = req;
+  const { password } = req.body;
 
-  if (!userId) return res.status(401).json({ error: 'You are not authorized' });
+  if (!userId || !password)
+    return res.status(401).json({ error: 'You are not authorized' });
 
   try {
+    const userDocument = await User.findOne({ _id: userId });
+
+    if (!userDocument) return res.status(404).json({ error: 'Data not found' });
+
+    const isMatch = await bcrypt.compare(password, userDocument.password);
+
+    if (!isMatch) return res.status(401).json({ error: 'Incorrect password' });
+
     const financeDoc = await FinanceModel.findOneAndDelete({ userId: userId });
     const userDoc = await User.findOneAndDelete({ _id: userId });
 
