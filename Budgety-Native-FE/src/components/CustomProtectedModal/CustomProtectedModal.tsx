@@ -67,7 +67,7 @@ const CustomProtectedModal = ({
             }}
             hashText
             onChangeText={handlePasswordChange}
-            placeholderText={t('password')}
+            placeholderText={t('enterPassword')}
             value={password}
           />
           <Text style={styles.errorMsg}>{errorMsg || ''}</Text>
