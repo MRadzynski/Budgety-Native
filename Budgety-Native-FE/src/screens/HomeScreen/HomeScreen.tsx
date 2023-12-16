@@ -11,6 +11,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { withErrorBoundary } from '../../hoc/withErrorBoundary';
 import ScrollableBarChart from '../../components/ScrollableBarChart/ScrollableBarChart';
 import SemiPieChart from '../../components/SemiPieChart/SemiPieChart';
 
@@ -323,4 +324,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default HomeScreen;
+export default withErrorBoundary(HomeScreen);

@@ -15,6 +15,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { withErrorBoundary } from '../../hoc/withErrorBoundary';
 import CURRENCIES from '../../data/currencies.json';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomModal from '../../components/CustomModal/CustomModal';
@@ -385,4 +386,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SettingsScreen;
+export default withErrorBoundary(SettingsScreen);

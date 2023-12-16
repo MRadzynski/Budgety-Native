@@ -6,6 +6,7 @@ import { Link } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { withErrorBoundary } from '../../hoc/withErrorBoundary';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Title from '../../components/Title/Title';
@@ -17,7 +18,7 @@ const validateEmail = (email: string) => {
   return re.test(email.trim().toLowerCase());
 };
 
-const SignUpScreen = () => {
+const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState('');
 
   const { i18n, t } = useTranslation();
@@ -203,4 +204,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SignUpScreen;
+export default withErrorBoundary(ForgotPasswordScreen);

@@ -13,6 +13,7 @@ import { useAppSelector } from '../../hooks/redux';
 import { useCallback, useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import { withErrorBoundary } from '../../hoc/withErrorBoundary';
 import CurrencyListItem from '../../components/CurrencyListItem/CurrencyListItem';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import Title from '../../components/Title/Title';
@@ -281,4 +282,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ExchangeScreen;
+export default withErrorBoundary(ExchangeScreen);

@@ -46,6 +46,8 @@ export const de = {
   forgotPassword: 'Passwort vergessen?',
   forgotPasswordMsg:
     'Geben Sie Ihre E-Mail-Adresse ein, um Anweisungen zum Zurücksetzen Ihres Passworts zu erhalten',
+  goHome: 'Zur Startbildschirm gehen',
+  goStart: 'Zur Startbildschirm gehen',
   history: 'Geschichte',
   historySubTitle: 'Zusammenfassung Ihrer vergangenen Monate',
   home: 'Startseite',
@@ -152,6 +154,8 @@ export const en = {
   forgotPassword: 'Forgot password?',
   forgotPasswordMsg:
     'Enter your email for instructions on resetting your password',
+  goHome: 'Go to Home',
+  goStart: 'Go to start screen',
   history: 'History',
   historySubTitle: 'Summary of your previous months',
   home: 'Home',
@@ -255,6 +259,8 @@ export const es = {
   forgotPassword: '¿Olvidaste tu contraseña?',
   forgotPasswordMsg:
     'Ingresa tu correo electrónico para recibir instrucciones sobre cómo restablecer tu contraseña',
+  goHome: 'Ir a la pantalla de inicio',
+  goStart: 'Ir a la pantalla de inicio',
   history: 'Historia',
   historySubTitle: 'Resumen de tus meses anteriores',
   home: 'Página principal',
@@ -363,6 +369,8 @@ export const fr = {
   forgotPassword: 'Mot de passe oublié?',
   forgotPasswordMsg:
     'Entrez votre adresse e-mail pour obtenir des instructions sur la réinitialisation de votre mot de passe',
+  goHome: "Aller à l'écran d'accueil",
+  goStart: "Aller à l'écran de démarrage",
   history: 'Histoire',
   historySubTitle: 'Résumé de vos mois précédents',
   home: "Page d'accueil",
@@ -470,6 +478,8 @@ export const it = {
   forgotPassword: 'Password dimenticata?',
   forgotPasswordMsg:
     'Inserisci la tua email per istruzioni su come resettare la password',
+  goHome: 'Vai alla schermata principale',
+  goStart: 'Vai alla schermata iniziale',
   history: 'Storia',
   historySubTitle: 'Sommario dei tuoi mesi precedenti',
   home: 'Pagina iniziale',
@@ -575,6 +585,8 @@ export const pl = {
   forgotPassword: 'Zapomniałeś hasła?',
   forgotPasswordMsg:
     'Podaj swoją skrzynkę mailową, aby uzyskać instrukcje dotyczące zresetowania hasła',
+  goHome: 'Przejdź do ekranu głównego',
+  goStart: 'Przejdź do ekranu startowego',
   history: 'Historia',
   historySubTitle: 'Podsumowanie poprzednich miesięcy',
   home: 'Strona główna',
@@ -677,6 +689,8 @@ export const ru = {
   forgotPassword: 'Забыли пароль?',
   forgotPasswordMsg:
     'Введите свой адрес электронной почты для инструкций по сбросу пароля',
+  goHome: 'Перейти на главную страницу',
+  goStart: 'Перейти на начальный экран',
   history: 'История',
   historySubTitle: 'Сводка предыдущих месяцев',
   home: 'Домашняя страница',
