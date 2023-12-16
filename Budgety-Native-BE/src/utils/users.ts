@@ -43,9 +43,7 @@ export const sendEmail = (
       style="
         background-color: #4361ee;
         color: white;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+        display: block;
         max-width: 600px;
         padding: 32px;
       "
@@ -61,10 +59,10 @@ export const sendEmail = (
       <p style="margin-bottom: 10px; text-align: left">${translation.dear} ${
     username || translation.user
   },</p>
-      <p style="line-height: 24px; margin: 0">
+      <p style="margin-bottom: 16px">
         ${translation.receivedRequest}
       </p>
-      <p style="line-height: 24px; margin: 0">
+      <p style="margin: 0">
         ${translation.doNotMakeRequest}
       </p>
       <p style="margin-bottom: 16px">
