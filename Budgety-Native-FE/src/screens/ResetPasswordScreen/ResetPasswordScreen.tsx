@@ -6,7 +6,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { withErrorBoundary } from '../../utils/withErrorBoundary';
+import { withErrorBoundary } from '../../hoc/withErrorBoundary';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Title from '../../components/Title/Title';

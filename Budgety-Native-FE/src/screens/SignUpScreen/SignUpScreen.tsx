@@ -10,7 +10,7 @@ import { setUser } from '../../slices/userSlice';
 import { useAppDispatch } from '../../hooks/redux';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { withErrorBoundary } from '../../utils/withErrorBoundary';
+import { withErrorBoundary } from '../../hoc/withErrorBoundary';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Title from '../../components/Title/Title';
