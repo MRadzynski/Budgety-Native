@@ -6,6 +6,7 @@ import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { withErrorBoundary } from '../../utils/withErrorBoundary';
 import ExpensesIncomeStack from '../../routes/ExpensesIncomeStack/ExpensesIncomeStack';
 import PieChartWrapper from '../../components/PieChartWrapper/PieChartWrapper';
 import Title from '../../components/Title/Title';
@@ -173,4 +174,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ExpensesIncomeScreen;
+export default withErrorBoundary(ExpensesIncomeScreen);
