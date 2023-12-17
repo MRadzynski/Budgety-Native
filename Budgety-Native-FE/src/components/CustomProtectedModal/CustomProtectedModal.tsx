@@ -63,9 +63,11 @@ const CustomProtectedModal = ({
           <CustomTextInput
             customStyles={{
               container: styles.inputContainer,
-              content: styles.inputContent
+              content: styles.inputContent,
+              icon: styles.inputIcon
             }}
             hashText
+            iconVariant="black"
             onChangeText={handlePasswordChange}
             placeholderText={t('enterPassword')}
             value={password}
@@ -134,6 +136,9 @@ const styles = StyleSheet.create({
     color: COLORS.BLACK_SHADE,
     fontSize: 16,
     textAlign: 'center'
+  },
+  inputIcon: {
+    right: 8
   },
   overlay: {
     alignItems: 'center',

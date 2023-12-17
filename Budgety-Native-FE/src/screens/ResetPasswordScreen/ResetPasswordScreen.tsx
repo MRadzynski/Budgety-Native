@@ -193,12 +193,14 @@ const ResetPasswordScreen = ({ navigation }: IProps) => {
             onChangeText={handlePasswordChange}
             placeholderText={t('newPassword')}
             type="default"
+            value={password}
           />
           <CustomTextInput
             hashText
             onChangeText={handleConfirmPasswordChange}
             placeholderText={t('confirmNewPassword')}
             type="default"
+            value={confirmPassword}
           />
         </View>
         <CustomButton
