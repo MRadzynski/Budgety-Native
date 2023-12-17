@@ -240,12 +240,14 @@ const SignUpScreen = () => {
             hashText
             onChangeText={handlePasswordChange}
             placeholderText={t('password')}
+            value={password}
           />
           <CustomTextInput
             autoCapitalize="none"
             hashText
             onChangeText={handleConfirmationPasswordChange}
             placeholderText={t('confirmPassword')}
+            value={confirmationPassword}
           />
         </View>
         <CustomButton

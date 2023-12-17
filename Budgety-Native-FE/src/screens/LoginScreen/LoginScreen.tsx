@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { saveToSecureStore } from '../../utils/secureStorage';
 import { setUser } from '../../slices/userSlice';
 import { useAppDispatch } from '../../hooks/redux';
-import { useReducer, useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { withErrorBoundary } from '../../hoc/withErrorBoundary';
 import CustomButton from '../../components/CustomButton/CustomButton';
@@ -15,33 +15,9 @@ import CustomTextInput from '../../components/CustomTextInput/CustomTextInput';
 import Title from '../../components/Title/Title';
 import Toast from 'react-native-toast-message';
 
-interface IState {
-  email: string;
-  password: string;
-}
-
-type TAction =
-  | { type: 'UPDATE_EMAIL'; email: string }
-  | { type: 'UPDATE_PASSWORD'; password: string };
-
-const INITIAL_STATE = {
-  email: '',
-  password: ''
-};
-
-const reducer = (state: IState, action: TAction): IState => {
-  switch (action.type) {
-    case 'UPDATE_EMAIL':
-      return { ...state, email: action.email };
-    case 'UPDATE_PASSWORD':
-      return { ...state, password: action.password };
-    default:
-      return state;
-  }
-};
-
-const LoginScreen: React.FC<any> = ({ navigation }) => {
-  const [state, reducerDispatch] = useReducer(reducer, INITIAL_STATE);
+const LoginScreen = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const dispatch = useAppDispatch();
 
@@ -62,17 +38,15 @@ const LoginScreen: React.FC<any> = ({ navigation }) => {
     }
   };
 
-  const handleEmailChange = (e: string) =>
-    reducerDispatch({ email: e, type: 'UPDATE_EMAIL' });
+  const handleEmailChange = (e: string) => setEmail(e);
 
-  const handlePasswordChange = (e: string) =>
-    reducerDispatch({ password: e, type: 'UPDATE_PASSWORD' });
+  const handlePasswordChange = (e: string) => setPassword(e);
 
   const handleSubmit = async () => {
     const url = `${API_URL}/api/user/login`;
     const body = {
-      email: state.email.trim().toLowerCase(),
-      password: state.password.trim()
+      email: email.trim().toLowerCase(),
+      password: password.trim()
     };
 
     try {
@@ -131,7 +105,7 @@ const LoginScreen: React.FC<any> = ({ navigation }) => {
   };
 
   const isSubmitBtnDisabled =
-    state.email.trim().length === 0 || state.password.trim().length === 0;
+    email.trim().length === 0 || password.trim().length === 0;
 
   return (
     <SafeAreaView style={{ backgroundColor: COLORS.PRIMARY, flex: 1 }}>
@@ -179,6 +153,7 @@ const LoginScreen: React.FC<any> = ({ navigation }) => {
             onChangeText={handlePasswordChange}
             placeholderText={t('password')}
             type="default"
+            value={password}
           />
           <Link
             style={styles.forgotPasswordText}

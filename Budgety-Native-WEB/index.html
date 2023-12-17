@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="description"
+      content="This is a page to reset your password for 'Budgety' app."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="main.css" />
+    <script defer src="index.js"></script>
+    <title>Budgety - Reset Password</title>
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
+  </head>
+  <body>
+    <header class="header">
+      <h1 class="header-title">Budgety</h1>
+    </header>
+    <main class="form-container">
+      <form class="form" onsubmit="resetPassword(event)">
+        <h1 class="form-title">Reset Password</h1>
+        <hr class="form-separator" />
+        <div class="form-input-container">
+          <input
+            class="form-input"
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Password"
+          />
+          <img
+            alt="Show password"
+            class="form-input-icon"
+            onclick="togglePasswordVisibility(event, 'password')"
+            onkeydown="togglePasswordVisibilityKeyDown(event, 'password')"
+            src="assets/eye-open.svg"
+            tabindex="0"
+          />
+        </div>
+
+        <div class="form-input-container">
+          <input
+            class="form-input"
+            id="confirm-password"
+            name="confirm-password"
+            type="password"
+            placeholder="Confirm Password"
+          />
+          <img
+            alt="Show password"
+            class="form-input-icon"
+            onclick="togglePasswordVisibility(event, 'confirm-password')"
+            onkeydown="togglePasswordVisibilityKeyDown(event, 'confirm-password')"
+            src="assets/eye-open.svg"
+            tabindex="0"
+          />
+        </div>
+        <div class="error-message" id="error-message"></div>
+        <div class="success-message hidden" id="success-message"></div>
+        <button class="form-button" type="submit">Reset Password</button>
+      </form>
+    </main>
+  </body>
+</html>
