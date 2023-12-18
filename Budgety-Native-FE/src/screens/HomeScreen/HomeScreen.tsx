@@ -103,7 +103,10 @@ const HomeScreen = ({ navigation }: DrawerProps) => {
       incCat => incCat.amount > 0
     );
 
-    if (!hasAtLeastOneValueAddedExp && !hasAtLeastOneValueAddedInc) return [];
+    if (!hasAtLeastOneValueAddedExp && !hasAtLeastOneValueAddedInc) {
+      setBalance(0);
+      return [];
+    }
 
     setBalance(incomeSum - expensesSum);
 

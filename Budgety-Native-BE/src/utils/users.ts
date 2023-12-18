@@ -22,6 +22,9 @@ const getTranslation = (language: string) => {
   }
 };
 
+export const isValidUserLanguage = (language: string) =>
+  ['DE', 'EN', 'ES', 'FR', 'IT', 'PL', 'RU'].includes(language);
+
 export const sendEmail = (
   recipient: string,
   token: string,
