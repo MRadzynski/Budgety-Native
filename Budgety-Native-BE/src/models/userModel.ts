@@ -1,8 +1,12 @@
 import bcrypt from 'bcrypt';
 import mongoose, { Model } from 'mongoose';
 import validator from 'validator';
+import { isValidUserLanguage } from '../utils/users';
+import { translatedCategoriesNames } from '../data/defaultCategoriesTranslations';
 import defaultFinancesConfig from '../data/defaultFinances.json';
 import Finances from './financeModel';
+
+type TLanguage = 'DE' | 'EN' | 'ES' | 'FR' | 'IT' | 'PL' | 'RU';
 
 interface IUser {
   _id: string;
@@ -93,7 +97,7 @@ userSchema.statics.signup = async function (
   password: string,
   username: string,
   currency: string,
-  language: string
+  language: TLanguage
 ) {
   if (!email?.trim() || !password?.trim())
     throw new Error('Email and password are required');
@@ -119,9 +123,33 @@ userSchema.statics.signup = async function (
     username
   });
 
+  let userLanguage: TLanguage;
+
+  if (isValidUserLanguage(language)) {
+    userLanguage = language;
+  } else {
+    userLanguage = 'EN';
+  }
+
+  const translatedDefaultCategories = {
+    ...defaultFinancesConfig,
+    expenses: defaultFinancesConfig.expenses.map(expense => ({
+      ...expense,
+      categoryName: (translatedCategoriesNames as Record<TLanguage, any>)[
+        userLanguage
+      ].expenses[expense.categoryName]
+    })),
+    income: defaultFinancesConfig.income.map(income => ({
+      ...income,
+      categoryName: (translatedCategoriesNames as Record<TLanguage, any>)[
+        userLanguage
+      ].income[income.categoryName]
+    }))
+  };
+
   await Finances.create({
     userId: user._id,
-    ...defaultFinancesConfig
+    ...translatedDefaultCategories
   });
 
   return user;
