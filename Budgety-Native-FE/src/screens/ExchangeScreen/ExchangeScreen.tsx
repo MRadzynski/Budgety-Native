@@ -8,6 +8,7 @@ import {
 import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { formatDate, formatNumber } from '../../utils/helpers';
+import { generateBoxShadowStyle } from '../../utils/helpers';
 import { LANGUAGES_LOCALES } from '../../data/constants';
 import { useAppSelector } from '../../hooks/redux';
 import { useCallback, useEffect, useState } from 'react';
@@ -254,7 +255,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     flex: 1,
     justifyContent: 'center',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    ...generateBoxShadowStyle(4, 4, '#000', 0.2, 5, 10)
   },
   listContent: {
     backgroundColor: 'white'

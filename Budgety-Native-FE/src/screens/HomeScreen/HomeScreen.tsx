@@ -2,7 +2,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { CONTEXT, LANGUAGES_LOCALES } from '../../data/constants';
-import { formatNumber } from '../../utils/helpers';
+import { formatNumber, generateBoxShadowStyle } from '../../utils/helpers';
 import { PieChartSelectEvent } from 'react-native-charts-wrapper';
 import {
   setExpensesCategories,
@@ -299,12 +299,9 @@ const styles = StyleSheet.create({
   section: {
     backgroundColor: 'white',
     borderRadius: 15,
-    elevation: 10,
     flex: 1,
-    shadowColor: 'black',
-    shadowOffset: { height: 4, width: 4 },
-    shadowRadius: 5,
-    width: '80%'
+    width: '80%',
+    ...generateBoxShadowStyle(4, 4, '#000', 0.2, 5, 10)
   },
   sectionValueText: {
     alignSelf: 'center',

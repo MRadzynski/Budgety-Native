@@ -1,9 +1,16 @@
 import { API_URL } from '@env';
 import { CATEGORY_FORM_TYPES, CONTEXT } from '../../data/constants';
 import { COLORS } from '../../styles/Colors';
+import { generateBoxShadowStyle } from '../../utils/helpers';
 import { MaterialIcons } from '@expo/vector-icons';
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAppSelector } from '../../hooks/redux';
 import { useTranslation } from 'react-i18next';
 import ColorPickerModal from '../ColorPickerModal/ColorPickerModal';
@@ -203,9 +210,9 @@ const CategoryForm = ({ navigation }: IProps) => {
 const styles = StyleSheet.create({
   colorPreviewContainer: {
     borderRadius: 25,
-    elevation: 1,
     height: 36,
-    width: 36
+    width: 36,
+    ...generateBoxShadowStyle(1, 1, '#000', 0.1, 1, 1)
   },
   confirmBtnContainer: {
     alignSelf: 'center',
@@ -219,6 +226,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     gap: 32,
+    paddingBottom: Platform.OS === 'ios' ? 16 : 0,
     paddingHorizontal: 32,
     paddingTop: 16,
     position: 'relative'
@@ -247,10 +255,10 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
     borderRadius: 25,
-    elevation: 1,
     height: 36,
     justifyContent: 'center',
-    width: 36
+    width: 36,
+    ...generateBoxShadowStyle(1, 1, '#000', 0.1, 1, 1)
   },
   nameInputContainer: {
     backgroundColor: COLORS.WHITE_SHADE,

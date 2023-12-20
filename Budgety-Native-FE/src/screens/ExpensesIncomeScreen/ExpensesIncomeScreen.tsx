@@ -1,7 +1,8 @@
 import { COLORS } from '../../styles/Colors';
 import { CONTEXT } from '../../data/constants';
-import { setContext } from '../../slices/expenseIncomeSlice';
+import { generateBoxShadowStyle } from '../../utils/helpers';
 import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
+import { setContext } from '../../slices/expenseIncomeSlice';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useCallback, useMemo } from 'react';
@@ -147,8 +148,7 @@ const styles = StyleSheet.create({
   },
   chartContainer: {
     borderRadius: 100,
-    elevation: 10,
-    shadowColor: '#00000066'
+    ...generateBoxShadowStyle(3, 3, '#00000066', 0.2, 10, 10)
   },
   container: {
     backgroundColor: COLORS.PRIMARY,

@@ -84,6 +84,9 @@ const ResetPasswordScreen = ({ navigation }: IProps) => {
             type: 'error'
           });
         }
+      } finally {
+        setPassword('');
+        setConfirmPassword('');
       }
     }
   };

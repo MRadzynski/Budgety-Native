@@ -1,4 +1,5 @@
 import { COLORS } from '../../styles/Colors';
+import { generateBoxShadowStyle } from '../../utils/helpers';
 import { ICON_NAMES } from '../../data/iconNames';
 import { MaterialIcons } from '@expo/vector-icons';
 import {
@@ -65,10 +66,10 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
     borderRadius: 8,
-    elevation: 2,
     height: 48,
     justifyContent: 'center',
-    width: 48
+    width: 48,
+    ...generateBoxShadowStyle(2, 2, '#000', 0.1, 1, 2)
   },
   overlay: {
     alignItems: 'center',
