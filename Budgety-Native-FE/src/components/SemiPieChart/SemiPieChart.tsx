@@ -3,7 +3,7 @@ import { PieChart, PieChartSelectEvent } from 'react-native-charts-wrapper';
 import { processColor, StyleProp, ViewStyle } from 'react-native';
 import { useAppSelector } from '../../hooks/redux';
 
-interface Props {
+interface IProps {
   chartStyles?: StyleProp<ViewStyle>;
   data: {
     color: string;
@@ -14,7 +14,12 @@ interface Props {
   onSelectHandler: (event: PieChartSelectEvent) => void;
 }
 
-const SemiPieChart = ({ chartStyles, data, label, onSelectHandler }: Props) => {
+const SemiPieChart = ({
+  chartStyles,
+  data,
+  label,
+  onSelectHandler
+}: IProps) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   return (

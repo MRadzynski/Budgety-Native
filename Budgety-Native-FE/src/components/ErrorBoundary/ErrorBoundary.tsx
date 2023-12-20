@@ -1,9 +1,10 @@
+import { NavigationProp } from '@react-navigation/native';
 import ErrorScreen from '../../screens/ErrorScreen/ErrorScreen';
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 
 interface IProps {
   children: ReactNode;
-  navigation?: any;
+  navigation: NavigationProp<any>;
 }
 
 interface IState {

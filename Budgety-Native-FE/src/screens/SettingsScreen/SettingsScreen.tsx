@@ -26,11 +26,7 @@ import Dropdown from '../../components/Dropdown/Dropdown';
 import LANGUAGES from '../../data/languages.json';
 import Title from '../../components/Title/Title';
 
-interface IDrawerProps {
-  navigation: any;
-}
-
-const SettingsScreen = ({ navigation }: IDrawerProps) => {
+const SettingsScreen = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [isDeletedModalVisible, setIsDeletedModalVisible] = useState(false);
   const [isErasedModalVisible, setIsErasedModalVisible] = useState(false);
@@ -221,7 +217,7 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
                 onBlur={handleUsernameBlur}
                 onChangeText={handleUsernameChange}
                 placeholderText={t('exampleUsername')}
-                placeholderTextColor="#757575"
+                placeholderTextColor={COLORS.GRAY}
                 selectionColor={COLORS.PRIMARY}
               />
             </View>
@@ -276,12 +272,11 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
             <View style={styles.sectionItemContainer}>
               <Text
                 style={{
+                  ...styles.eraseDataLabel,
                   height:
                     Platform.OS === 'ios'
                       ? calculateTextNumberOfLines(t('eraseData')) * 20
-                      : 40,
-                  maxWidth: '60%',
-                  textAlignVertical: 'center'
+                      : 40
                 }}
               >
                 {t('eraseData')}
@@ -345,6 +340,10 @@ const styles = StyleSheet.create({
   dropdownList: {
     height: '25%',
     width: 100
+  },
+  eraseDataLabel: {
+    maxWidth: '60%',
+    textAlignVertical: 'center'
   },
   sectionContainer: {
     backgroundColor: COLORS.WHITE_SHADE,

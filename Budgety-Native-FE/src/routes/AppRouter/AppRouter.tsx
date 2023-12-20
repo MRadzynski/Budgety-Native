@@ -11,9 +11,9 @@ import { useUserLocalization } from '../../hooks/useUserLocalization';
 import AuthStack from '../AuthStack/AuthStack';
 import DrawerNavigator from '../DrawerNavigator/DrawerNavigator';
 
-const prefix = Linking.createURL('/');
+const PREFIX = Linking.createURL('/');
 
-const AppRouter: React.FC<any> = () => {
+const AppRouter = () => {
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const dispatch = useAppDispatch();
@@ -49,7 +49,7 @@ const AppRouter: React.FC<any> = () => {
         }
       }
     },
-    prefixes: [prefix]
+    prefixes: [PREFIX]
   };
 
   return (

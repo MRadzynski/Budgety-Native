@@ -7,7 +7,6 @@ import {
   handleDeleteIncomeCategory,
   handleEraseAllData,
   handleGetBalance,
-  handleGetCategories,
   handleGetCategoriesMonthly,
   handleGetExpensesCategories,
   handleGetHistoryCategories,
@@ -35,9 +34,6 @@ router.delete('/income/delete-income', handleDeleteIncome);
 router.delete('/erase-all-data', handleEraseAllData);
 
 router.get('/get-balance', handleGetBalance);
-
-// not used yet
-router.get('/get-categories', handleGetCategories);
 
 router.get('/get-categories-history', handleGetHistoryCategories);
 

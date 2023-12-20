@@ -3,6 +3,7 @@ import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { CONTEXT, LANGUAGES_LOCALES } from '../../data/constants';
 import { formatNumber, generateBoxShadowStyle } from '../../utils/helpers';
+import { NavigationProp } from '@react-navigation/native';
 import { PieChartSelectEvent } from 'react-native-charts-wrapper';
 import {
   setExpensesCategories,
@@ -15,11 +16,11 @@ import { withErrorBoundary } from '../../hoc/withErrorBoundary';
 import ScrollableBarChart from '../../components/ScrollableBarChart/ScrollableBarChart';
 import SemiPieChart from '../../components/SemiPieChart/SemiPieChart';
 
-interface DrawerProps {
-  navigation: any;
+interface IProps {
+  navigation: NavigationProp<any>;
 }
 
-const HomeScreen = ({ navigation }: DrawerProps) => {
+const HomeScreen = ({ navigation }: IProps) => {
   const [balance, setBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 

@@ -13,12 +13,24 @@ const checkInputFields = () => {
   }
 };
 
+const init = () => {
+  redirectToBudgety();
+
+  const confirmPasswordInput = document.getElementById('confirm-password');
+  const passwordInput = document.getElementById('password');
+  const submitButton = document.querySelector('.form-button');
+
+  confirmPasswordInput.addEventListener('input', checkInputFields);
+  passwordInput.addEventListener('input', checkInputFields);
+
+  submitButton.disabled = true;
+};
+
 const redirectToBudgety = () => {
   document.addEventListener('DOMContentLoaded', () => {
-    console.log(window.location);
     const { search } = window.location;
     const token = search.substring(1);
-    console.log('Done');
+
     window.location.href = `budgety:///reset-password/${token}`;
   });
 };
@@ -121,22 +133,8 @@ const togglePasswordVisibility = (e, inputId) => {
 };
 
 const togglePasswordVisibilityKeyDown = (e, inputId) => {
-  console.log(e);
   if (e.key !== 'Enter' && e.key !== ' ') return;
   togglePasswordVisibility(e, inputId);
-};
-
-const init = () => {
-  redirectToBudgety();
-
-  const confirmPasswordInput = document.getElementById('confirm-password');
-  const passwordInput = document.getElementById('password');
-  const submitButton = document.querySelector('.form-button');
-
-  confirmPasswordInput.addEventListener('input', checkInputFields);
-  passwordInput.addEventListener('input', checkInputFields);
-
-  submitButton.disabled = true;
 };
 
 init();

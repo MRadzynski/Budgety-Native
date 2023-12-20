@@ -40,6 +40,8 @@ const HistoryTab = ({ data }: IProps) => {
     }, [])
   );
 
+  const toggleTabOpen = () => setIsOpen(prev => !prev);
+
   const EXPENSES_BAR_DATA = useMemo(() => {
     if (!data.expenses) return [];
 
@@ -65,7 +67,7 @@ const HistoryTab = ({ data }: IProps) => {
 
     if (!hasAtLeastOneValueAdded) return [];
 
-    return data.expenses.map(incCategory => ({
+    return data.income.map(incCategory => ({
       color: incCategory.bgColor,
       name: incCategory.categoryName,
       value: incCategory.amount
@@ -88,7 +90,7 @@ const HistoryTab = ({ data }: IProps) => {
     <>
       <TouchableOpacity
         activeOpacity={0.85}
-        onPress={() => setIsOpen(prev => !prev)}
+        onPress={toggleTabOpen}
         style={[
           styles.tabContainer,
           {
@@ -126,7 +128,7 @@ const HistoryTab = ({ data }: IProps) => {
                 label="Expenses"
               />
             ) : (
-              <Text style={styles.notFoundText}>`${t('noData')} 😔`</Text>
+              <Text style={styles.notFoundText}>{t('noData')} 😔</Text>
             )}
           </View>
           <View style={styles.chartContainer}>

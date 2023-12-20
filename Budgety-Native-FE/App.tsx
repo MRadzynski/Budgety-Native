@@ -1,10 +1,10 @@
 import 'react-native-gesture-handler';
+import './i18n.config';
 import { Provider } from 'react-redux';
 import { StatusBar, StyleSheet, View } from 'react-native';
 import { store } from './src/store/store';
 import AppRouter from './src/routes/AppRouter/AppRouter';
 import CustomToast from './src/components/CustomToast/CustomToast';
-import './i18n.config';
 
 const App = () => (
   <Provider store={store}>

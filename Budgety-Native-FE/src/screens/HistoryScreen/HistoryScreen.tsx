@@ -9,10 +9,6 @@ import { withErrorBoundary } from '../../hoc/withErrorBoundary';
 import HistoryTab from '../../components/HistoryTab/HistoryTab';
 import Title from '../../components/Title/Title';
 
-interface DrawerProps {
-  navigation: any;
-}
-
 interface IHistoryData {
   date: string;
   expenses: {
@@ -29,7 +25,7 @@ interface IHistoryData {
   sumOfIncome: number;
 }
 
-const HistoryScreen = ({ navigation }: DrawerProps) => {
+const HistoryScreen = () => {
   const [historyData, setHistoryData] = useState<IHistoryData[]>([]);
 
   const currentUser = useAppSelector(state => state.user.currentUser);

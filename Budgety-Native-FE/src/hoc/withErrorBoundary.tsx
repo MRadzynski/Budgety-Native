@@ -1,7 +1,8 @@
+import { NavigationProp } from '@react-navigation/native';
 import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
 
 type TProps = {
-  navigation: any;
+  navigation: NavigationProp<any>;
 };
 
 export const withErrorBoundary = <P extends object & TProps>(

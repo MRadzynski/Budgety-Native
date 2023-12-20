@@ -3,10 +3,10 @@ import cron from 'node-cron';
 import dotenv from 'dotenv';
 import express, { Application } from 'express';
 import mongoose from 'mongoose';
-import financeRoutes from './routes/financeRoutes';
-import userRoutes from './routes/userRoutes';
 import { addHistoryLogsForAllUsers } from './scheduledActions/addHistoryLogsForAllUsers';
 import { logger } from './middlewares/logger';
+import financeRoutes from './routes/financeRoutes';
+import userRoutes from './routes/userRoutes';
 
 dotenv.config();
 

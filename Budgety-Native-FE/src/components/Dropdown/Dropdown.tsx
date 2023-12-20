@@ -32,7 +32,7 @@ interface IDropdownCustomStyles {
 
 interface IProps {
   customStyles?: IDropdownCustomStyles;
-  data: Array<{ label: string; value: string }>;
+  data: Array<TDropdownOption>;
   defaultSelected?: TDropdownOption;
   label?: string;
   onSelect: (item: TDropdownOption) => void;
@@ -98,7 +98,7 @@ const Dropdown: FC<IProps> = ({
       }
     );
 
-  const renderDropdown = (): ReactElement<any, any> => (
+  const renderDropdown = (): ReactElement => (
     <Modal animationType="none" transparent visible={visible}>
       <TouchableOpacity onPress={hideDropdown} style={styles.overlay}>
         <View
@@ -127,13 +127,13 @@ const Dropdown: FC<IProps> = ({
   }: {
     item: TDropdownOption;
     index: number;
-  }): ReactElement<any, any> => (
+  }): ReactElement => (
     <TouchableOpacity
+      onPress={() => onItemPress(item)}
       style={[
         styles.dropdownListItem,
         { borderBottomColor: index + 1 === data.length ? 'white' : '#efefef' }
       ]}
-      onPress={() => onItemPress(item)}
     >
       <Text style={dropdownListItemValueStyle}>{item.label}</Text>
     </TouchableOpacity>

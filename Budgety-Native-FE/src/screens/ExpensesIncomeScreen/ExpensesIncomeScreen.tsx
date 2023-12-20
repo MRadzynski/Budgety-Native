@@ -1,7 +1,12 @@
 import { COLORS } from '../../styles/Colors';
 import { CONTEXT } from '../../data/constants';
 import { generateBoxShadowStyle } from '../../utils/helpers';
-import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
+import {
+  NavigationProp,
+  RouteProp,
+  useFocusEffect,
+  useRoute
+} from '@react-navigation/native';
 import { setContext } from '../../slices/expenseIncomeSlice';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
@@ -13,7 +18,7 @@ import PieChartWrapper from '../../components/PieChartWrapper/PieChartWrapper';
 import Title from '../../components/Title/Title';
 
 interface IProps {
-  navigation: any;
+  navigation: NavigationProp<any>;
 }
 
 type TParamList = {
@@ -34,9 +39,8 @@ const ExpensesIncomeScreen = ({ navigation }: IProps) => {
   const dispatch = useAppDispatch();
 
   const { i18n, t } = useTranslation();
-  const { width } = useWindowDimensions();
-
   const { params } = useRoute<RouteProp<TParamList, 'ExpensesIncomeScreen'>>();
+  const { width } = useWindowDimensions();
 
   useFocusEffect(
     useCallback(() => {
@@ -85,21 +89,6 @@ const ExpensesIncomeScreen = ({ navigation }: IProps) => {
 
   return (
     <View style={styles.container}>
-      {/* // <KeyboardAwareScrollView
-    //   style={{
-    //     backgroundColor: COLORS.PRIMARY
-    //   }}
-    //   extraScrollHeight={200}
-    //   enableOnAndroid={true}
-    //   scrollEnabled={false}
-    //   resetScrollToCoords={{ x: 0, y: 0 }}
-    //   contentContainerStyle={{
-    //     backgroundColor: COLORS.PRIMARY,
-    //     // flexGrow: 1
-    //     flex: 1
-    //     // justifyContent: 'center'
-    //   }}
-    // > */}
       <View style={styles.headerContainer}>
         <Title
           customStyles={{
@@ -133,7 +122,6 @@ const ExpensesIncomeScreen = ({ navigation }: IProps) => {
       <View style={styles.bodyContainer}>
         <ExpensesIncomeStack />
       </View>
-      {/* </KeyboardAwareScrollView> */}
     </View>
   );
 };
@@ -162,8 +150,8 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    flex: 4
+    flex: 4,
+    justifyContent: 'flex-start'
   },
   titleContent: {
     fontSize: 28,

@@ -1,9 +1,11 @@
 export const COLORS = {
   BLACK_SHADE: '#353535',
   ERROR: '#ED4337',
+  ERROR_LIGHT: '#F15455',
   LIGHT_GRAY: '#E0E0E0',
+  GRAY: '#757575',
   PRIMARY: '#4361EE',
   SECONDARY: '#33CFFF',
   SUCCESS: '#4BB543',
   WHITE_SHADE: '#F5F5F5'
-};
+} as const;
