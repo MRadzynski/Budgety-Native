@@ -31,11 +31,7 @@ interface ICurrencyListState {
   value: string;
 }
 
-interface IDrawerProps {
-  navigation: any;
-}
-
-const ExchangeScreen = ({ navigation }: IDrawerProps) => {
+const ExchangeScreen = () => {
   const [allTimeBalance, setAllTimeBalance] = useState(0);
   const [allTimeCurrenciesList, setAllTimeCurrenciesList] = useState<
     ICurrencyListState[] | null
@@ -265,10 +261,10 @@ const styles = StyleSheet.create({
     transform: [{ scaleX: 1.25 }, { scaleY: 1.25 }]
   },
   singleButtonContainer: {
-    justifyContent: 'center',
     borderRadius: 15,
     borderWidth: 2,
-    flex: 1
+    flex: 1,
+    justifyContent: 'center'
   },
   subText: {
     color: COLORS.WHITE_SHADE,

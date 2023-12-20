@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.90)',
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
     flex: 1,
     gap: 16,
     justifyContent: 'center'

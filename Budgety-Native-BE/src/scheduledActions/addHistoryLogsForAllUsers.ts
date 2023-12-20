@@ -1,13 +1,7 @@
 import mongoose from 'mongoose';
+import { IFinanceDocument } from '../controllers/financeController';
 import Finance from '../models/financeModel';
 import User from '../models/userModel';
-import { IFinanceDocument } from '../controllers/financeController';
-
-const isTheSameMonthYearAsProvided = (
-  dateToCheck: Date,
-  month: number,
-  year: number
-) => dateToCheck.getFullYear() === year && dateToCheck.getMonth() === month;
 
 const getPreviousMonthAndYear = () => {
   const currentDate = new Date();
@@ -22,6 +16,12 @@ const getPreviousMonthAndYear = () => {
 
   return { previousMonth: previousMonth, previousYear: previousYear };
 };
+
+const isTheSameMonthYearAsProvided = (
+  dateToCheck: Date,
+  month: number,
+  year: number
+) => dateToCheck.getFullYear() === year && dateToCheck.getMonth() === month;
 
 export const addHistoryLogsForAllUsers = async () => {
   if (mongoose.connection.readyState !== 1) {

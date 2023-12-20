@@ -94,29 +94,16 @@ const ForgotPasswordScreen = () => {
   const isSubmitBtnDisabled = email.trim().length === 0;
 
   return (
-    <SafeAreaView style={{ backgroundColor: COLORS.PRIMARY, flex: 1 }}>
+    <SafeAreaView style={styles.container}>
       <KeyboardAwareScrollView
-        contentContainerStyle={{
-          backgroundColor: COLORS.PRIMARY,
-          flex: 1,
-          gap: 40
-        }}
+        contentContainerStyle={styles.keyboardContentContainer}
         enableOnAndroid={true}
         extraScrollHeight={180}
       >
         <Title
           customStyles={{
-            container: {
-              backgroundColor: 'transparent',
-              marginTop: 30
-            },
-            content: {
-              fontSize: 48,
-              letterSpacing: 3,
-              textShadowColor: 'rgba(0, 0, 0, 0.4)',
-              textShadowOffset: { height: 3, width: 3 },
-              textShadowRadius: 6
-            }
+            container: styles.titleContainer,
+            content: styles.titleContent
           }}
           text="Budgety"
         />
@@ -136,7 +123,7 @@ const ForgotPasswordScreen = () => {
         <CustomButton
           customStyles={{
             container: {
-              alignSelf: 'center',
+              ...styles.buttonContainer,
               width: i18n.language === 'fr' ? 260 : 240
             }
           }}
@@ -158,7 +145,11 @@ const ForgotPasswordScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    alignSelf: 'center'
+  },
   container: {
+    backgroundColor: COLORS.PRIMARY,
     flex: 1
   },
   image: {
@@ -186,6 +177,11 @@ const styles = StyleSheet.create({
     height: 160,
     width: '60%'
   },
+  keyboardContentContainer: {
+    backgroundColor: COLORS.PRIMARY,
+    flex: 1,
+    gap: 40
+  },
   link: {
     color: COLORS.SECONDARY,
     fontSize: 16,
@@ -201,6 +197,17 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     marginBottom: '7%',
     textAlign: 'center'
+  },
+  titleContainer: {
+    backgroundColor: 'transparent',
+    marginTop: 30
+  },
+  titleContent: {
+    fontSize: 48,
+    letterSpacing: 3,
+    textShadowColor: 'rgba(0, 0, 0, 0.4)',
+    textShadowOffset: { height: 3, width: 3 },
+    textShadowRadius: 6
   }
 });
 

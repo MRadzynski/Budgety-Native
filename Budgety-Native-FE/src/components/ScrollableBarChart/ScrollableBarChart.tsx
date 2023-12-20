@@ -14,7 +14,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 
-interface Props {
+interface IProps {
   containerStyles?: StyleProp<ViewStyle>;
   data: {
     color: string;
@@ -26,7 +26,7 @@ interface Props {
 
 const windowWidth = Dimensions.get('window').width;
 
-const ScrollableBarChart = ({ containerStyles, data, label }: Props) => {
+const ScrollableBarChart = ({ containerStyles, data, label }: IProps) => {
   const [barIndex, setBarIndex] = useState<number | undefined>();
   const [coords, setCoords] = useState({
     left: 40,
@@ -150,7 +150,6 @@ const ScrollableBarChart = ({ containerStyles, data, label }: Props) => {
         }}
         yAxis={{
           left: {
-            // valueFormatter: 'percent',
             textColor: processColor('black'),
             valueFormatter: "#.#'%'"
           },

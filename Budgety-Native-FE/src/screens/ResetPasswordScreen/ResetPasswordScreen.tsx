@@ -2,7 +2,7 @@ import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { NavigationProp, RouteProp, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ import Title from '../../components/Title/Title';
 import Toast from 'react-native-toast-message';
 
 interface IProps {
-  navigation: any;
+  navigation: NavigationProp<any>;
 }
 
 type TParamList = {
@@ -158,29 +158,16 @@ const ResetPasswordScreen = ({ navigation }: IProps) => {
     password.trim().length === 0 && confirmPassword.trim().length === 0;
 
   return (
-    <SafeAreaView style={{ backgroundColor: COLORS.PRIMARY, flex: 1 }}>
+    <SafeAreaView style={styles.container}>
       <KeyboardAwareScrollView
-        contentContainerStyle={{
-          backgroundColor: COLORS.PRIMARY,
-          flex: 1,
-          gap: 50
-        }}
+        contentContainerStyle={styles.keyboardContentContainer}
         enableOnAndroid={true}
         extraScrollHeight={180}
       >
         <Title
           customStyles={{
-            container: {
-              backgroundColor: 'transparent',
-              marginTop: 30
-            },
-            content: {
-              fontSize: 48,
-              letterSpacing: 3,
-              textShadowColor: 'rgba(0, 0, 0, 0.4)',
-              textShadowOffset: { height: 3, width: 3 },
-              textShadowRadius: 6
-            }
+            container: styles.titleContainer,
+            content: styles.titleContent
           }}
           text="Budgety"
         />
@@ -209,8 +196,7 @@ const ResetPasswordScreen = ({ navigation }: IProps) => {
         <CustomButton
           customStyles={{
             container: {
-              alignSelf: 'center',
-              marginTop: 20,
+              ...styles.buttonContainer,
               width: i18n.language === 'fr' ? 260 : 240
             }
           }}
@@ -224,7 +210,12 @@ const ResetPasswordScreen = ({ navigation }: IProps) => {
 };
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    alignSelf: 'center',
+    marginTop: 20
+  },
   container: {
+    backgroundColor: COLORS.PRIMARY,
     flex: 1
   },
   image: {
@@ -252,11 +243,27 @@ const styles = StyleSheet.create({
     height: 140,
     width: '60%'
   },
+  keyboardContentContainer: {
+    backgroundColor: COLORS.PRIMARY,
+    flex: 1,
+    gap: 50
+  },
   link: {
     color: COLORS.SECONDARY,
     fontSize: 16,
     textDecorationLine: 'underline',
     textDecorationStyle: 'solid'
+  },
+  titleContainer: {
+    backgroundColor: 'transparent',
+    marginTop: 30
+  },
+  titleContent: {
+    fontSize: 48,
+    letterSpacing: 3,
+    textShadowColor: 'rgba(0, 0, 0, 0.4)',
+    textShadowOffset: { height: 3, width: 3 },
+    textShadowRadius: 6
   }
 });
 

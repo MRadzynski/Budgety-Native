@@ -65,7 +65,7 @@ const PieChartWrapper = ({
         legend={{ enabled: false }}
         maxAngle={360}
         rotationEnabled={false}
-        style={{ flex: 1 }}
+        style={styles.pieChart}
       />
       {centerValue && (
         <View style={styles.centerValueContainer}>
@@ -92,8 +92,8 @@ const styles = StyleSheet.create({
   centerValueContainer: {
     alignItems: 'center',
     borderRadius: 100,
-    justifyContent: 'center',
     height: '100%',
+    justifyContent: 'center',
     position: 'absolute',
     width: '100%'
   },
@@ -103,6 +103,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     paddingHorizontal: 8,
     paddingVertical: 4
+  },
+  pieChart: {
+    flex: 1
   }
 });
 

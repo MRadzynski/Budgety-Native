@@ -108,29 +108,16 @@ const LoginScreen = () => {
     email.trim().length === 0 || password.trim().length === 0;
 
   return (
-    <SafeAreaView style={{ backgroundColor: COLORS.PRIMARY, flex: 1 }}>
+    <SafeAreaView style={styles.container}>
       <KeyboardAwareScrollView
-        contentContainerStyle={{
-          backgroundColor: COLORS.PRIMARY,
-          flex: 1,
-          gap: 40
-        }}
+        contentContainerStyle={styles.keyboardContentContainer}
         enableOnAndroid={true}
         extraScrollHeight={70}
       >
         <Title
           customStyles={{
-            container: {
-              backgroundColor: 'transparent',
-              marginTop: 30
-            },
-            content: {
-              fontSize: 48,
-              letterSpacing: 3,
-              textShadowColor: 'rgba(0, 0, 0, 0.4)',
-              textShadowOffset: { height: 3, width: 3 },
-              textShadowRadius: 6
-            }
+            container: styles.titleContainer,
+            content: styles.titleContent
           }}
           text="Budgety"
         />
@@ -164,11 +151,7 @@ const LoginScreen = () => {
         </View>
         <CustomButton
           customStyles={{
-            container: {
-              alignSelf: 'center',
-              marginTop: 20,
-              width: 240
-            }
+            container: styles.buttonContainer
           }}
           isDisabled={isSubmitBtnDisabled}
           onPress={handleSubmit}
@@ -188,7 +171,13 @@ const LoginScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    alignSelf: 'center',
+    marginTop: 20,
+    width: 240
+  },
   container: {
+    backgroundColor: COLORS.PRIMARY,
     flex: 1
   },
   forgotPasswordText: {
@@ -219,6 +208,11 @@ const styles = StyleSheet.create({
     height: 120,
     width: '60%'
   },
+  keyboardContentContainer: {
+    backgroundColor: COLORS.PRIMARY,
+    flex: 1,
+    gap: 40
+  },
   link: {
     color: COLORS.SECONDARY,
     fontSize: 16,
@@ -234,6 +228,17 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     marginBottom: '7%',
     textAlign: 'center'
+  },
+  titleContainer: {
+    backgroundColor: 'transparent',
+    marginTop: 30
+  },
+  titleContent: {
+    fontSize: 48,
+    letterSpacing: 3,
+    textShadowColor: 'rgba(0, 0, 0, 0.4)',
+    textShadowOffset: { height: 3, width: 3 },
+    textShadowRadius: 6
   }
 });
 

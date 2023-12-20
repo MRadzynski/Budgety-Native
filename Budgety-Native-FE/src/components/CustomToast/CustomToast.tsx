@@ -1,4 +1,5 @@
 import { COLORS } from '../../styles/Colors';
+import { StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Toast, {
   BaseToastProps,
@@ -47,32 +48,24 @@ const CustomToast = () => {
       <ErrorToast
         {...props}
         contentContainerStyle={{
-          //backgroundColor: COLORS.ERROR,
-          backgroundColor: '#F15455',
-          borderRadius: 8,
+          ...styles.errorToastContent,
           height: calculateToastHeight(
             props.text1 || '',
             props.text2 || '',
             props?.props?.text1FontSize || 17,
             props?.props?.text2FontSize || 10,
             i18n.language
-          ),
-          margin: 0,
-          minHeight: 60,
-          padding: 0
+          )
         }}
-        style={{
-          borderLeftWidth: 0,
-          borderRadius: 12
-        }}
+        style={styles.toastContainer}
         text1NumberOfLines={calculateTextNumberOfLines(props.text1 || '')}
         text1Style={{
-          color: COLORS.WHITE_SHADE,
+          ...styles.toastText,
           fontSize: props?.props?.text1FontSize || 17
         }}
         text2NumberOfLines={calculateTextNumberOfLines(props.text2 || '')}
         text2Style={{
-          color: COLORS.WHITE_SHADE,
+          ...styles.toastText,
           fontSize: props?.props?.text2FontSize || 12
         }}
       />
@@ -80,30 +73,43 @@ const CustomToast = () => {
     success: (props: BaseToastProps & TCustomProps) => (
       <SuccessToast
         {...props}
-        contentContainerStyle={{
-          backgroundColor: COLORS.SUCCESS,
-          borderRadius: 8,
-          margin: 0,
-          padding: 0
-        }}
-        style={{
-          borderLeftWidth: 0,
-          borderRadius: 12
-        }}
+        contentContainerStyle={styles.successToastContent}
+        style={styles.toastContainer}
         text1NumberOfLines={calculateTextNumberOfLines(props.text1 || '')}
         text1Style={{
-          color: COLORS.WHITE_SHADE,
+          ...styles.toastText,
           fontSize: props?.props?.text1FontSize || 17
         }}
         text2NumberOfLines={calculateTextNumberOfLines(props.text2 || '')}
-        text2Style={{
-          color: COLORS.WHITE_SHADE
-        }}
+        text2Style={styles.toastText}
       />
     )
   };
 
   return <Toast config={toastConfig} visibilityTime={2500} />;
 };
+
+const styles = StyleSheet.create({
+  errorToastContent: {
+    backgroundColor: COLORS.ERROR_LIGHT,
+    borderRadius: 8,
+    margin: 0,
+    minHeight: 60,
+    padding: 0
+  },
+  successToastContent: {
+    backgroundColor: COLORS.SUCCESS,
+    borderRadius: 8,
+    margin: 0,
+    padding: 0
+  },
+  toastContainer: {
+    borderLeftWidth: 0,
+    borderRadius: 12
+  },
+  toastText: {
+    color: COLORS.WHITE_SHADE
+  }
+});
 
 export default CustomToast;

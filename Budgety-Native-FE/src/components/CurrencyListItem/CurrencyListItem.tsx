@@ -7,12 +7,12 @@ interface ICurrencyList {
   value: string;
 }
 
-interface ICurrencyListItemProps {
+interface IProps {
   index: number;
   item: ICurrencyList;
 }
 
-const CurrencyListItem = ({ index, item }: ICurrencyListItemProps) => (
+const CurrencyListItem = ({ index, item }: IProps) => (
   <View
     style={[
       styles.container,

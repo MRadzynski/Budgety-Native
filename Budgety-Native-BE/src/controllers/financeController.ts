@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
 import { Request, Response } from 'express';
-import FinanceModel from '../models/financeModel';
+import mongoose from 'mongoose';
 import { isTheSameMonthYear } from '../utils/finances';
+import FinanceModel from '../models/financeModel';
 
 interface IExpenseIncome {
   _id: mongoose.Types.ObjectId;
@@ -22,21 +22,6 @@ interface IExpensesIncomeLog {
   categoryId: String;
   date: Date;
 }
-
-interface IHistoryLog {
-  date: String;
-  expenses: {
-    amount: Number;
-    bgColor: String;
-    categoryName: String;
-  }[];
-  income: {
-    amount: Number;
-    bgColor: String;
-    categoryName: String;
-  }[];
-}
-
 interface IFinanceDocExp {
   expenses: IExpenseIncome[];
 }
@@ -70,6 +55,19 @@ export interface IFinanceDocument {
   income: IExpenseIncome[];
   incomeLogs: IExpensesIncomeLog[];
   save: () => Promise<IFinanceDocument>;
+}
+interface IHistoryLog {
+  date: String;
+  expenses: {
+    amount: Number;
+    bgColor: String;
+    categoryName: String;
+  }[];
+  income: {
+    amount: Number;
+    bgColor: String;
+    categoryName: String;
+  }[];
 }
 
 export const handleDeleteExpense = async (req: Request, res: Response) => {
@@ -339,30 +337,6 @@ export const handleGetBalance = async (req: Request, res: Response) => {
     const monthlyBalance = sumOfMonthlyIncome - sumOfMonthlyExpenses;
 
     res.status(200).json({ allTimeBalance, monthlyBalance });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'Something went wrong' });
-    }
-  }
-};
-
-export const handleGetCategories = async (req: Request, res: Response) => {
-  const { userId } = req;
-
-  if (!userId) return res.status(401).json({ error: 'You are not authorized' });
-
-  try {
-    const financeDoc = (await FinanceModel.findOne({ userId: userId }).select(
-      'expenses income'
-    )) as IFinanceDocExpInc;
-
-    if (!financeDoc) return res.status(404).json({ error: 'Data not found' });
-
-    res
-      .status(200)
-      .json({ expenses: financeDoc.expenses, income: financeDoc.income });
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });

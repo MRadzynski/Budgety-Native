@@ -4,11 +4,11 @@
   "main": "node_modules/expo/AppEntry.js",
   "author": "Miłosz Radzyński",
   "scripts": {
-    "start": "expo start",
-    "start-fresh": "expo start -c",
-    "start-dev-client": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "start": "expo start",
+    "start-dev-client": "expo start --dev-client",
+    "start-fresh": "expo start -c",
     "web": "expo start --web"
   },
   "dependencies": {

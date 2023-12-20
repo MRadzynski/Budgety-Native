@@ -1,6 +1,7 @@
 import { COLORS } from '../../styles/Colors';
 import {
   Image,
+  ImageSourcePropType,
   KeyboardTypeOptions,
   StyleSheet,
   TextInput,
@@ -10,7 +11,7 @@ import {
 import { useState } from 'react';
 
 interface IProps {
-  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters' | undefined;
+  autoCapitalize?: 'characters' | 'none' | 'sentences' | 'words' | undefined;
   cursorColor?: string;
   customStyles?: ITextInputCustomStyle;
   defaultValue?: string;
@@ -31,7 +32,7 @@ interface ITextInputCustomStyle {
   icon?: {};
 }
 
-const IMAGES: { [key: string]: any } = {
+const IMAGES: { [key: string]: ImageSourcePropType } = {
   'eye-close-black': require('../../../assets/eye-close-black.png'),
   'eye-close-white': require('../../../assets/eye-close.png'),
   'eye-open-black': require('../../../assets/eye-open-black.png'),

@@ -3,6 +3,7 @@ import { CATEGORY_FORM_TYPES, CONTEXT } from '../../data/constants';
 import { COLORS } from '../../styles/Colors';
 import { generateBoxShadowStyle } from '../../utils/helpers';
 import { MaterialIcons } from '@expo/vector-icons';
+import { NavigationProp, RouteProp, useRoute } from '@react-navigation/native';
 import {
   Platform,
   StyleSheet,
@@ -10,7 +11,6 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { RouteProp, useRoute } from '@react-navigation/native';
 import { useAppSelector } from '../../hooks/redux';
 import { useTranslation } from 'react-i18next';
 import ColorPickerModal from '../ColorPickerModal/ColorPickerModal';
@@ -33,7 +33,7 @@ type TParamList = {
   };
 };
 interface IProps {
-  navigation: any;
+  navigation: NavigationProp<any>;
 }
 
 const CategoryForm = ({ navigation }: IProps) => {
@@ -46,9 +46,8 @@ const CategoryForm = ({ navigation }: IProps) => {
   const context = useAppSelector(state => state.expensesIncome.context);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
-  const { t } = useTranslation();
-
   const { params } = useRoute<RouteProp<TParamList, 'ExpensesIncomeScreen'>>();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (params?.categoryData) {
@@ -159,7 +158,7 @@ const CategoryForm = ({ navigation }: IProps) => {
             defaultValue={name}
             onChangeText={handleNameChange}
             placeholderText={t('exampleCategoryName')}
-            placeholderTextColor="#757575"
+            placeholderTextColor={COLORS.GRAY}
             selectionColor={COLORS.PRIMARY}
           />
         </View>

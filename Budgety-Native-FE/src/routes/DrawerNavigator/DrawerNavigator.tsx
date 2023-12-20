@@ -1,15 +1,15 @@
 import { COLORS } from '../../styles/Colors';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import CustomDrawerContent from '../CustomDrawerContent/CustomDrawerContent';
-import ExpensesIncomeScreen from '../../screens/ExpensesIncomeScreen/ExpensesIncomeScreen';
 import ExchangeScreen from '../../screens/ExchangeScreen/ExchangeScreen';
+import ExpensesIncomeScreen from '../../screens/ExpensesIncomeScreen/ExpensesIncomeScreen';
 import HistoryScreen from '../../screens/HistoryScreen/HistoryScreen';
 import HomeScreen from '../../screens/HomeScreen/HomeScreen';
 import SettingsScreen from '../../screens/SettingsScreen/SettingsScreen';
 
 const Drawer = createDrawerNavigator();
 
-const DrawerNavigator: React.FC = () => (
+const DrawerNavigator = () => (
   <Drawer.Navigator
     drawerContent={({ navigation }) => (
       <CustomDrawerContent navigation={navigation} />

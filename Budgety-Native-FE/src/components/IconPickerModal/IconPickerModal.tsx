@@ -30,7 +30,7 @@ const IconPickerModal = ({ bgColor, isVisible, onApply, onClose }: IProps) => {
         onPress={onClose}
         style={styles.overlay}
       >
-        <View onStartShouldSetResponder={_ => true} style={styles.container}>
+        <View onStartShouldSetResponder={() => true} style={styles.container}>
           <ScrollView contentContainerStyle={styles.contentContainer}>
             {ICON_NAMES.map(iconName => (
               <TouchableOpacity

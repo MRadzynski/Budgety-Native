@@ -10,6 +10,7 @@ import { COLORS } from '../../styles/Colors';
 import { CONTEXT } from '../../data/constants';
 import { generateBoxShadowStyle } from '../../utils/helpers';
 import { MaterialIcons } from '@expo/vector-icons';
+import { NavigationProp, useFocusEffect } from '@react-navigation/native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import {
   setContext,
@@ -17,7 +18,6 @@ import {
   setIncomeCategories
 } from '../../slices/expenseIncomeSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import CategoryListItem from '../CategoryListItem/CategoryListItem';
 import CustomButton from '../CustomButton/CustomButton';
@@ -25,8 +25,16 @@ import CustomModal from '../CustomModal/CustomModal';
 import React, { useCallback, useEffect, useState } from 'react';
 
 interface IProps {
-  navigation: any;
+  navigation: NavigationProp<any>;
 }
+
+type TCategory = {
+  _id: string;
+  amount: number;
+  bgColor: string;
+  categoryName: string;
+  icon: string;
+};
 
 const CategoryRoute = ({ navigation }: IProps) => {
   const [categoryIdToBeRemoved, setCategoryIdToBeRemoved] = useState('');
@@ -118,13 +126,13 @@ const CategoryRoute = ({ navigation }: IProps) => {
     });
   };
 
-  const handleAddExpenseIncome = (category?: any) => {
+  const handleAddExpenseIncome = (category?: TCategory) => {
     navigation.navigate('AddExpenseIncome', {
       categoryData: category
     });
   };
 
-  const handleEditCategory = (category: any) => {
+  const handleEditCategory = (category: TCategory) => {
     navigation.navigate('EditCategory', {
       categoryData: category,
       type: 'EDIT'

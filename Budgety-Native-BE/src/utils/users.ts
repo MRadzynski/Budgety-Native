@@ -107,8 +107,8 @@ export const sendEmail = (
       <p style="margin: 4px 0; text-align: center">${translation.allTheBest}</p>
       <p
         style="
-          margin: 0;
           font-size: 20px;
+          margin: 0;
           text-align: center;
         "
       >
@@ -119,9 +119,9 @@ export const sendEmail = (
 
   const mailDetails = {
     from: process.env.EMAIL_ADDRESS,
-    to: recipient,
+    html: emailContent,
     subject: translation.subject,
-    html: emailContent
+    to: recipient
   };
 
   mailTransporter.sendMail(mailDetails, function (err, _data) {

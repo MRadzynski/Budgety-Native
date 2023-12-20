@@ -19,8 +19,8 @@ html {
   color: #cb3a2f;
   font-size: 0.9rem;
   margin-top: -1rem;
-  min-height: 1rem;
   max-width: 240px;
+  min-height: 1rem;
   text-align: center;
   word-break: break-word;
 }

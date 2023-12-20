@@ -1,12 +1,16 @@
 import { COLORS } from '../../styles/Colors';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { NavigationProp, useRoute } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import CustomButton from '../../components/CustomButton/CustomButton';
 
 const AUTH_NAMES = ['Login', 'SignUp', 'ForgotPassword', 'ResetPassword'];
 
-const ErrorScreen = ({ navigation }: any) => {
+interface IProps {
+  navigation: NavigationProp<any>;
+}
+
+const ErrorScreen = ({ navigation }: IProps) => {
   const { name } = useRoute();
   const { t } = useTranslation();
 

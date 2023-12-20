@@ -2,7 +2,7 @@ import { AnyAction, configureStore } from '@reduxjs/toolkit';
 import expenseIncomeSlice, {
   IExpenseIncomeSlice
 } from '../slices/expenseIncomeSlice';
-import userSlice, { UserSlice, logout } from '../slices/userSlice';
+import userSlice, { logout, UserSlice } from '../slices/userSlice';
 
 interface IState {
   expensesIncome: IExpenseIncomeSlice;

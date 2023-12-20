@@ -7,16 +7,15 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-interface TextInputCustomStyle {
-  container?: {};
-  textContent?: {};
-}
-
 interface IProps {
-  customStyles?: TextInputCustomStyle;
+  customStyles?: ITextInputCustomStyle;
   isDisabled?: boolean;
   onPress: TonPressFunc;
   title: string;
+}
+interface ITextInputCustomStyle {
+  container?: {};
+  textContent?: {};
 }
 
 type TonPressFunc = (event: GestureResponderEvent) => void;

@@ -2,6 +2,7 @@ import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { CONTEXT, CURRENCIES_SIGNS } from '../../data/constants';
 import { MaterialIcons } from '@expo/vector-icons';
+import { NavigationProp, RouteProp, useRoute } from '@react-navigation/native';
 import {
   Platform,
   StyleSheet,
@@ -9,7 +10,6 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { RouteProp, useRoute } from '@react-navigation/native';
 import {
   setExpensesCategories,
   setIncomeCategories
@@ -22,7 +22,7 @@ import CustomTextInput from '../CustomTextInput/CustomTextInput';
 import Dropdown from '../Dropdown/Dropdown';
 
 interface IProps {
-  navigation: any;
+  navigation: NavigationProp<any>;
 }
 
 type TCategory = {
@@ -205,7 +205,7 @@ const ExpenseIncomeForm = ({ navigation }: IProps) => {
                 ? '1.00'
                 : '1,00'
             }
-            placeholderTextColor="#757575"
+            placeholderTextColor={COLORS.GRAY}
             selectionColor={COLORS.PRIMARY}
             type="decimal-pad"
             value={price}

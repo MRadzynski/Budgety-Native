@@ -5,34 +5,32 @@ import ExpenseIncomeForm from '../../components/ExpenseIncomeForm/ExpenseIncomeF
 
 const Stack = createStackNavigator();
 
-const ExpensesIncomeStack = () => {
-  return (
-    <Stack.Navigator initialRouteName="CategoriesList">
-      <Stack.Screen
-        component={CategoryForm}
-        name="AddCategory"
-        options={{ animationEnabled: false, headerShown: false }}
-      />
-      <Stack.Screen
-        component={ExpenseIncomeForm}
-        name="AddExpenseIncome"
-        options={{
-          animationEnabled: false,
-          headerShown: false
-        }}
-      />
-      <Stack.Screen
-        component={CategoryRoute}
-        name="CategoriesList"
-        options={{ animationEnabled: false, headerShown: false }}
-      />
-      <Stack.Screen
-        component={CategoryForm}
-        name="EditCategory"
-        options={{ animationEnabled: false, headerShown: false }}
-      />
-    </Stack.Navigator>
-  );
-};
+const ExpensesIncomeStack = () => (
+  <Stack.Navigator initialRouteName="CategoriesList">
+    <Stack.Screen
+      component={CategoryForm}
+      name="AddCategory"
+      options={{ animationEnabled: false, headerShown: false }}
+    />
+    <Stack.Screen
+      component={ExpenseIncomeForm}
+      name="AddExpenseIncome"
+      options={{
+        animationEnabled: false,
+        headerShown: false
+      }}
+    />
+    <Stack.Screen
+      component={CategoryRoute}
+      name="CategoriesList"
+      options={{ animationEnabled: false, headerShown: false }}
+    />
+    <Stack.Screen
+      component={CategoryForm}
+      name="EditCategory"
+      options={{ animationEnabled: false, headerShown: false }}
+    />
+  </Stack.Navigator>
+);
 
 export default ExpensesIncomeStack;

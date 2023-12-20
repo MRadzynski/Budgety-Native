@@ -1,17 +1,20 @@
 import { deleteFromSecureStore } from '../../utils/secureStorage';
-import { DrawerActions } from '@react-navigation/native';
+import { DrawerActions, NavigationProp } from '@react-navigation/native';
 import { logout } from '../../slices/userSlice';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAppDispatch } from '../../hooks/redux';
 import { useTranslation } from 'react-i18next';
 import ROUTES from '../../data/routes.json';
 
+interface IProps {
+  navigation: NavigationProp<any>;
+}
 interface IRoute {
   name: string;
   route: string;
 }
 
-const CustomDrawerContent: React.FC<any> = ({ navigation }) => {
+const CustomDrawerContent = ({ navigation }: IProps) => {
   const dispatch = useAppDispatch();
 
   const { t } = useTranslation();
