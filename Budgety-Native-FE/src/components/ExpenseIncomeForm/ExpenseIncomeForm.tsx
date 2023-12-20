@@ -2,12 +2,18 @@ import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { CONTEXT, CURRENCIES_SIGNS } from '../../data/constants';
 import { MaterialIcons } from '@expo/vector-icons';
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import {
   setExpensesCategories,
   setIncomeCategories
 } from '../../slices/expenseIncomeSlice';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -260,9 +266,7 @@ const styles = StyleSheet.create({
   confirmBtnContainer: {
     alignSelf: 'center',
     backgroundColor: COLORS.PRIMARY,
-    bottom: '0%',
     marginBottom: 8,
-    position: 'absolute',
     width: '70%'
   },
   confirmBtnText: {
@@ -271,6 +275,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     gap: 32,
+    paddingBottom: Platform.OS === 'ios' ? 16 : 0,
     paddingHorizontal: 32,
     paddingTop: 16,
     position: 'relative'

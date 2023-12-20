@@ -1,6 +1,15 @@
 import { COLORS } from '../../styles/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Modal,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import CustomButton from '../CustomButton/CustomButton';
 
@@ -18,6 +27,14 @@ const CustomModal = ({
   setIsVisible
 }: IProps) => {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      isVisible
+        ? StatusBar.setBackgroundColor('rgba(0,0,0,0.9)')
+        : StatusBar.setBackgroundColor('transparent');
+    }
+  }, [isVisible]);
 
   const handleClose = () => setIsVisible(false);
 
@@ -108,7 +125,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.90)',
+    backgroundColor: 'rgba(0,0,0,0.9)',
     flex: 1,
     justifyContent: 'center'
   },

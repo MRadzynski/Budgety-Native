@@ -1,4 +1,5 @@
 import { COLORS } from '../../styles/Colors';
+import { generateBoxShadowStyle } from '../../utils/helpers';
 import {
   GestureResponderEvent,
   StyleSheet,
@@ -40,9 +41,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.WHITE_SHADE,
     borderRadius: 25,
-    elevation: 10,
     padding: 10,
-    shadowColor: '#000'
+    ...generateBoxShadowStyle(3, 4, '#000', 0.2, 3, 10)
   },
   textContent: {
     color: COLORS.BLACK_SHADE,

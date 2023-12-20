@@ -2,7 +2,9 @@ import { COLORS } from '../../styles/Colors';
 import { Entypo } from '@expo/vector-icons';
 import {
   FlatList,
+  LayoutChangeEvent,
   Modal,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -60,6 +62,12 @@ const Dropdown: FC<IProps> = ({
 
   const hideDropdown = () => setVisible(false);
 
+  const onDropdownLayout = (event: LayoutChangeEvent) => {
+    const { x, y } = event.nativeEvent.layout;
+
+    setDropdownPos({ left: x, top: y });
+  };
+
   const onItemPress = (item: TDropdownOption) => {
     setSelected(item);
     onSelect(item);
@@ -81,34 +89,37 @@ const Dropdown: FC<IProps> = ({
         px: number,
         py: number
       ) => {
-        setDropdownPos({ top: py + 16, left: px });
+        const platformOffset = Platform.OS === 'ios' ? 44 : 16;
+
+        setDropdownPos({
+          left: px,
+          top: py + platformOffset
+        });
       }
     );
 
-  const renderDropdown = (): ReactElement<any, any> => {
-    return (
-      <Modal animationType="none" transparent visible={visible}>
-        <TouchableOpacity onPress={hideDropdown} style={styles.overlay}>
-          <View
-            style={[
-              styles.dropdownList,
-              {
-                left: dropdownPos.left,
-                top: dropdownPos.top
-              },
-              dropdownListStyle
-            ]}
-          >
-            <FlatList
-              data={data}
-              keyExtractor={({ value }) => value}
-              renderItem={renderItem}
-            />
-          </View>
-        </TouchableOpacity>
-      </Modal>
-    );
-  };
+  const renderDropdown = (): ReactElement<any, any> => (
+    <Modal animationType="none" transparent visible={visible}>
+      <TouchableOpacity onPress={hideDropdown} style={styles.overlay}>
+        <View
+          style={[
+            styles.dropdownList,
+            {
+              left: dropdownPos.left,
+              top: dropdownPos.top
+            },
+            dropdownListStyle
+          ]}
+        >
+          <FlatList
+            data={data}
+            keyExtractor={({ value }) => value}
+            renderItem={renderItem}
+          />
+        </View>
+      </TouchableOpacity>
+    </Modal>
+  );
 
   const renderItem = ({
     item,
@@ -142,6 +153,7 @@ const Dropdown: FC<IProps> = ({
 
   return (
     <TouchableOpacity
+      onLayout={onDropdownLayout}
       onPress={toggleDropdown}
       ref={dropdownButton}
       style={[styles.button, buttonStyle]}

@@ -291,6 +291,7 @@ const styles = StyleSheet.create({
     color: COLORS.WHITE_SHADE
   },
   addExpenseIncomeContainer: {
+    paddingBottom: Platform.OS === 'ios' ? 16 : 0,
     paddingHorizontal: 32
   },
   categoryListContainer: {

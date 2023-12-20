@@ -268,7 +268,7 @@ export const es = {
   january: 'Enero',
   june: 'Junio',
   july: 'Julio',
-  language: 'idioma',
+  language: 'Idioma',
   logout: 'Cerrar sesión',
   march: 'Marzo',
   may: 'Mayo',

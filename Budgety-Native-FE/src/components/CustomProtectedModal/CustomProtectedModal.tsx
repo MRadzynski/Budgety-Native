@@ -1,6 +1,14 @@
 import { COLORS } from '../../styles/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Modal,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import CustomButton from '../CustomButton/CustomButton';
@@ -29,6 +37,12 @@ const CustomProtectedModal = ({
     if (!isVisible) {
       setPassword('');
       setErrorMsg('');
+    }
+
+    if (Platform.OS === 'android') {
+      isVisible
+        ? StatusBar.setBackgroundColor('rgba(0,0,0,0.9)')
+        : StatusBar.setBackgroundColor('transparent');
     }
   }, [isVisible]);
 

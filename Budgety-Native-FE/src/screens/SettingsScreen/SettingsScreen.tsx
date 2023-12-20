@@ -1,17 +1,18 @@
 import { API_URL } from '@env';
 import { COLORS } from '../../styles/Colors';
 import { deleteFromSecureStore } from '../../utils/secureStorage';
+import { generateBoxShadowStyle } from '../../utils/helpers';
 import {
   logout,
   setCurrency,
   setLanguage,
   setUsername
 } from '../../slices/userSlice';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import {
   setExpensesCategories,
   setIncomeCategories
 } from '../../slices/expenseIncomeSlice';
-import { StyleSheet, Text, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -40,6 +41,16 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const { t } = useTranslation();
+
+  const calculateTextNumberOfLines = (text: string): number => {
+    const charCount = text.length;
+
+    let amountOfCharsPerLine = 30;
+    if ('language' in currentUser && currentUser?.language === 'RU')
+      amountOfCharsPerLine = 20;
+
+    return Math.ceil(charCount / amountOfCharsPerLine);
+  };
 
   const getTranslatedServerErrorMessages = (message: string) => {
     switch (message) {
@@ -265,7 +276,10 @@ const SettingsScreen = ({ navigation }: IDrawerProps) => {
             <View style={styles.sectionItemContainer}>
               <Text
                 style={{
-                  height: 40,
+                  height:
+                    Platform.OS === 'ios'
+                      ? calculateTextNumberOfLines(t('eraseData')) * 20
+                      : 40,
                   maxWidth: '60%',
                   textAlignVertical: 'center'
                 }}
@@ -314,19 +328,19 @@ const styles = StyleSheet.create({
   },
   dangerZoneButtonContainer: {
     borderRadius: 8,
-    elevation: 3,
     height: 40,
     justifyContent: 'center',
     paddingVertical: 6,
-    width: 94
+    width: 94,
+    ...generateBoxShadowStyle(2, 2, '#000', 0.2, 3, 3)
   },
   dangerZoneButtonContent: {
     fontSize: 16
   },
   dropdownButton: {
     backgroundColor: COLORS.LIGHT_GRAY,
-    elevation: 3,
-    width: 100
+    width: 100,
+    ...generateBoxShadowStyle(2, 2, '#000', 0.2, 3, 3)
   },
   dropdownList: {
     height: '25%',
@@ -335,9 +349,9 @@ const styles = StyleSheet.create({
   sectionContainer: {
     backgroundColor: COLORS.WHITE_SHADE,
     borderRadius: 8,
-    elevation: 16,
     paddingHorizontal: 24,
-    paddingVertical: 16
+    paddingVertical: 16,
+    ...generateBoxShadowStyle(4, 4, '#000', 0.2, 5, 10)
   },
   sectionContentContainer: {
     gap: 16,

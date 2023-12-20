@@ -189,8 +189,7 @@ const SignUpScreen = () => {
   const isSubmitBtnDisabled =
     email.trim().length === 0 ||
     password.trim().length === 0 ||
-    confirmationPassword.trim().length === 0 ||
-    password.trim() !== confirmationPassword.trim();
+    confirmationPassword.trim().length === 0;
 
   return (
     <SafeAreaView style={{ backgroundColor: COLORS.PRIMARY, flex: 1 }}>
