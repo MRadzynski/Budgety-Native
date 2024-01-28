@@ -7,6 +7,7 @@
   "scripts": {
     "build": "npx tsc",
     "dev": "nodemon src/index.ts",
+    "postbuild": "mv node_modules ./dist",
     "start": "node src/index.js"
   },
   "license": "ISC",
